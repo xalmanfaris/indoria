@@ -910,7 +910,8 @@ a:hover {
   color: var(--aura-muted);
 }
 
-/* Hero Banner - Left to Right Filled Picture */
+/* Hero Banner - Modern Floating Curved Visual */
+.aura-hero-banner,
 .aura-hero-fullbleed {
   position: relative;
   width: 100%;
@@ -919,6 +920,8 @@ a:hover {
   align-items: center;
   overflow: hidden;
   background-color: var(--aura-dark);
+  border-radius: 28px;
+  box-shadow: 0 16px 40px -12px rgba(15, 23, 42, 0.22);
 }
 
 .aura-hero-bg-img {
@@ -1543,8 +1546,10 @@ a:hover {
 
 /* Comprehensive Cross-Device Responsive Adjustments */
 @media (max-width: 991px) {
+  .aura-hero-banner,
   .aura-hero-fullbleed {
     min-height: 480px;
+    border-radius: 24px;
   }
   .aura-hero-content {
     padding: 3.5rem 0;
@@ -1558,8 +1563,10 @@ a:hover {
 }
 
 @media (max-width: 767px) {
+  .aura-hero-banner,
   .aura-hero-fullbleed {
     min-height: 420px;
+    border-radius: 20px;
   }
   .aura-hero-content {
     padding: 2.75rem 0;
@@ -1583,8 +1590,10 @@ a:hover {
 }
 
 @media (max-width: 575px) {
+  .aura-hero-banner,
   .aura-hero-fullbleed {
     min-height: 380px;
+    border-radius: 16px;
   }
   .aura-hero-content {
     padding: 2.25rem 0;
