@@ -1,0 +1,73 @@
+@{
+    ViewData["Title"] = "Appliance Buying Guides & Living Journal";
+    var breadcrumbs = new List<(string Title, string Url)>
+    {
+        ("Journal & Buying Guides", "")
+    };
+}
+
+<div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
+    <div class="mb-5">
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">Aura Journal</span>
+        <h1 class="fw-bold mb-2">Architectural Appliance Buying Guides</h1>
+        <p class="text-muted">Expert technical insights, energy calculation formulas, and aesthetic styling advice from our senior appliance engineers.</p>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <!-- Article 1 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 rounded-4 shadow-sm h-100 overflow-hidden bg-white">
+                <img src="https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Refrigerator Guide" style="height: 220px; object-fit: cover;" />
+                <div class="card-body p-4 d-flex flex-column justify-content-between">
+                    <div>
+                        <span class="badge bg-light text-primary border mb-2">Buying Guide</span>
+                        <h5 class="fw-bold text-dark mb-2">Choosing the Right Refrigerator Capacity for Modern Indian Families</h5>
+                        <p class="text-muted small mb-3">How to balance French-door modular aesthetics with raw liter volume for fresh groceries, frozen gravies, and beverages.</p>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top small text-muted">
+                        <span>7 Min Read</span>
+                        <a href="/category/refrigerators" class="text-primary fw-bold text-decoration-none">Read Guide &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Article 2 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 rounded-4 shadow-sm h-100 overflow-hidden bg-white">
+                <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Inverter AC Guide" style="height: 220px; object-fit: cover;" />
+                <div class="card-body p-4 d-flex flex-column justify-content-between">
+                    <div>
+                        <span class="badge bg-light text-primary border mb-2">Engineering</span>
+                        <h5 class="fw-bold text-dark mb-2">Dual-Inverter vs Twin-Rotary ACs: Real Power Consumption Decoded</h5>
+                        <p class="text-muted small mb-3">Understanding ISEER 5.2 benchmarks and how high ambient cooling stabilizes indoor temperatures during peak 48°C heatwaves.</p>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top small text-muted">
+                        <span>5 Min Read</span>
+                        <a href="/category/air-conditioners" class="text-primary fw-bold text-decoration-none">Read Guide &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Article 3 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 rounded-4 shadow-sm h-100 overflow-hidden bg-white">
+                <img src="https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="OLED TV Guide" style="height: 220px; object-fit: cover;" />
+                <div class="card-body p-4 d-flex flex-column justify-content-between">
+                    <div>
+                        <span class="badge bg-light text-primary border mb-2">Home Cinema</span>
+                        <h5 class="fw-bold text-dark mb-2">OLED vs Neo QLED: Which Screen Suits Well-Lit Living Rooms?</h5>
+                        <p class="text-muted small mb-3">A head-to-head comparison of infinite contrast ratios versus anti-reflective 2,000-nit peak brightness displays.</p>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top small text-muted">
+                        <span>6 Min Read</span>
+                        <a href="/category/smart-tvs" class="text-primary fw-bold text-decoration-none">Read Guide &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

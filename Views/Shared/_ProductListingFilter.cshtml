@@ -1,0 +1,85 @@
+@model AuraLiving.Models.CatalogFilterViewModel
+
+<div class="aura-filter-card">
+    <div class="aura-filter-title">
+        <span>Filters</span>
+        <a href="@(Model.CategorySlug != null ? $"/category/{Model.CategorySlug}" : (Model.SearchQuery != null ? $"/search?q={Model.SearchQuery}" : "/products"))" class="text-primary small text-decoration-none fw-semibold">Reset</a>
+    </div>
+
+    <form method="get">
+        @if (!string.IsNullOrEmpty(Model.SearchQuery))
+        {
+            <input type="hidden" name="q" value="@Model.SearchQuery" />
+        }
+
+        <!-- Brands Filter -->
+        <div class="aura-filter-group">
+            <label class="fw-bold small text-dark mb-2 d-block">Brand</label>
+            <div class="d-flex flex-column gap-2" style="max-height: 200px; overflow-y: auto;">
+                @foreach (var brand in Model.AvailableBrands)
+                {
+                    var isChecked = Model.SelectedBrands.Contains(brand);
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="brands" value="@brand" id="brand_@brand" @(isChecked ? "checked" : "") onchange="this.form.submit()" />
+                        <label class="form-check-label small text-secondary" for="brand_@brand">
+                            @brand
+                        </label>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Energy Star Rating -->
+        <div class="aura-filter-group">
+            <label class="fw-bold small text-dark mb-2 d-block">Energy Efficiency</label>
+            <div class="d-flex flex-column gap-2">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="energyRating" value="5" id="energy_5" @(Model.EnergyRating == 5 ? "checked" : "") onchange="this.form.submit()" />
+                    <label class="form-check-label small text-secondary" for="energy_5">
+                        <span class="badge bg-warning text-dark me-1">5★</span> BEE Certified 5 Star
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="energyRating" value="4" id="energy_4" @(Model.EnergyRating == 4 ? "checked" : "") onchange="this.form.submit()" />
+                    <label class="form-check-label small text-secondary" for="energy_4">
+                        <span class="badge bg-secondary text-light me-1">4★+</span> 4 Star &amp; Above
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Minimum Customer Rating -->
+        <div class="aura-filter-group">
+            <label class="fw-bold small text-dark mb-2 d-block">Customer Rating</label>
+            <div class="d-flex flex-column gap-2">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="minRating" value="4.5" id="rat_45" @(Model.MinRating >= 4.5 ? "checked" : "") onchange="this.form.submit()" />
+                    <label class="form-check-label small text-secondary" for="rat_45">
+                        4.5★ &amp; Above
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="minRating" value="4.0" id="rat_40" @(Model.MinRating >= 4.0 && Model.MinRating < 4.5 ? "checked" : "") onchange="this.form.submit()" />
+                    <label class="form-check-label small text-secondary" for="rat_40">
+                        4.0★ &amp; Above
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Availability -->
+        <div class="aura-filter-group">
+            <label class="fw-bold small text-dark mb-2 d-block">Availability</label>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="inStockOnly" value="true" id="inStockOnly" @(Model.InStockOnly ? "checked" : "") onchange="this.form.submit()" />
+                <label class="form-check-label small text-secondary" for="inStockOnly">
+                    In Stock (Ready to Dispatch)
+                </label>
+            </div>
+        </div>
+
+        <button type="submit" class="btn aura-btn-primary w-100 py-2 small mt-2">
+            Apply Filters
+        </button>
+    </form>
+</div>

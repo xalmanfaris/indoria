@@ -1,0 +1,141 @@
+@{
+    ViewData["Title"] = "Contact Us & Experience Centres";
+    var breadcrumbs = new List<(string Title, string Url)>
+    {
+        ("Contact & Locations", "")
+    };
+}
+
+<div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
+    <div class="row g-4 g-lg-5 mb-5">
+        <!-- Contact Form -->
+        <div class="col-lg-7">
+            <div class="p-4 p-md-5 rounded-4 bg-white border shadow-sm">
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">Concierge Desk</span>
+                <h2 class="fw-bold text-dark mb-2">We Are Here to Assist You</h2>
+                <p class="text-secondary small mb-4">Have questions regarding kitchen fitments, product specifications, bulk architect orders, or active shipments? Reach our specialized appliance consultants.</p>
+
+                <form onsubmit="event.preventDefault(); showAuraToast('Your message has been sent to our concierge team. We will call you back within 2 hours.', 'success'); this.reset();">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Your Name</label>
+                            <input type="text" class="form-control" required placeholder="Arjun Mehta" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Mobile Number</label>
+                            <input type="tel" class="form-control" required placeholder="+91 98201 45890" />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Email Address</label>
+                            <input type="email" class="form-control" required placeholder="arjun@example.com" />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Inquiry Type</label>
+                            <select class="form-select">
+                                <option>Product Recommendation &amp; Sizing</option>
+                                <option>Active Order &amp; Delivery Tracking</option>
+                                <option>Installation &amp; Demo Request</option>
+                                <option>Architect / Interior Designer Partnership</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Message Details</label>
+                            <textarea class="form-control" rows="4" required placeholder="Please describe how we can assist you..."></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn aura-btn-primary rounded-pill px-5 py-3 fw-bold">
+                        Send Inquiry <i class="bi bi-send ms-1"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Direct Contact Channels -->
+        <div class="col-lg-5">
+            <div class="d-flex flex-column gap-3 mb-4">
+                <div class="p-4 rounded-4 bg-white border shadow-sm">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                            <i class="bi bi-telephone fs-5"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-dark mb-0">Toll-Free Concierge Hotline</h6>
+                            <span class="text-primary fw-bold">1800-209-INDORIA</span>
+                        </div>
+                    </div>
+                    <p class="text-muted small mb-0 ps-5">Mon - Sun: 9:00 AM – 9:00 PM IST</p>
+                </div>
+
+                <div class="p-4 rounded-4 bg-white border shadow-sm">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                            <i class="bi bi-whatsapp fs-5"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-dark mb-0">WhatsApp Support</h6>
+                            <span class="text-success fw-bold">+91 91520 28720</span>
+                        </div>
+                    </div>
+                    <p class="text-muted small mb-0 ps-5">Instant chat for live delivery tracking &amp; manuals.</p>
+                </div>
+
+                <div class="p-4 rounded-4 bg-white border shadow-sm">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                            <i class="bi bi-envelope fs-5"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-dark mb-0">Email Concierge</h6>
+                            <span class="text-dark fw-bold">care@indoria.in</span>
+                        </div>
+                    </div>
+                    <p class="text-muted small mb-0 ps-5">Guaranteed response within 4 hours.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metro Experience Centres -->
+    <div class="p-4 p-md-5 rounded-4 bg-white border shadow-sm">
+        <h3 class="fw-bold text-dark mb-1">Indoria Flagship Experience Centres</h3>
+        <p class="text-muted small mb-4">Visit our architectural galleries to test living appliances, experience whisper-quiet decibel levels, and consult with in-house designers.</p>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
+            <div class="col">
+                <div class="p-3 rounded-3 bg-light border h-100">
+                    <span class="badge bg-primary mb-2">Mumbai</span>
+                    <h6 class="fw-bold text-dark mb-1">Bandra Kurla Complex (BKC)</h6>
+                    <p class="text-muted small mb-2">Unit 04, Ground Floor, One International Centre, BKC, Mumbai 400051</p>
+                    <small class="text-primary fw-bold"><i class="bi bi-clock me-1"></i> 10:30 AM - 8:30 PM</small>
+                </div>
+            </div>
+            <div class="col">
+                <div class="p-3 rounded-3 bg-light border h-100">
+                    <span class="badge bg-primary mb-2">Bengaluru</span>
+                    <h6 class="fw-bold text-dark mb-1">Indiranagar 100ft Road</h6>
+                    <p class="text-muted small mb-2">1082, 100 Feet Rd, HAL 2nd Stage, Indiranagar, Bengaluru 560038</p>
+                    <small class="text-primary fw-bold"><i class="bi bi-clock me-1"></i> 10:30 AM - 8:30 PM</small>
+                </div>
+            </div>
+            <div class="col">
+                <div class="p-3 rounded-3 bg-light border h-100">
+                    <span class="badge bg-primary mb-2">Delhi NCR</span>
+                    <h6 class="fw-bold text-dark mb-1">Mehrauli-Gurgaon Road</h6>
+                    <p class="text-muted small mb-2">The Gallery on MG, Sector 28, Sultanpur, New Delhi 110030</p>
+                    <small class="text-primary fw-bold"><i class="bi bi-clock me-1"></i> 10:30 AM - 8:30 PM</small>
+                </div>
+            </div>
+            <div class="col">
+                <div class="p-3 rounded-3 bg-light border h-100">
+                    <span class="badge bg-primary mb-2">Hyderabad</span>
+                    <h6 class="fw-bold text-dark mb-1">Jubilee Hills Road No. 36</h6>
+                    <p class="text-muted small mb-2">Plot 784, Road Number 36, CBI Colony, Jubilee Hills, Hyderabad 500033</p>
+                    <small class="text-primary fw-bold"><i class="bi bi-clock me-1"></i> 10:30 AM - 8:30 PM</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+@model List<AuraLiving.Models.CategoryViewModel>
+@{
+    ViewData["Title"] = "All Categories - Premium Home Appliances";
+    var breadcrumbs = new List<(string Title, string Url)>
+    {
+        ("All Categories", "")
+    };
+}
+
+<div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
+    <div class="mb-4">
+        <h1 class="fw-bold mb-2">Explore All Appliance Categories</h1>
+        <p class="text-muted">Browse our comprehensive selection of high-efficiency kitchen systems, cinema displays, laundry care, and silent climate appliances.</p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var cat in Model)
+        {
+            <div class="col">
+                <div class="p-4 rounded-4 bg-white border h-100 d-flex flex-column justify-content-between hover-shadow transition">
+                    <div>
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="aura-category-card-icon m-0" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                                <i class="bi @cat.Icon"></i>
+                            </div>
+                            <div>
+                                <h4 class="fw-bold mb-0">
+                                    <a href="/category/@cat.Slug" class="text-dark text-decoration-none">@cat.Name</a>
+                                </h4>
+                                <small class="text-muted">@cat.ProductCount+ Premium Models</small>
+                            </div>
+                        </div>
+
+                        <p class="text-secondary small mb-3">@cat.Description</p>
+
+                        <div class="d-flex flex-wrap gap-1 mb-4">
+                            @foreach (var sub in cat.SubCategories)
+                            {
+                                <a href="/category/@cat.Slug?sub=@sub" class="badge bg-light text-muted border text-decoration-none py-2 px-2.5">
+                                    @sub
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+                    <a href="/category/@cat.Slug" class="btn aura-btn-outline w-100 py-2">
+                        View @cat.Name Collection <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,87 @@
+@model List<AuraLiving.Models.OrderViewModel>
+@{
+    ViewData["Title"] = "My Orders History";
+}
+
+<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-lg-3">
+            <partial name="_AccountSidebar" />
+        </div>
+
+        <div class="col-lg-9">
+            <div class="p-4 p-md-5 rounded-4 bg-white border shadow-sm">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom gap-3">
+                    <div>
+                        <h3 class="fw-bold text-dark mb-1">My Orders</h3>
+                        <p class="text-muted small mb-0">Track active dispatches and view historical appliance warranty certificates.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <select class="form-select form-select-sm" style="width: 140px;">
+                            <option>All Orders</option>
+                            <option>Year 2026</option>
+                            <option>Year 2025</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column gap-4">
+                    @foreach (var order in Model)
+                    {
+                        <div class="p-4 rounded-4 border bg-light shadow-sm">
+                            <!-- Order Header -->
+                            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-3 border-bottom gap-2">
+                                <div>
+                                    <span class="text-muted small">Order ID:</span>
+                                    <strong class="text-dark">#@order.Id</strong>
+                                    <span class="text-muted small ms-2">• Placed on @order.OrderDate.ToString("dd MMM yyyy")</span>
+                                </div>
+                                <div>
+                                    <span class="badge @(order.Status == "Delivered" ? "bg-success" : "bg-primary") px-3 py-2">
+                                        @order.Status
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Items in Order -->
+                            <div class="d-flex flex-column gap-3 mb-3">
+                                @foreach (var itm in order.Items)
+                                {
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <img src="@itm.Image" alt="@itm.ProductName" class="bg-white p-2 rounded-3 border" style="width: 60px; height: 60px; object-fit: contain;" />
+                                            <div>
+                                                <h6 class="fw-bold text-dark mb-1" style="font-size: 0.9rem;">
+                                                    <a href="/product/@itm.ProductSlug" class="text-dark text-decoration-none">@itm.ProductName</a>
+                                                </h6>
+                                                <small class="text-muted">Quantity: @itm.Quantity • @itm.SelectedCapacity</small>
+                                            </div>
+                                        </div>
+                                        <div class="fw-bold text-dark">₹@itm.Total.ToString("N0")</div>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Footer & Actions -->
+                            <div class="d-flex flex-wrap justify-content-between align-items-center pt-3 border-top gap-2">
+                                <div>
+                                    <span class="text-muted small">Total Amount:</span>
+                                    <strong class="text-dark fs-5 ms-1">₹@order.GrandTotal.ToString("N0")</strong>
+                                    <span class="text-muted small ms-2">(@order.PaymentMethod)</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <a href="/account/orders/@order.Id" class="btn aura-btn-primary btn-sm rounded-pill px-3">
+                                        <i class="bi bi-geo-alt me-1"></i> Track &amp; Details
+                                    </a>
+                                    <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="showAuraToast('Added items from order #@order.Id to bag', 'success');">
+                                        <i class="bi bi-arrow-repeat me-1"></i> Buy Again
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

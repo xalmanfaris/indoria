@@ -1,0 +1,84 @@
+@{
+    ViewData["Title"] = "Frequently Asked Questions (FAQ)";
+    var breadcrumbs = new List<(string Title, string Url)>
+    {
+        ("Frequently Asked Questions", "")
+    };
+}
+
+<div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
+    <div class="mb-4">
+        <h1 class="fw-bold mb-2">Frequently Asked Questions</h1>
+        <p class="text-muted">Find quick answers to common queries regarding ordering, specialized logistics, certified installation, and warranties.</p>
+    </div>
+
+    <div class="accordion mb-5" id="faqAccordion">
+        <!-- Delivery & Installation Category -->
+        <div class="accordion-item border rounded-3 mb-3 overflow-hidden shadow-sm">
+            <h2 class="accordion-header" id="faqH1">
+                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqC1">
+                    <i class="bi bi-truck text-primary me-2"></i> How does White-Glove delivery and free installation work?
+                </button>
+            </h2>
+            <div id="faqC1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                <div class="accordion-body bg-light small text-secondary">
+                    Unlike standard couriers that drop heavy crates at the building lobby, our Indoria White-Glove logistics team transports the appliance directly inside your designated room. Our certified technicians unpack the unit, inspect for cosmetic perfection, level the appliance, establish plumbing or gas connectors, and conduct a functional demonstration before you sign off.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item border rounded-3 mb-3 overflow-hidden shadow-sm">
+            <h2 class="accordion-header" id="faqH2">
+                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqC2">
+                    <i class="bi bi-shield-check text-primary me-2"></i> What is covered under the 2-Year Indoria Care Warranty?
+                </button>
+            </h2>
+            <div id="faqC2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body bg-light small text-secondary">
+                    Every appliance purchased through Indoria carries full OEM warranty backed by our 2-Year Indoria Care assurance. This covers 100% of spare parts, printed circuit boards (PCBs), electrical wiring, inverter assemblies, and zero technician visiting charges. Long-term compressors and motors continue under 10 to 20-year brand warranties.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item border rounded-3 mb-3 overflow-hidden shadow-sm">
+            <h2 class="accordion-header" id="faqH3">
+                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqC3">
+                    <i class="bi bi-credit-card text-primary me-2"></i> How does No Cost EMI work on Credit Cards?
+                </button>
+            </h2>
+            <div id="faqC3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body bg-light small text-secondary">
+                    On eligible bank credit cards (HDFC, ICICI, SBI, Axis, Kotak), the total interest charged by your bank is discounted upfront from the appliance price at checkout. This ensures the total of your monthly installments equals the original product price with zero extra cost.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item border rounded-3 mb-3 overflow-hidden shadow-sm">
+            <h2 class="accordion-header" id="faqH4">
+                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqC4">
+                    <i class="bi bi-arrow-repeat text-primary me-2"></i> What is the 15-Day Return &amp; Replacement policy?
+                </button>
+            </h2>
+            <div id="faqC4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body bg-light small text-secondary">
+                    If an appliance arrives with transit damage, manufacturing defect, or spatial dimension conflict, you may initiate a return or replacement within 15 days of delivery through your Account dashboard. Indoria will dispatch a technician for inspection and doorstep pickup with zero return logistics fees.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item border rounded-3 overflow-hidden shadow-sm">
+            <h2 class="accordion-header" id="faqH5">
+                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqC5">
+                    <i class="bi bi-patch-check text-primary me-2"></i> Are all products brand-sealed and 100% genuine?
+                </button>
+            </h2>
+            <div id="faqC5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body bg-light small text-secondary">
+                    Yes. We partner directly with primary brand manufacturing facilities (Samsung India, LG Electronics, BSH Bosch, Sony India, Dyson Technology India). We do not work with unverified third-party resellers. Every unit includes an authentic serial barcode and verifiable OEM warranty certificate.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

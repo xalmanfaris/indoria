@@ -1,0 +1,45 @@
+<div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header border-0 pb-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 pt-0">
+                <div class="row g-4 align-items-center">
+                    <div class="col-md-5 text-center bg-light p-4 rounded-3">
+                        <img id="qvImage" src="" alt="Appliance Preview" class="img-fluid" style="max-height: 260px; object-fit: contain;" />
+                    </div>
+                    <div class="col-md-7">
+                        <div class="text-uppercase fw-bold text-muted small" id="qvBrand">Brand</div>
+                        <h4 class="fw-bold text-dark mb-2" id="qvTitle">Product Title</h4>
+                        
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="badge bg-warning text-dark"><span id="qvRating">4.8</span> <i class="bi bi-star-fill"></i></span>
+                            <small class="text-muted" id="qvReviews">(200+ reviews)</small>
+                            <span class="text-muted opacity-25">|</span>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle">In Stock</span>
+                        </div>
+
+                        <div class="d-flex align-items-baseline gap-2 mb-3">
+                            <span class="fs-3 fw-bold text-dark" id="qvPrice">₹0</span>
+                            <span class="text-muted text-decoration-line-through small" id="qvOrigPrice">₹0</span>
+                        </div>
+
+                        <p class="text-secondary small mb-4" id="qvDesc">
+                            Product description preview will appear here.
+                        </p>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn aura-btn-primary flex-grow-1 py-2" onclick="showAuraToast('Added to your Bag!', 'success'); bootstrap.Modal.getInstance(document.getElementById('quickViewModal')).hide();">
+                                <i class="bi bi-bag-plus me-1"></i> Add to Bag
+                            </button>
+                            <a href="#" id="qvLink" class="btn aura-btn-outline px-3 py-2">
+                                Full Specs <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

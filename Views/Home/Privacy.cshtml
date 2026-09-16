@@ -1,0 +1,35 @@
+@{
+    ViewData["Title"] = "Privacy Policy - Indoria";
+    var breadcrumbs = new List<(string Title, string Url)>
+    {
+        ("Privacy Policy", "")
+    };
+}
+
+<div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
+    <div class="p-4 p-md-5 rounded-4 bg-white border shadow-sm" style="max-width: 900px; margin: 0 auto;">
+        <h1 class="fw-bold text-dark mb-4">Privacy Policy</h1>
+        <p class="text-secondary small mb-4">Last Updated: September 2026</p>
+
+        <p class="text-secondary mb-4">
+            Indoria Technologies Pvt. Ltd. ("Indoria", "we", "our") values the privacy of your personal data. This Privacy Policy details how we collect, store, and protect your information when accessing our online catalog and white-glove logistics services.
+        </p>
+
+        <h5 class="fw-bold text-dark mt-4 mb-2">1. Information We Collect</h5>
+        <p class="text-secondary small mb-3">
+            We collect contact information (name, address, delivery PIN code, phone number, email address) solely to coordinate delivery, fulfill manufacturer warranty registrations, and schedule technician appointments.
+        </p>
+
+        <h5 class="fw-bold text-dark mt-4 mb-2">2. Payment Security</h5>
+        <p class="text-secondary small mb-3">
+            We do not store full credit/debit card numbers or bank account passwords on our servers. All transactions are routed directly through RBI-compliant, 256-bit SSL encrypted payment gateways.
+        </p>
+
+        <h5 class="fw-bold text-dark mt-4 mb-2">3. Zero Third-Party Advertising</h5>
+        <p class="text-secondary small mb-0">
+            We never sell, lease, or monetize customer contact records to third-party telemarketers. Customer communication is restricted strictly to order fulfillment, dispatch updates, and requested concierge support.
+        </p>
+    </div>
+</div>

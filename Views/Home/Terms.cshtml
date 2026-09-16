@@ -1,0 +1,35 @@
+@{
+    ViewData["Title"] = "Terms of Service - Indoria";
+    var breadcrumbs = new List<(string Title, string Url)>
+    {
+        ("Terms of Service", "")
+    };
+}
+
+<div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
+    <div class="p-4 p-md-5 rounded-4 bg-white border shadow-sm" style="max-width: 900px; margin: 0 auto;">
+        <h1 class="fw-bold text-dark mb-4">Terms &amp; Conditions of Service</h1>
+        <p class="text-secondary small mb-4">Last Updated: September 2026</p>
+
+        <p class="text-secondary mb-4">
+            Welcome to Indoria. By accessing our platform, placing appliance orders, or utilizing our white-glove installation services, you agree to be bound by the following conditions.
+        </p>
+
+        <h5 class="fw-bold text-dark mt-4 mb-2">1. Authentic Goods &amp; Brand Invoices</h5>
+        <p class="text-secondary small mb-3">
+            All merchandise sold on Indoria represents brand-sealed, authorized original inventory. GST-compliant tax invoices are issued electronically with serial numbers mapped to OEM warranty databases.
+        </p>
+
+        <h5 class="fw-bold text-dark mt-4 mb-2">2. Site Preparation for Large Appliances</h5>
+        <p class="text-secondary small mb-3">
+            Customers are responsible for ensuring adequate doorway clearances, functional plumbing supply taps (for washing machines/dishwashers), and 16A earthing electrical points (for ACs/ovens) prior to arrival of the installation technician.
+        </p>
+
+        <h5 class="fw-bold text-dark mt-4 mb-2">3. Pricing &amp; Festive Promotions</h5>
+        <p class="text-secondary small mb-0">
+            All stated prices are in Indian Rupees (INR) and inclusive of GST. Bank cashback offers, coupon deductions, and No Cost EMI terms apply subject to partner bank eligibility.
+        </p>
+    </div>
+</div>

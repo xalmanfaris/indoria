@@ -1,0 +1,87 @@
+<header class="aura-header">
+    <div class="container py-2 py-lg-3">
+        <div class="d-flex align-items-center justify-content-between gap-2 gap-md-3 gap-lg-4">
+            <!-- Brand Logo -->
+            <a href="/" class="aura-brand text-decoration-none">
+                <span class="aura-brand-name">Indoria</span>
+            </a>
+
+            <!-- Search Form -->
+            <form action="/search" method="get" class="aura-search-wrap d-none d-md-block">
+                <i class="bi bi-search aura-search-icon"></i>
+                <input type="text" name="q" class="form-control aura-search-input" 
+                       placeholder="Search premium refrigerators, OLED TVs, inverter ACs, Bosch washers..." 
+                       aria-label="Search appliances" />
+            </form>
+
+            <!-- Actions: Theme Slider, Account, Wishlist, Cart (Icon Only) -->
+            <div class="d-flex align-items-center gap-1 gap-sm-2">
+                <!-- Mobile Search Toggle -->
+                <a href="/search" class="aura-header-btn d-md-none" title="Search" aria-label="Search">
+                    <i class="bi bi-search"></i>
+                </a>
+
+                <!-- One-Tap Sliding Theme Switcher (Light / Midnight Dark) -->
+                <button type="button" 
+                        class="aura-theme-slider-btn me-1" 
+                        id="themeSliderBtn" 
+                        onclick="toggleAppTheme()" 
+                        aria-label="Toggle Light and Midnight Dark Theme" 
+                        title="Tap to slide between Light & Midnight Dark">
+                    <span class="aura-theme-track">
+                        <span class="aura-theme-thumb">
+                            <i class="bi bi-sun-fill" id="themeActiveIcon" style="color: #000000 !important;"></i>
+                        </span>
+                    </span>
+                </button>
+
+                <!-- Account Dropdown (Icon Only) -->
+                <div class="dropdown">
+                    <button class="aura-header-btn dropdown-toggle border-0 bg-transparent" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Account" aria-label="Account">
+                        <i class="bi bi-person"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 mt-2 p-2" style="min-width: 220px;">
+                        <li class="px-3 py-2 border-bottom mb-1">
+                            <div class="fw-bold text-dark">Arjun Mehta</div>
+                            <small class="text-muted">arjun.mehta@example.com</small>
+                        </li>
+                        <li><a class="dropdown-item rounded-2 py-2" href="/account"><i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard</a></li>
+                        <li><a class="dropdown-item rounded-2 py-2" href="/account/orders"><i class="bi bi-box-seam me-2 text-primary"></i> My Orders</a></li>
+                        <li><a class="dropdown-item rounded-2 py-2" href="/account/addresses"><i class="bi bi-geo-alt me-2 text-primary"></i> Saved Addresses</a></li>
+                        <li><a class="dropdown-item rounded-2 py-2" href="/account/returns"><i class="bi bi-arrow-counterclockwise me-2 text-primary"></i> Returns &amp; Refunds</a></li>
+                        <li><a class="dropdown-item rounded-2 py-2" href="/account/profile"><i class="bi bi-person-gear me-2 text-primary"></i> Profile Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item rounded-2 py-2 text-danger" href="/login"><i class="bi bi-box-arrow-right me-2"></i> Sign Out</a></li>
+                    </ul>
+                </div>
+
+                <!-- Wishlist Link (Icon Only) -->
+                <a href="/wishlist" class="aura-header-btn position-relative" title="Wishlist" aria-label="Wishlist">
+                    <i class="bi bi-heart"></i>
+                    <span class="aura-badge-count aura-wishlist-count">4</span>
+                </a>
+
+                <!-- Cart Trigger (Icon Only) -->
+                <a href="/cart" class="aura-header-btn position-relative" title="Shopping Bag" aria-label="Shopping Bag">
+                    <i class="bi bi-bag"></i>
+                    <span class="aura-badge-count aura-cart-count">3</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Navigation Bar (Horizontally scrollable on mobile) -->
+    <nav class="aura-category-bar" aria-label="Category navigation">
+        <div class="container d-flex align-items-center flex-nowrap gap-1">
+            <a href="/categories" class="aura-category-nav-link text-primary fw-bold">All Categories</a>
+            <span class="text-muted opacity-25">|</span>
+            <a href="/category/refrigerators" class="aura-category-nav-link">Refrigerators</a>
+            <a href="/category/washing-machines" class="aura-category-nav-link">Washing Machines</a>
+            <a href="/category/air-conditioners" class="aura-category-nav-link">Air Conditioners</a>
+            <a href="/category/smart-tvs" class="aura-category-nav-link">Smart Televisions</a>
+            <a href="/category/kitchen-appliances" class="aura-category-nav-link">Kitchen &amp; Cooking</a>
+            <a href="/category/dishwashers" class="aura-category-nav-link">Dishwashers</a>
+            <a href="/category/vacuum-air" class="aura-category-nav-link">Vacuum &amp; Air</a>
+        </div>
+    </nav>
+</header>

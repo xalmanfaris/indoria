@@ -1,0 +1,62 @@
+@{
+    ViewData["Title"] = "Help & Support Centre";
+    var breadcrumbs = new List<(string Title, string Url)>
+    {
+        ("Help & Support", "")
+    };
+}
+
+<div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
+    <!-- Help Banner -->
+    <div class="p-4 p-md-5 rounded-4 bg-white border mb-5 text-center shadow-sm">
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">Customer Care</span>
+        <h1 class="fw-bold mb-2">How Can Our Appliance Concierge Assist You?</h1>
+        <p class="text-muted small mb-4">Search guides on installation, deliveries, warranty claims, or find instant answers.</p>
+
+        <div class="mx-auto" style="max-width: 550px;">
+            <div class="input-group">
+                <input type="text" class="form-control py-3 px-4 rounded-start-pill" placeholder="Search questions (e.g. installation timing, returns, warranty)..." />
+                <button class="btn aura-btn-primary px-4 rounded-end-pill" type="button" onclick="showAuraToast('Displaying relevant support articles below', 'primary');">
+                    Search Help
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Help Topics Grid -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="p-4 rounded-4 bg-white border h-100 shadow-sm text-center">
+                <i class="bi bi-truck fs-1 text-primary mb-3 d-block"></i>
+                <h5 class="fw-bold mb-2">White-Glove Delivery</h5>
+                <p class="text-muted small mb-3">Learn about our air-ride shockproof fleet, slot selection, and transit insurance coverage.</p>
+                <a href="/shipping-policy" class="btn aura-btn-outline btn-sm rounded-pill">Delivery Details</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-4 rounded-4 bg-white border h-100 shadow-sm text-center">
+                <i class="bi bi-tools fs-1 text-primary mb-3 d-block"></i>
+                <h5 class="fw-bold mb-2">Installation &amp; Demo</h5>
+                <p class="text-muted small mb-3">Free certified technician visits for electrical check, leveling, and plumbing connections.</p>
+                <a href="/faq" class="btn aura-btn-outline btn-sm rounded-pill">Setup Process</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-4 rounded-4 bg-white border h-100 shadow-sm text-center">
+                <i class="bi bi-shield-check fs-1 text-primary mb-3 d-block"></i>
+                <h5 class="fw-bold mb-2">Indoria Care &amp; Warranty</h5>
+                <p class="text-muted small mb-3">Claim priority repairs, register your invoice, or contact OEM certified engineering desks.</p>
+                <a href="/account/orders" class="btn aura-btn-outline btn-sm rounded-pill">View Warranties</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Direct Contact CTA -->
+    <div class="p-4 rounded-4 bg-light border text-center">
+        <h5 class="fw-bold mb-2">Need immediate assistance with an ongoing delivery?</h5>
+        <p class="text-muted small mb-3">Call our priority hotline <strong>1800-209-INDORIA</strong> or reach our WhatsApp desk.</p>
+        <a href="/contact" class="btn aura-btn-primary rounded-pill px-4">Contact Support Team</a>
+    </div>
+</div>

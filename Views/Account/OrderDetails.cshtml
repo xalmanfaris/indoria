@@ -1,0 +1,119 @@
+@model AuraLiving.Models.OrderViewModel
+@{
+    ViewData["Title"] = $"Order #{Model.Id} Details";
+}
+
+<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-lg-3">
+            <partial name="_AccountSidebar" />
+        </div>
+
+        <div class="col-lg-9">
+            <div class="p-4 p-md-5 rounded-4 bg-white border shadow-sm mb-4">
+                <!-- Header -->
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom gap-2">
+                    <div>
+                        <a href="/account/orders" class="text-muted small text-decoration-none d-block mb-1">&larr; Back to all orders</a>
+                        <h3 class="fw-bold text-dark mb-0">Order #@Model.Id</h3>
+                        <small class="text-muted">Placed on @Model.OrderDate.ToString("dd MMMM yyyy, hh:mm tt")</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="window.print();">
+                            <i class="bi bi-printer me-1"></i> Invoice PDF
+                        </button>
+                        <span class="badge @(Model.Status == "Delivered" ? "bg-success" : "bg-primary") px-3 py-2 fs-6">
+                            @Model.Status
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Shipment Tracking Timeline -->
+                <div class="p-4 rounded-4 bg-light mb-4">
+                    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-truck text-primary me-2"></i> White-Glove Shipment Tracker</h5>
+                    <div class="aura-order-timeline">
+                        @foreach (var step in Model.Timeline)
+                        {
+                            <div class="aura-timeline-step @(step.IsCompleted ? "completed" : "") @(step.IsCurrent ? "current" : "")">
+                                <div class="aura-timeline-dot"></div>
+                                <div class="fw-bold text-dark">@step.Title</div>
+                                <p class="text-muted small mb-1">@step.Description</p>
+                                <small class="text-secondary fw-semibold">@step.Timestamp</small>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Order Line Items -->
+                <h5 class="fw-bold text-dark mb-3">Items in This Shipment</h5>
+                <div class="d-flex flex-column gap-3 mb-4">
+                    @foreach (var itm in Model.Items)
+                    {
+                        <div class="p-3 rounded-3 border bg-light d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="@itm.Image" alt="@itm.ProductName" class="bg-white p-2 rounded-3 border" style="width: 64px; height: 64px; object-fit: contain;" />
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-1">
+                                        <a href="/product/@itm.ProductSlug" class="text-dark text-decoration-none">@itm.ProductName</a>
+                                    </h6>
+                                    <small class="text-muted">Qty: @itm.Quantity • @itm.SelectedCapacity • @itm.SelectedColor</small>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold text-dark">₹@itm.Total.ToString("N0")</div>
+                                <small class="text-muted">₹@itm.Price.ToString("N0") each</small>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Delivery Address & Payment Summary -->
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 border bg-light h-100">
+                            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-geo-alt text-primary me-1"></i> Delivery Address</h6>
+                            <div class="small text-secondary">
+                                <strong class="text-dark">@Model.ShippingAddress.FullName</strong> (@Model.ShippingAddress.Type)<br />
+                                @Model.ShippingAddress.AddressLine1, @Model.ShippingAddress.AddressLine2<br />
+                                @Model.ShippingAddress.City, @Model.ShippingAddress.State - <strong>@Model.ShippingAddress.Pincode</strong><br />
+                                Phone: @Model.ShippingAddress.Phone
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 border bg-light h-100">
+                            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-credit-card text-primary me-1"></i> Payment Summary</h6>
+                            <div class="d-flex justify-content-between small text-secondary mb-1">
+                                <span>Subtotal</span>
+                                <span>₹@Model.SubTotal.ToString("N0")</span>
+                            </div>
+                            <div class="d-flex justify-content-between small text-success mb-1">
+                                <span>Discount</span>
+                                <span>-₹@Model.Discount.ToString("N0")</span>
+                            </div>
+                            <div class="d-flex justify-content-between small text-secondary mb-1">
+                                <span>White-Glove Shipping</span>
+                                <span class="text-success">FREE</span>
+                            </div>
+                            <hr class="my-2" />
+                            <div class="d-flex justify-content-between fw-bold text-dark">
+                                <span>Grand Total</span>
+                                <span>₹@Model.GrandTotal.ToString("N0")</span>
+                            </div>
+                            <small class="text-muted d-block mt-2">Paid via @Model.PaymentMethod</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top d-flex gap-2">
+                    <a href="/account/returns" class="btn btn-outline-danger btn-sm rounded-pill">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i> Request Return / Replacement
+                    </a>
+                    <a href="/help" class="btn btn-outline-secondary btn-sm rounded-pill ms-auto">
+                        <i class="bi bi-headset me-1"></i> Need Help with this Order?
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,81 @@
+@{
+    ViewData["Title"] = "About Us - Architectural Engineering & Modern Appliances";
+    var breadcrumbs = new List<(string Title, string Url)>
+    {
+        ("About Indoria", "")
+    };
+}
+
+<div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
+    <!-- Hero Story -->
+    <div class="p-4 p-md-5 rounded-4 bg-white border mb-5 shadow-sm">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">Our Manifesto</span>
+                <h1 class="display-6 fw-bold text-dark mb-3">Redefining How Modern Homes Interact with Appliances</h1>
+                <p class="text-secondary lead mb-4">
+                    Founded in 2022, Indoria was born out of a clear realization: premium homes deserve a retail experience as sophisticated, thoughtful, and seamless as the architectural appliances that power them.
+                </p>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <div class="p-3 bg-light rounded-3">
+                            <h4 class="fw-bold text-primary mb-1">85,000+</h4>
+                            <small class="text-muted">Luxury Homes Furnished</small>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="p-3 bg-light rounded-3">
+                            <h4 class="fw-bold text-primary mb-1">20+ Metros</h4>
+                            <small class="text-muted">White-Glove Fleet Network</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 text-center">
+                <img src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=800&q=80" 
+                     alt="Modern Architectural Kitchen" 
+                     class="img-fluid rounded-4 shadow" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Pillars -->
+    <div class="mb-5">
+        <div class="text-center mb-4">
+            <span class="text-uppercase fw-bold text-primary small letter-spacing-1">The Indoria Philosophy</span>
+            <h2 class="fw-bold">Built On Three Uncompromising Pillars</h2>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="p-4 rounded-4 bg-white border h-100 shadow-sm">
+                    <div class="aura-category-card-icon m-0 mb-3" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                        <i class="bi bi-gem"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">Curated Exclusivity</h5>
+                    <p class="text-secondary small mb-0">We curate only the top 5% of global appliance models that meet our rigorous benchmarks for silent decibels, 5-star energy efficiency, and aesthetic elegance.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 rounded-4 bg-white border h-100 shadow-sm">
+                    <div class="aura-category-card-icon m-0 mb-3" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                        <i class="bi bi-truck-flatbed"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">White-Glove Fleet</h5>
+                    <p class="text-secondary small mb-0">Unlike general parcel logistics, our dedicated heavy-appliance vehicles are air-cushioned and manned by certified technicians who unpack, level, and test run every unit.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 rounded-4 bg-white border h-100 shadow-sm">
+                    <div class="aura-category-card-icon m-0 mb-3" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">Indoria Care Promise</h5>
+                    <p class="text-secondary small mb-0">Every appliance carries a 2-Year Indoria Care assurance backing all OEM warranties, ensuring priority engineer dispatch and guaranteed turnaround.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

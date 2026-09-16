@@ -1,0 +1,287 @@
+@model AuraLiving.Models.HomeViewModel
+@{
+    ViewData["Title"] = "Engineered Luxury & Smart Living";
+}
+
+<!-- Hero Banner Section - Modern Full-Bleed Architectural Visual -->
+<section class="aura-hero-fullbleed mb-4 mb-lg-5">
+    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85" 
+         alt="Modern Luxury Living & Appliances" 
+         class="aura-hero-bg-img" />
+    <div class="aura-hero-overlay"></div>
+    <div class="container position-relative" style="z-index: 3;">
+        <div class="aura-hero-content">
+            <h1 class="aura-hero-title">
+                Intelligent Appliances.<br class="d-none d-sm-inline" /> Designed for Modern Living.
+            </h1>
+            <div class="d-flex flex-wrap gap-2 gap-md-3 mb-4">
+                <a href="/products" class="btn btn-light px-3 px-sm-4 py-2 py-sm-3 rounded-pill fw-bold text-dark shadow-sm">
+                    Explore Collection <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+                <a href="/category/refrigerators" class="btn btn-outline-light px-3 px-sm-4 py-2 py-sm-3 rounded-pill fw-bold" style="backdrop-filter: blur(8px); background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.4);">
+                    Smart Refrigerators
+                </a>
+            </div>
+            <div class="d-flex flex-wrap align-items-center gap-2 pt-1">
+                <div class="aura-hero-trust-chip">
+                    <i class="bi bi-truck text-info"></i> Free White-Glove Delivery
+                </div>
+                <div class="aura-hero-trust-chip">
+                    <i class="bi bi-tools text-info"></i> Certified Brand Installation
+                </div>
+                <div class="aura-hero-trust-chip">
+                    <i class="bi bi-shield-check text-info"></i> 2-Year Indoria Care
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container py-2">
+
+    <!-- Shop by Curated Categories -->
+    <section class="mb-5">
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-end gap-2 mb-4">
+            <div>
+                <span class="text-uppercase fw-bold text-primary small letter-spacing-1">Explore By Room &amp; Need</span>
+                <h2 class="fw-bold mb-0 fs-3 fs-md-2">Curated Categories</h2>
+            </div>
+            <a href="/categories" class="btn aura-btn-outline rounded-pill px-4 btn-sm">
+                All Categories <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="row row-cols-2 row-cols-md-4 g-2 g-sm-3 g-md-4">
+            @foreach (var cat in Model.Categories.Take(8))
+            {
+                <div class="col">
+                    <partial name="_CategoryCard" model="cat" />
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- Interactive Flagship Showcase with Modern Filter Pills -->
+    <section class="mb-5">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-end gap-3 mb-4">
+            <div>
+                <span class="text-uppercase fw-bold text-primary small letter-spacing-1">Handpicked Engineering</span>
+                <h2 class="fw-bold mb-0 fs-3 fs-md-2">Flagship Appliances</h2>
+            </div>
+            <div class="aura-filter-pills" id="homeProductFilters" role="tablist">
+                <button type="button" class="aura-pill-btn active" data-filter="all">All Flagships</button>
+                <button type="button" class="aura-pill-btn" data-filter="refrigerators">Cooling</button>
+                <button type="button" class="aura-pill-btn" data-filter="washing-machines">Laundry</button>
+                <button type="button" class="aura-pill-btn" data-filter="smart-tvs">OLED Cinema</button>
+                <button type="button" class="aura-pill-btn" data-filter="air-conditioners">Climate</button>
+                <button type="button" class="aura-pill-btn" data-filter="kitchen-appliances">Kitchen</button>
+            </div>
+        </div>
+
+        <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-2 g-sm-3 g-md-4" id="homeProductGrid">
+            @{
+                var combinedFlagships = Model.FeaturedProducts.Concat(Model.BestSellers).DistinctBy(p => p.Id).Take(8);
+            }
+            @foreach (var product in combinedFlagships)
+            {
+                <div class="col home-product-item" data-category="@product.CategorySlug">
+                    <partial name="_ProductCard" model="product" />
+                </div>
+            }
+        </div>
+
+        <div class="text-center mt-4 pt-2">
+            <a href="/products" class="btn aura-btn-outline rounded-pill px-5 py-2 fw-semibold">
+                Explore Complete Catalog <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Bento Innovation & Craft Showcase (Unique Asymmetric Feature) -->
+    <section class="mb-5">
+        <div class="text-center mb-4">
+            <span class="text-uppercase fw-bold text-primary small letter-spacing-1">Architectural Innovation</span>
+            <h2 class="fw-bold fs-3 fs-md-2">The Art of Modern Living</h2>
+            <p class="text-muted small mx-auto" style="max-width: 580px;">Discover appliances where cutting-edge thermal engineering and acoustic perfection integrate seamlessly into contemporary interiors.</p>
+        </div>
+
+        <div class="row g-3 g-md-4">
+            <!-- Box 1: Wide OLED Cinema Feature -->
+            <div class="col-12 col-lg-6">
+                <div class="aura-bento-card h-100">
+                    <img src="https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&w=1200&q=80" 
+                         alt="Sony Bravia OLED Cinema Experience" 
+                         class="aura-bento-bg" />
+                    <div class="aura-bento-overlay"></div>
+                    <div class="aura-bento-content">
+                        <span class="aura-bento-badge">
+                            <i class="bi bi-tv-fill text-warning"></i> Acoustic OLED Cinema
+                        </span>
+                        <h3 class="fw-bold mb-2 fs-4">Sony 4K OLED &amp; QD-OLED Suites</h3>
+                        <p class="text-light opacity-90 small mb-3">Self-lit pixels deliver pure black and infinite contrast, paired with Acoustic Surface Audio+ radiating sound directly through the glass.</p>
+                        <a href="/category/smart-tvs" class="btn btn-sm btn-light rounded-pill px-3 fw-bold text-dark">
+                            Explore Cinema <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Box 2: Whisper-Quiet Climate -->
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="aura-bento-card h-100">
+                    <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80" 
+                         alt="Daikin Inverter AC" 
+                         class="aura-bento-bg" />
+                    <div class="aura-bento-overlay"></div>
+                    <div class="aura-bento-content">
+                        <span class="aura-bento-badge">
+                            <i class="bi bi-snow text-info"></i> Whisper Climate
+                        </span>
+                        <h4 class="fw-bold mb-1 fs-5">Daikin &amp; Dyson Air</h4>
+                        <p class="text-light opacity-90 small mb-3">Sub-19dB silent cooling with integrated medical-grade HEPA purification.</p>
+                        <a href="/category/air-conditioners" class="text-white small fw-bold text-decoration-underline">
+                            View ACs <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Box 3: German Culinary Suite -->
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="aura-bento-card h-100">
+                    <img src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=800&q=80" 
+                         alt="Bosch German Engineered Kitchen" 
+                         class="aura-bento-bg" />
+                    <div class="aura-bento-overlay"></div>
+                    <div class="aura-bento-content">
+                        <span class="aura-bento-badge">
+                            <i class="bi bi-fire text-danger"></i> German Precision
+                        </span>
+                        <h4 class="fw-bold mb-1 fs-5">Bosch Series 8 Hobs</h4>
+                        <p class="text-light opacity-90 small mb-3">FlameSelect flame control with 9 calibrated power levels for chef mastery.</p>
+                        <a href="/category/kitchen-appliances" class="text-white small fw-bold text-decoration-underline">
+                            View Suites <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Promotional Campaign Banner with Live Timer -->
+    <partial name="_PromoBanner" />
+
+    <!-- Minimalist Authorised Brands Strip -->
+    <section class="mb-5">
+        <div class="aura-brand-strip text-center">
+            <div class="small text-uppercase fw-bold text-muted mb-3" style="letter-spacing: 0.1em; font-size: 0.75rem;">
+                Authorized Direct Manufacturer Warranty Honors
+            </div>
+            <div class="row row-cols-2 row-cols-sm-3 row-cols-md-6 g-2 align-items-center justify-content-center">
+                <div class="col"><a href="/search?q=Samsung" class="aura-brand-item w-100">SAMSUNG</a></div>
+                <div class="col"><a href="/search?q=Bosch" class="aura-brand-item w-100">BOSCH</a></div>
+                <div class="col"><a href="/search?q=LG" class="aura-brand-item w-100">LG</a></div>
+                <div class="col"><a href="/search?q=Sony" class="aura-brand-item w-100">SONY</a></div>
+                <div class="col"><a href="/search?q=Dyson" class="aura-brand-item w-100">DYSON</a></div>
+                <div class="col"><a href="/search?q=Daikin" class="aura-brand-item w-100">DAIKIN</a></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Indoria Standard: Service Pillars -->
+    <section class="mb-5">
+        <div class="text-center mb-4">
+            <span class="text-uppercase fw-bold text-primary small letter-spacing-1">The Indoria Standard</span>
+            <h2 class="fw-bold fs-3 fs-md-2">Engineered For Zero Hassle</h2>
+        </div>
+
+        <div class="row g-2 g-sm-3 g-md-4">
+            <div class="col-6 col-lg-3">
+                <div class="aura-value-card">
+                    <div class="aura-value-icon">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-1 fs-6">White-Glove Delivery</h5>
+                        <p class="text-muted small mb-0">Air-ride shockproof transit with scheduled delivery windows in 20+ metro regions.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="aura-value-card">
+                    <div class="aura-value-icon">
+                        <i class="bi bi-wrench-adjustable"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-1 fs-6">Free Certified Install</h5>
+                        <p class="text-muted small mb-0">Authorized brand engineers handle unboxing, civil plumbing, calibration, and demo.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="aura-value-card">
+                    <div class="aura-value-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-1 fs-6">2-Year Indoria Care</h5>
+                        <p class="text-muted small mb-0">Comprehensive mechanical protection and zero-depreciation coverage on all suites.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="aura-value-card">
+                    <div class="aura-value-icon">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-1 fs-6">15-Day Easy Returns</h5>
+                        <p class="text-muted small mb-0">Doorstep pickup and instant resolution if any transit or technical mismatch occurs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Verified Patron Experiences -->
+    <section class="mb-5">
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-end gap-2 mb-4">
+            <div>
+                <span class="text-uppercase fw-bold text-primary small letter-spacing-1">Verified Experience</span>
+                <h2 class="fw-bold mb-0 fs-3 fs-md-2">What Our Patrons Say</h2>
+            </div>
+            <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+                <i class="bi bi-patch-check-fill me-1"></i> 4.9 / 5 Verified Satisfaction
+            </span>
+        </div>
+
+        <div class="row g-3 g-md-4">
+            @foreach (var test in Model.Testimonials)
+            {
+                <div class="col-12 col-md-4">
+                    <div class="p-4 rounded-4 bg-white border h-100 d-flex flex-column justify-content-between shadow-sm">
+                        <div>
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <partial name="_RatingStars" model="(double)test.Rating" />
+                                <span class="badge bg-light text-muted border">Verified Buyer</span>
+                            </div>
+                            <h5 class="fw-bold mb-2 fs-6">"@test.Title"</h5>
+                            <p class="text-secondary small mb-4">
+                                @test.Comment
+                            </p>
+                        </div>
+                        <div class="d-flex align-items-center gap-3 pt-3 border-top">
+                            <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; font-size: 0.9rem;">
+                                @test.Author.Substring(0, 1)
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark small">@test.Author</div>
+                                <small class="text-muted" style="font-size: 0.75rem;">@test.City • @test.Date</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+</div>

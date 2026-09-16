@@ -1,0 +1,43 @@
+@model List<AuraLiving.Models.ProductViewModel>
+@{
+    ViewData["Title"] = "My Saved Appliances - Wishlist";
+    var breadcrumbs = new List<(string Title, string Url)>
+    {
+        ("Wishlist", "")
+    };
+}
+
+<div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
+    <div class="d-flex justify-content-between align-items-baseline mb-4 pb-2 border-bottom">
+        <div>
+            <h1 class="h2 fw-bold mb-1">My Saved Wishlist</h1>
+            <p class="text-muted small mb-0">Track price drops, stock alerts, and move appliances to your shopping bag.</p>
+        </div>
+        <span class="badge bg-primary px-3 py-2 fs-6"><span class="aura-wishlist-count">@Model.Count</span> Items</span>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-2 g-sm-3 g-md-4">
+            @foreach (var prod in Model)
+            {
+                <div class="col">
+                    <partial name="_ProductCard" model="prod" />
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5 bg-white rounded-4 border p-5">
+            <i class="bi bi-heart text-muted opacity-50" style="font-size: 4rem;"></i>
+            <h3 class="fw-bold mt-3">Your wishlist is empty</h3>
+            <p class="text-muted small mb-4">Click the heart icon on any appliance card to save it for later.</p>
+            <a href="/products" class="btn aura-btn-primary px-4 py-2 rounded-pill">
+                Explore Flagships
+            </a>
+        </div>
+    }
+</div>

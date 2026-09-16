@@ -1,0 +1,55 @@
+@{
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+}
+
+<div class="aura-account-nav shadow-sm mb-4">
+    <!-- User Quick Summary Card -->
+    <div class="p-3 bg-light border-bottom d-flex align-items-center gap-3">
+        <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; font-size: 1.1rem;">
+            AM
+        </div>
+        <div>
+            <div class="fw-bold text-dark">Arjun Mehta</div>
+            <small class="text-muted">Indoria Privilege Member</small>
+        </div>
+    </div>
+
+    <!-- Links -->
+    <div class="d-flex flex-column">
+        <a href="/account" class="aura-account-nav-link @(currentAction == "Index" ? "active" : "")">
+            <span><i class="bi bi-speedometer2"></i> Overview</span>
+            <i class="bi bi-chevron-right text-muted small"></i>
+        </a>
+        <a href="/account/orders" class="aura-account-nav-link @(currentAction == "Orders" || currentAction == "OrderDetails" ? "active" : "")">
+            <span><i class="bi bi-box-seam"></i> My Orders</span>
+            <span class="badge bg-primary rounded-pill">2 Active</span>
+        </a>
+        <a href="/account/addresses" class="aura-account-nav-link @(currentAction == "Addresses" ? "active" : "")">
+            <span><i class="bi bi-geo-alt"></i> Saved Addresses</span>
+            <i class="bi bi-chevron-right text-muted small"></i>
+        </a>
+        <a href="/account/returns" class="aura-account-nav-link @(currentAction == "Returns" ? "active" : "")">
+            <span><i class="bi bi-arrow-counterclockwise"></i> Returns &amp; Refunds</span>
+            <i class="bi bi-chevron-right text-muted small"></i>
+        </a>
+        <a href="/account/reviews" class="aura-account-nav-link @(currentAction == "Reviews" ? "active" : "")">
+            <span><i class="bi bi-star"></i> My Product Reviews</span>
+            <i class="bi bi-chevron-right text-muted small"></i>
+        </a>
+        <a href="/account/profile" class="aura-account-nav-link @(currentAction == "Profile" ? "active" : "")">
+            <span><i class="bi bi-person-gear"></i> Profile Information</span>
+            <i class="bi bi-chevron-right text-muted small"></i>
+        </a>
+        <a href="/account/notifications" class="aura-account-nav-link @(currentAction == "Notifications" ? "active" : "")">
+            <span><i class="bi bi-bell"></i> Notification Settings</span>
+            <i class="bi bi-chevron-right text-muted small"></i>
+        </a>
+        <a href="/account/settings" class="aura-account-nav-link @(currentAction == "Settings" ? "active" : "")">
+            <span><i class="bi bi-shield-lock"></i> Security &amp; Password</span>
+            <i class="bi bi-chevron-right text-muted small"></i>
+        </a>
+        <a href="/login" class="aura-account-nav-link text-danger border-0">
+            <span><i class="bi bi-box-arrow-right text-danger"></i> Sign Out</span>
+        </a>
+    </div>
+</div>

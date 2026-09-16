@@ -1,0 +1,56 @@
+@model List<AuraLiving.Models.ReviewItemViewModel>
+@{
+    ViewData["Title"] = "My Product Reviews";
+}
+
+<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-lg-3">
+            <partial name="_AccountSidebar" />
+        </div>
+
+        <div class="col-lg-9">
+            <div class="p-4 p-md-5 rounded-4 bg-white border shadow-sm">
+                <h3 class="fw-bold text-dark mb-1">My Product Reviews</h3>
+                <p class="text-muted small mb-4">Share your real-world experience and earn 250 Aura Reward points per review.</p>
+
+                <div class="d-flex flex-column gap-4">
+                    @foreach (var rev in Model)
+                    {
+                        <div class="p-4 rounded-4 border bg-light shadow-sm">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <img src="@rev.ProductImage" alt="@rev.ProductName" style="width: 50px; height: 50px; object-fit: contain;" class="bg-white rounded-3 p-1 border" />
+                                    <div>
+                                        <h6 class="fw-bold text-dark mb-0">@rev.ProductName</h6>
+                                        <small class="text-muted">@rev.Date</small>
+                                    </div>
+                                </div>
+                                <span class="badge @(rev.IsSubmitted ? "bg-success-subtle text-success border border-success-subtle" : "bg-warning-subtle text-warning border border-warning-subtle")">
+                                    @(rev.IsSubmitted ? "Published" : "Awaiting Review")
+                                </span>
+                            </div>
+
+                            @if (rev.IsSubmitted)
+                            {
+                                <partial name="_RatingStars" model="(double)rev.Rating" />
+                                <h6 class="fw-bold text-dark mt-2 mb-1">@rev.Title</h6>
+                                <p class="text-secondary small mb-3">@rev.Comment</p>
+                                <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="showAuraToast('Edit review demo', 'dark');">
+                                    <i class="bi bi-pencil me-1"></i> Edit Review
+                                </button>
+                            }
+                            else
+                            {
+                                <p class="text-muted small mb-3">How has this appliance been working in your home? Your honest feedback helps fellow homeowners.</p>
+                                <button class="btn aura-btn-primary btn-sm rounded-pill px-4" onclick="showAuraToast('Review editor submitted!', 'success');">
+                                    <i class="bi bi-star me-1"></i> Write Review &amp; Claim 250 Pts
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

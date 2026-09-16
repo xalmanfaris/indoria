@@ -1,0 +1,36 @@
+@{
+    ViewData["Title"] = "15-Day Return & Replacement Policy";
+    var breadcrumbs = new List<(string Title, string Url)>
+    {
+        ("Return & Replacement Policy", "")
+    };
+}
+
+<div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
+    <div class="p-4 p-md-5 rounded-4 bg-white border shadow-sm" style="max-width: 900px; margin: 0 auto;">
+        <h1 class="fw-bold text-dark mb-4">15-Day Return &amp; Replacement Policy</h1>
+        <p class="text-secondary mb-4">
+            We want you to have complete confidence when investing in appliances for your home. Indoria provides a clear 15-day window for returns, replacements, or model exchanges.
+        </p>
+
+        <h4 class="fw-bold text-dark mt-4 mb-2">1. Eligible Scenarios for Replacement or Return</h4>
+        <ul class="text-secondary small mb-3">
+            <li><strong>Transit Damage or Defect:</strong> Visible cosmetic scratch, dent, or hardware defect observed during unboxing.</li>
+            <li><strong>Spatial Conflict:</strong> Appliance dimensions incompatible with existing cabinet cutouts or doorways.</li>
+            <li><strong>Incorrect Specification:</strong> Discrepancy between the delivered model and the order invoice.</li>
+            <li><strong>Technical Malfunction:</strong> Failure detected during technician setup and demo.</li>
+        </ul>
+
+        <h4 class="fw-bold text-dark mt-4 mb-2">2. Doorstep Inspection &amp; Pickup</h4>
+        <p class="text-secondary small mb-3">
+            Returns can be initiated in one click via your Account portal under <a href="/account/returns" class="text-primary">Returns &amp; Refunds</a>. An Indoria technician will visit to inspect the appliance and complete repackaging. Zero reverse-logistics charges apply.
+        </p>
+
+        <h4 class="fw-bold text-dark mt-4 mb-2">3. Rapid Refund Process</h4>
+        <p class="text-secondary small mb-0">
+            Refunds are credited to the original payment method (Credit/Debit Card, UPI, NetBanking) within 48 to 72 business hours after technician verification. For Cash-on-Delivery orders, funds are disbursed via direct NEFT / IMPS transfer.
+        </p>
+    </div>
+</div>

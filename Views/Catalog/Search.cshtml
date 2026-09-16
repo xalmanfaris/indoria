@@ -1,0 +1,93 @@
+@model AuraLiving.Models.CatalogFilterViewModel
+@{
+    ViewData["Title"] = $"Search: {Model.SearchQuery} - Aura Living";
+    var breadcrumbs = new List<(string Title, string Url)>
+    {
+        ("Search", "")
+    };
+}
+
+<div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
+    <!-- Search Header -->
+    <div class="p-4 rounded-4 bg-white border mb-4 shadow-sm">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <h1 class="h3 fw-bold mb-1">
+                    Search Results for: <span class="text-primary">"@Model.SearchQuery"</span>
+                </h1>
+                <p class="text-muted small mb-0">Found @Model.TotalCount matching appliances in our catalog.</p>
+            </div>
+
+            <!-- In-page refine search -->
+            <form action="/search" method="get" class="d-flex gap-2" style="max-width: 380px; width: 100%;">
+                <input type="text" name="q" value="@Model.SearchQuery" class="form-control form-control-sm rounded-pill px-3" placeholder="Search again..." />
+                <button type="submit" class="btn btn-sm aura-btn-primary rounded-pill px-3">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Product Grid & Filters -->
+    <div class="row g-4">
+        <div class="col-lg-3">
+            <button class="btn btn-outline-dark w-100 d-lg-none mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#mobileFilterCollapse" aria-expanded="false">
+                <i class="bi bi-funnel me-1"></i> Filter &amp; Sort
+            </button>
+            <div class="collapse d-lg-block" id="mobileFilterCollapse">
+                <partial name="_ProductListingFilter" model="Model" />
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <!-- Sort & Count Bar -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom gap-3">
+                <div class="text-muted small">
+                    Showing <strong class="text-dark">@Model.Products.Count</strong> of <strong class="text-dark">@Model.TotalCount</strong> appliances
+                </div>
+                
+                <div class="d-flex align-items-center gap-2">
+                    <label class="small text-muted text-nowrap">Sort by:</label>
+                    <select class="form-select form-select-sm" style="width: 190px;" onchange="location.href = updateQueryString('sortBy', this.value);">
+                        <option value="popularity" selected="@(Model.SortBy == "popularity")">Most Popular</option>
+                        <option value="rating" selected="@(Model.SortBy == "rating")">Highest Rated</option>
+                        <option value="price-low" selected="@(Model.SortBy == "price-low")">Price: Low to High</option>
+                        <option value="price-high" selected="@(Model.SortBy == "price-high")">Price: High to Low</option>
+                    </select>
+                </div>
+            </div>
+
+            @if (Model.Products.Any())
+            {
+                <div class="row row-cols-2 row-cols-md-2 row-cols-xl-3 g-2 g-sm-3 g-md-4">
+                    @foreach (var prod in Model.Products)
+                    {
+                        <div class="col">
+                            <partial name="_ProductCard" model="prod" />
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <!-- Empty State -->
+                <div class="text-center py-5 bg-white rounded-4 border p-5">
+                    <i class="bi bi-search text-muted opacity-50" style="font-size: 3.5rem;"></i>
+                    <h4 class="fw-bold mt-3">No matching appliances found for "@Model.SearchQuery"</h4>
+                    <p class="text-muted small mb-4">Check for spelling errors or try searching for generic categories like "refrigerator", "tv", "ac", or "washing machine".</p>
+                    <a href="/products" class="btn aura-btn-primary px-4 py-2">
+                        Browse All Products
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateQueryString(key, value) {
+        const url = new URL(window.location.href);
+        url.searchParams.set(key, value);
+        return url.toString();
+    }
+</script>
