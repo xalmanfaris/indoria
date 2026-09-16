@@ -50,6 +50,22 @@ function initHomeProductTabs() {
     });
 }
 
+function copyCouponCode(code) {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(code).then(() => {
+            if (typeof showAuraToast === 'function') {
+                showAuraToast(`Coupon code <strong>${code}</strong> copied to clipboard!`, 'success');
+            }
+        }).catch(() => {
+            if (typeof showAuraToast === 'function') {
+                showAuraToast(`Coupon code: <strong>${code}</strong>`, 'dark');
+            }
+        });
+    } else if (typeof showAuraToast === 'function') {
+        showAuraToast(`Coupon code: <strong>${code}</strong>`, 'dark');
+    }
+}
+
 // Theme Switching Engine (Simplified: Light & Midnight Dark only)
 function initTheme() {
     const saved = localStorage.getItem('indoria-theme') === 'dark' ? 'dark' : 'light';

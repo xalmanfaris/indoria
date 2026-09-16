@@ -859,55 +859,222 @@ a:hover {
   color: var(--aura-primary);
 }
 
-/* Category Card */
+/* Section Tags & Headings */
+.aura-section-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.28rem 0.85rem;
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--aura-primary-light);
+  color: var(--aura-primary);
+  border: 1px solid rgba(30, 64, 175, 0.15);
+  margin-bottom: 0.4rem;
+}
+
+[data-theme="dark"] .aura-section-tag {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+.aura-section-heading {
+  font-size: clamp(1.6rem, 3.2vw, 2.35rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--aura-dark);
+  line-height: 1.2;
+}
+
+/* Category Card - Elevated Architectural Capsule */
 .aura-category-card {
   background: var(--aura-surface);
   border: 1px solid var(--aura-border);
-  border-radius: var(--aura-radius);
-  padding: 1.5rem 1.25rem;
+  border-radius: var(--aura-radius-lg);
+  padding: 1.6rem 1.25rem;
   text-align: center;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   transition: var(--aura-transition);
   height: 100%;
   color: var(--aura-dark);
+  position: relative;
+  overflow: hidden;
+}
+
+.aura-category-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top, var(--aura-primary-light), transparent 75%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.aura-category-card:hover::before {
+  opacity: 1;
 }
 
 .aura-category-card:hover {
   border-color: var(--aura-primary);
-  box-shadow: var(--aura-shadow-md);
-  transform: translateY(-4px);
+  box-shadow: var(--aura-shadow-lg);
+  transform: translateY(-5px);
   color: var(--aura-primary);
 }
 
-.aura-category-card-icon {
-  width: 56px;
-  height: 56px;
-  margin: 0 auto 1rem;
-  background: var(--aura-primary-light);
-  color: var(--aura-primary);
+.aura-category-card-arrow {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
+  background: var(--aura-surface-subtle);
+  color: var(--aura-muted);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 0.75rem;
+  opacity: 0;
+  transform: translate(-3px, 3px);
   transition: var(--aura-transition);
+  z-index: 3;
+}
+
+.aura-category-card:hover .aura-category-card-arrow {
+  opacity: 1;
+  transform: translate(0, 0);
+  background: var(--aura-primary);
+  color: white;
+}
+
+.aura-category-card-icon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 1rem;
+  background: var(--aura-surface-subtle);
+  border: 1px solid var(--aura-border);
+  color: var(--aura-primary);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.65rem;
+  transition: var(--aura-transition);
+  position: relative;
+  z-index: 2;
 }
 
 .aura-category-card:hover .aura-category-card-icon {
   background: var(--aura-primary);
   color: white;
-  transform: scale(1.1);
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 8px 20px rgba(30, 64, 175, 0.25);
+  border-color: var(--aura-primary);
 }
 
 .aura-category-card-title {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   margin-bottom: 0.25rem;
+  color: var(--aura-dark);
+  position: relative;
+  z-index: 2;
 }
 
 .aura-category-card-count {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
+  font-weight: 600;
   color: var(--aura-muted);
+  position: relative;
+  z-index: 2;
+}
+
+/* Modern Hero Enhancements */
+.aura-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.95rem;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f1f5f9;
+  margin-bottom: 1.15rem;
+}
+
+.aura-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: auraPulse 2s infinite;
+}
+
+@keyframes auraPulse {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.aura-hero-lead {
+  font-size: clamp(0.95rem, 1.8vw, 1.12rem);
+  color: rgba(241, 245, 249, 0.9);
+  max-width: 580px;
+  line-height: 1.6;
+  margin-bottom: 1.75rem;
+}
+
+.aura-hero-specs-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem 2rem;
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.aura-hero-spec-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.aura-coupon-chip {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border: 1px dashed rgba(255, 255, 255, 0.4);
+  padding: 0.35rem 0.85rem;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  color: white;
+  cursor: pointer;
+  transition: var(--aura-transition);
+}
+
+.aura-coupon-chip:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: #ffffff;
+  transform: translateY(-1px);
 }
 
 /* Hero Banner - Modern Floating Curved Visual */
@@ -1601,6 +1768,18 @@ a:hover {
   .aura-hero-title {
     font-size: 1.65rem;
     line-height: 1.2;
+  }
+  .aura-hero-lead {
+    font-size: 0.85rem;
+    margin-bottom: 1.25rem;
+  }
+  .aura-hero-specs-bar {
+    gap: 0.65rem 1rem;
+    padding-top: 1rem;
+    margin-top: 1rem;
+  }
+  .aura-hero-spec-item {
+    font-size: 0.72rem;
   }
   .aura-product-card {
     border-radius: 10px;

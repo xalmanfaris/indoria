@@ -1,9 +1,12 @@
 @model AuraLiving.Models.CategoryViewModel
 
 <a href="/category/@Model.Slug" class="aura-category-card text-decoration-none">
+    <span class="aura-category-card-arrow" aria-hidden="true">
+        <i class="bi bi-arrow-up-right"></i>
+    </span>
     <div class="aura-category-card-icon">
         <i class="bi @Model.Icon"></i>
     </div>
     <div class="aura-category-card-title">@Model.Name</div>
-    <div class="aura-category-card-count">@Model.ProductCount+ Products</div>
+    <div class="aura-category-card-count">@Model.ProductCount+ Curated Models</div>
 </a>
