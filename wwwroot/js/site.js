@@ -11,7 +11,27 @@ document.addEventListener('DOMContentLoaded', () => {
     initCheckoutSteps();
     initCouponDemo();
     initQuickView();
+    initQuickSearch();
 });
+
+function initQuickSearch() {
+    const searchInput = document.getElementById('topNavSearchInput');
+    const kbd = document.querySelector('.aura-search-kbd');
+    if (!searchInput) return;
+
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    if (kbd) {
+        kbd.textContent = isMac ? '⌘K' : 'Ctrl K';
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            searchInput.focus();
+            searchInput.select();
+        }
+    });
+}
 
 // Interactive Flagship Tabs on Home Screen
 function initHomeProductTabs() {

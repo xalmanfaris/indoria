@@ -461,37 +461,83 @@ a:hover {
   font-size: 1rem;
 }
 
-/* Search Box */
+/* Modern & Simple Search Box */
 .aura-search-wrap {
   position: relative;
-  max-width: 540px;
+  max-width: 440px;
   width: 100%;
 }
 
 .aura-search-input {
+  width: 100%;
+  height: 40px;
   border-radius: 50px;
   background-color: var(--aura-surface-subtle);
-  border: 1px solid transparent;
-  padding: 0.6rem 1.25rem 0.6rem 2.75rem;
-  font-size: 0.9rem;
+  border: 1px solid var(--aura-border);
+  padding: 0.5rem 4.8rem 0.5rem 2.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--aura-dark);
   transition: var(--aura-transition);
 }
 
+.aura-search-input::placeholder {
+  color: var(--aura-muted);
+  font-weight: 400;
+  opacity: 0.85;
+}
+
 .aura-search-input:focus {
-  background-color: #fff;
-  border-color: #93c5fd;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  background-color: var(--aura-surface);
+  border-color: var(--aura-primary);
+  box-shadow: 0 0 0 3px var(--aura-primary-light);
   outline: none;
 }
 
 .aura-search-icon {
   position: absolute;
-  left: 1rem;
+  left: 0.95rem;
   top: 50%;
   transform: translateY(-50%);
   color: var(--aura-muted);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.aura-search-wrap:focus-within .aura-search-icon {
+  color: var(--aura-primary);
+}
+
+.aura-search-kbd-wrap {
+  position: absolute;
+  right: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.aura-search-kbd {
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  background: var(--aura-surface);
+  border: 1px solid var(--aura-border);
+  color: var(--aura-muted);
+  padding: 0.18rem 0.45rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+[data-theme="dark"] .aura-search-kbd,
+[data-bs-theme="dark"] .aura-search-kbd {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #94a3b8;
 }
 
 /* Header Actions - Icon-Only Minimalist */

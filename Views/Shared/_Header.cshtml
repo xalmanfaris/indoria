@@ -6,12 +6,15 @@
                 <span class="aura-brand-name">Indoria</span>
             </a>
 
-            <!-- Search Form -->
-            <form action="/search" method="get" class="aura-search-wrap d-none d-md-block">
+            <!-- Modern & Simple Search Form -->
+            <form action="/search" method="get" class="aura-search-wrap d-none d-md-block" role="search">
                 <i class="bi bi-search aura-search-icon"></i>
-                <input type="text" name="q" class="form-control aura-search-input" 
-                       placeholder="Search premium refrigerators, OLED TVs, inverter ACs, Bosch washers..." 
-                       aria-label="Search appliances" />
+                <input type="text" name="q" class="form-control aura-search-input" id="topNavSearchInput"
+                       placeholder="Search appliances, brands, suites..." 
+                       aria-label="Search appliances" autocomplete="off" />
+                <div class="aura-search-kbd-wrap">
+                    <kbd class="aura-search-kbd">Ctrl K</kbd>
+                </div>
             </form>
 
             <!-- Actions: Theme Slider, Account, Wishlist, Cart (Icon Only) -->
