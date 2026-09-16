@@ -551,7 +551,7 @@ a:hover {
 .aura-category-bar {
   background: #ffffff;
   border-bottom: 1px solid var(--aura-border);
-  padding: 0.5rem 0;
+  padding: 0.65rem 0;
   overflow-x: auto;
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
@@ -576,8 +576,8 @@ a:hover {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.4rem 0.9rem;
-  font-size: 0.85rem;
+  padding: 0.45rem 1rem;
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--aura-text);
   border-radius: 20px;
