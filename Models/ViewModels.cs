@@ -19,11 +19,19 @@ public class ProductViewModel
     public int EnergyRating { get; set; } = 5; // 3, 4, 5 stars
     public List<string> Badges { get; set; } = new();
     public string MainImage { get; set; } = string.Empty;
+    public string Image2 { get; set; } = string.Empty;
+    public string Image3 { get; set; } = string.Empty;
     public List<string> GalleryImages { get; set; } = new();
+    public string? GalleryImagesJson { get; set; }
+    public string VideoUrl { get; set; } = string.Empty;
     public string ShortDescription { get; set; } = string.Empty;
     public string FullDescription { get; set; } = string.Empty;
     public List<string> KeyFeatures { get; set; } = new();
     public Dictionary<string, string> Specifications { get; set; } = new();
+    public string RawKeyFeatures { get; set; } = string.Empty;
+    public string RawSpecifications { get; set; } = string.Empty;
+    public string? KeyFeaturesJson { get; set; }
+    public string? SpecificationsJson { get; set; }
     public string DeliveryEstimate { get; set; } = "Tomorrow, 2:00 PM - 6:00 PM";
     public int WarrantyYears { get; set; } = 2;
     public List<string> ColorVariants { get; set; } = new();
@@ -34,6 +42,10 @@ public class ProductViewModel
 public class ReviewViewModel
 {
     public string Id { get; set; } = string.Empty;
+    public string ProductId { get; set; } = string.Empty;
+    public string ProductName { get; set; } = string.Empty;
+    public string ProductSlug { get; set; } = string.Empty;
+    public string UserId { get; set; } = string.Empty;
     public string Author { get; set; } = string.Empty;
     public string City { get; set; } = string.Empty;
     public int Rating { get; set; } = 5;
@@ -42,6 +54,18 @@ public class ReviewViewModel
     public string Comment { get; set; } = string.Empty;
     public bool VerifiedBuyer { get; set; } = true;
     public int HelpfulCount { get; set; } = 0;
+    public bool IsActive { get; set; } = true;
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+}
+
+public class AddReviewRequestModel
+{
+    public string ProductId { get; set; } = string.Empty;
+    public int Rating { get; set; } = 5;
+    public string Author { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public string Comment { get; set; } = string.Empty;
 }
 
 public class CategoryViewModel
@@ -52,6 +76,7 @@ public class CategoryViewModel
     public string Description { get; set; } = string.Empty;
     public string Icon { get; set; } = string.Empty;
     public string Image { get; set; } = string.Empty;
+    public string HeroBannerImage => !string.IsNullOrEmpty(Image) ? Image : "/images/hero-appliances.jpg";
     public int ProductCount { get; set; } = 0;
     public List<string> SubCategories { get; set; } = new();
     public bool Featured { get; set; } = false;
@@ -64,7 +89,9 @@ public class CartItemViewModel
     public string ProductSlug { get; set; } = string.Empty;
     public string Brand { get; set; } = string.Empty;
     public string Image { get; set; } = string.Empty;
+    public string ProductImage => Image;
     public decimal Price { get; set; }
+    public decimal UnitPrice => Price;
     public decimal OriginalPrice { get; set; }
     public string SelectedCapacity { get; set; } = string.Empty;
     public string SelectedColor { get; set; } = string.Empty;
@@ -86,11 +113,13 @@ public class CartViewModel
 public class AddressViewModel
 {
     public string Id { get; set; } = string.Empty;
+    public string UserId { get; set; } = string.Empty;
     public string FullName { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string AddressLine1 { get; set; } = string.Empty;
     public string AddressLine2 { get; set; } = string.Empty;
+    public string StreetAddress => string.IsNullOrEmpty(AddressLine2) ? AddressLine1 : $"{AddressLine1}, {AddressLine2}";
     public string City { get; set; } = string.Empty;
     public string State { get; set; } = string.Empty;
     public string Pincode { get; set; } = string.Empty;
@@ -112,6 +141,9 @@ public class CheckoutViewModel
 public class OrderViewModel
 {
     public string Id { get; set; } = string.Empty;
+    public string UserId { get; set; } = string.Empty;
+    public string CustomerEmail { get; set; } = string.Empty;
+    public string CustomerName { get; set; } = string.Empty;
     public DateTime OrderDate { get; set; } = DateTime.Now;
     public string Status { get; set; } = "In Transit"; // Confirmed, Processing, In Transit, Delivered, Cancelled
     public string EstimatedDelivery { get; set; } = string.Empty;
@@ -121,6 +153,9 @@ public class OrderViewModel
     public decimal SubTotal { get; set; }
     public decimal Discount { get; set; }
     public decimal GrandTotal { get; set; }
+    public decimal TotalAmount => GrandTotal > 0 ? GrandTotal : SubTotal;
+    public string? CancellationReason { get; set; }
+    public DateTime? CancellationDate { get; set; }
     public List<OrderTimelineStep> Timeline { get; set; } = new();
 }
 
@@ -209,3 +244,41 @@ public class HomeViewModel
     public List<string> Brands { get; set; } = new();
     public List<ReviewViewModel> Testimonials { get; set; } = new();
 }
+
+public class CouponViewModel
+{
+    public string Code { get; set; } = string.Empty;
+    public decimal DiscountAmount { get; set; }
+    public decimal MinimumSpend { get; set; }
+    public string Description { get; set; } = string.Empty;
+    public DateTime ExpiryDate { get; set; } = DateTime.Now.AddDays(30);
+    public int UsageCount { get; set; } = 42;
+    public bool IsActive { get; set; } = true;
+}
+
+public class AdminDashboardViewModel
+{
+    public decimal TotalRevenue { get; set; } = 4892400;
+    public int TotalOrders { get; set; } = 384;
+    public int TotalProducts { get; set; } = 24;
+    public int TotalCustomers { get; set; } = 1290;
+    public int OpenSupportTickets { get; set; } = 0;
+    public List<OrderViewModel> RecentOrders { get; set; } = new();
+    public List<ProductViewModel> LowStockProducts { get; set; } = new();
+    public List<ProductViewModel> TopSellingProducts { get; set; } = new();
+    public List<ProductViewModel> AllProducts { get; set; } = new();
+    public List<CategoryViewModel> AllCategories { get; set; } = new();
+    public List<CouponViewModel> AllCoupons { get; set; } = new();
+    public List<AuraLiving.Services.Repositories.SupportTicket> RecentTickets { get; set; } = new();
+}
+
+public class UserDetailsViewModel
+{
+    public UserModel User { get; set; } = new();
+    public int TotalOrders { get; set; }
+    public int AddressCount { get; set; }
+    public int WishlistCount { get; set; }
+    public int CartCount { get; set; }
+    public decimal TotalSpent { get; set; }
+}
+

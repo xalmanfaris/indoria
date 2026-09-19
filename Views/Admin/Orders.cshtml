@@ -1,0 +1,196 @@
+@model List<AuraLiving.Models.OrderViewModel>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Order Fulfillment & Processing";
+    var selectedStatus = ViewBag.SelectedStatus as string ?? "all";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h2 class="fw-bold admin-text-title mb-1">Order Fulfillment & Logistics</h2>
+        <p class="admin-text-muted mb-0 small">Track customer shipments, manage White-Glove installation slots, and update fulfillment statuses.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i> Print Manifest
+        </button>
+    </div>
+</div>
+
+<!-- Status Filter Tabs -->
+<div class="stat-card-glass p-2 mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
+    <div class="nav nav-pills gap-2">
+        <a href="/admin/orders?status=all" class="nav-link rounded-pill px-3 py-1.5 fs-7 @(selectedStatus == "all" ? "active bg-warning text-dark fw-bold" : "admin-text-muted")">
+            All Orders (@Model.Count)
+        </a>
+        <a href="/admin/orders?status=Processing" class="nav-link rounded-pill px-3 py-1.5 fs-7 @(selectedStatus == "Processing" ? "active bg-warning text-dark fw-bold" : "admin-text-muted")">
+            <i class="bi bi-clock-history me-1"></i> Processing (@Model.Count(o => o.Status == "Processing"))
+        </a>
+        <a href="/admin/orders?status=Shipped" class="nav-link rounded-pill px-3 py-1.5 fs-7 @(selectedStatus == "Shipped" ? "active bg-warning text-dark fw-bold" : "admin-text-muted")">
+            <i class="bi bi-truck me-1"></i> In-Transit (@Model.Count(o => o.Status == "Shipped"))
+        </a>
+        <a href="/admin/orders?status=Delivered" class="nav-link rounded-pill px-3 py-1.5 fs-7 @(selectedStatus == "Delivered" ? "active bg-warning text-dark fw-bold" : "admin-text-muted")">
+            <i class="bi bi-check-circle-fill me-1"></i> Delivered (@Model.Count(o => o.Status == "Delivered"))
+        </a>
+        <a href="/admin/orders?status=Cancelled" class="nav-link rounded-pill px-3 py-1.5 fs-7 @(selectedStatus == "Cancelled" ? "active bg-danger text-white fw-bold" : "admin-text-muted")">
+            <i class="bi bi-x-circle-fill me-1"></i> Cancelled (@Model.Count(o => o.Status == "Cancelled"))
+        </a>
+    </div>
+
+    <div class="d-none d-md-block">
+        <input type="text" class="form-control form-control-sm rounded-pill px-3" id="adminOrderSearchInput" style="width: 220px;" placeholder="Search Order ID..." onkeyup="filterAdminOrders(this.value)">
+    </div>
+</div>
+
+<!-- Orders List -->
+<div class="d-flex flex-column gap-3" id="adminOrdersContainer">
+    @if (!Model.Any())
+    {
+        <div class="stat-card-glass text-center py-5 admin-text-muted">
+            <i class="bi bi-box2 fs-1 d-block mb-2"></i>
+            No orders found matching the filter criteria.
+        </div>
+    }
+    else
+    {
+        @foreach (var order in Model)
+        {
+            <div class="stat-card-glass p-4 admin-order-card" data-order-id="@order.Id.ToLower()">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 pb-3 border-bottom">
+                    <div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="fs-5 fw-bold admin-text-title">Order #@order.Id</span>
+                            @if (order.Status == "Processing")
+                            {
+                                <span class="badge bg-warning bg-opacity-20 text-warning border border-warning rounded-pill px-3">Processing</span>
+                            }
+                            else if (order.Status == "Shipped" || order.Status == "In Transit")
+                            {
+                                <span class="badge bg-info bg-opacity-20 text-info border border-info rounded-pill px-3">In Transit / Shipped</span>
+                            }
+                            else if (order.Status == "Delivered")
+                            {
+                                <span class="badge bg-success bg-opacity-20 text-success border border-success rounded-pill px-3">Delivered</span>
+                            }
+                            else if (order.Status == "Cancelled")
+                            {
+                                <span class="badge bg-danger bg-opacity-20 text-danger border border-danger rounded-pill px-3">Cancelled</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-primary bg-opacity-20 text-primary border border-primary rounded-pill px-3">@order.Status</span>
+                            }
+                        </div>
+                        <div class="small admin-text-muted mt-1">Placed on <span class="admin-text-title fw-semibold">@order.OrderDate.ToString("MMMM dd, yyyy • hh:mm tt")</span></div>
+                    </div>
+                    <div class="text-md-end">
+                        <div class="fs-5 fw-bold text-warning">₹@order.TotalAmount.ToString("N0")</div>
+                        <div class="small admin-text-muted">Payment: <span class="badge bg-body-tertiary border text-body">@order.PaymentMethod</span></div>
+                    </div>
+                </div>
+
+                <div class="row g-4 mt-1">
+                    <!-- Items Purchased -->
+                    <div class="col-12 col-lg-7 border-end-lg">
+                        <div class="small fw-bold text-uppercase admin-text-muted mb-2 fs-8">Suite Products</div>
+                        <div class="d-flex flex-column gap-2">
+                            @foreach (var item in order.Items)
+                            {
+                                <div class="d-flex align-items-center justify-content-between p-2 rounded-3 bg-light border">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="@item.ProductImage" alt="@item.ProductName" class="rounded-2" style="width: 48px; height: 48px; object-fit: cover;" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='/images/homixa_hero_appliances.jpg';" />
+                                        <div>
+                                            <div class="fw-semibold admin-text-title fs-7">@item.ProductName</div>
+                                            <div class="small admin-text-muted fs-8">Qty: @item.Quantity × ₹@item.UnitPrice.ToString("N0")</div>
+                                        </div>
+                                    </div>
+                                    <div class="fw-bold admin-text-title fs-7 pe-2">
+                                        ₹@((item.UnitPrice * item.Quantity).ToString("N0"))
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Customer & Shipping Info + Cancellation Reason -->
+                    <div class="col-12 col-lg-5">
+                        <div class="small fw-bold text-uppercase admin-text-muted mb-2 fs-8">Customer & Delivery Address</div>
+                        <div class="p-3 rounded-3 bg-light border">
+                            <div class="fw-bold admin-text-title mb-1"><i class="bi bi-person-fill text-warning me-1"></i> @(string.IsNullOrEmpty(order.ShippingAddress?.FullName) ? order.CustomerName : order.ShippingAddress.FullName)</div>
+                            <div class="small admin-text-muted mb-1"><i class="bi bi-geo-alt-fill me-1"></i> @order.ShippingAddress?.StreetAddress, @order.ShippingAddress?.City, @order.ShippingAddress?.State - @order.ShippingAddress?.Pincode</div>
+                            <div class="small admin-text-muted"><i class="bi bi-telephone-fill me-1"></i> @order.ShippingAddress?.Phone</div>
+                        </div>
+
+                        <!-- Cancellation Reason Alert Box for Admin -->
+                        @if (order.Status == "Cancelled" || !string.IsNullOrEmpty(order.CancellationReason))
+                        {
+                            <div class="p-3 rounded-3 bg-danger bg-opacity-10 border border-danger border-opacity-30 mt-3">
+                                <div class="small fw-bold text-danger mb-1"><i class="bi bi-x-circle-fill me-1"></i> Customer Cancellation Reason:</div>
+                                <div class="small text-danger fw-semibold" style="word-break: break-word;">@(string.IsNullOrEmpty(order.CancellationReason) ? "Customer cancelled order." : order.CancellationReason)</div>
+                                @if (order.CancellationDate.HasValue)
+                                {
+                                    <div class="text-muted small mt-1"><i class="bi bi-clock me-1"></i> Cancelled on @order.CancellationDate.Value.ToString("MMM dd, yyyy • hh:mm tt")</div>
+                                }
+                            </div>
+                        }
+
+                        <div class="mt-3 d-flex align-items-center justify-content-between">
+                            <div class="small admin-text-muted">Status Control:</div>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-warning dropdown-toggle rounded-pill px-3" type="button" data-bs-toggle="dropdown">
+                                    Update Status
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-lg">
+                                    <li><a class="dropdown-item" href="#" onclick="updateAdminOrderStatus('@order.Id', 'Processing')"><i class="bi bi-clock-history me-2 text-warning"></i> Processing</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="updateAdminOrderStatus('@order.Id', 'Shipped')"><i class="bi bi-truck me-2 text-info"></i> Mark Shipped</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="updateAdminOrderStatus('@order.Id', 'Delivered')"><i class="bi bi-check-circle-fill me-2 text-success"></i> Mark Delivered</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="updateAdminOrderStatus('@order.Id', 'Cancelled')"><i class="bi bi-x-circle me-2"></i> Cancel Order</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function filterAdminOrders(query) {
+            const term = query.toLowerCase().trim();
+            document.querySelectorAll('.admin-order-card').forEach(card => {
+                const orderId = card.getAttribute('data-order-id') || '';
+                card.style.display = orderId.includes(term) ? '' : 'none';
+            });
+        }
+
+        async function updateAdminOrderStatus(orderId, newStatus) {
+            if (!confirm(`Are you sure you want to change Order #${orderId} status to '${newStatus}'?`)) return;
+
+            try {
+                const response = await fetch(`/api/v1/orders/${orderId}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    if (typeof showAuraToast === 'function') {
+                        showAuraToast(data.message || `Order #${orderId} updated to ${newStatus}`, 'success');
+                    } else {
+                        alert(data.message || `Order status updated to ${newStatus}`);
+                    }
+                    setTimeout(() => window.location.reload(), 800);
+                } else {
+                    alert(data.message || 'Error updating order status');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred while updating status');
+            }
+        }
+    </script>
+}
