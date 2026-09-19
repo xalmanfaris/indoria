@@ -146,16 +146,11 @@
                     <span class="aura-nav-badge-red aura-cart-badge">0</span>
                 </a>
 
-                <!-- 5. User Profile Avatar Dropdown -->
+                <!-- 5. User Account Dropdown -->
                 <div class="dropdown">
-                    <button class="btn p-0 border-0 bg-transparent d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Account" aria-label="Account">
-                        <div class="aura-nav-avatar">
-                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="User Profile" class="aura-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-                            <div class="aura-avatar-fallback" style="display: none;">
-                                <i class="bi bi-person-fill"></i>
-                            </div>
-                        </div>
-                        <i class="bi bi-chevron-down text-muted ms-0.5" style="font-size: 0.75rem;"></i>
+                    <button class="aura-nav-icon-btn border-0 bg-transparent d-flex align-items-center gap-0.5" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Account" aria-label="Account">
+                        <i class="bi bi-person"></i>
+                        <i class="bi bi-chevron-down text-muted" style="font-size: 0.65rem;"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-2 p-2" style="min-width: 220px;">
                         @if (User.Identity?.IsAuthenticated == true)
