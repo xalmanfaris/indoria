@@ -1,89 +1,190 @@
-<header class="aura-header">
-    <div class="container py-2 py-lg-3">
-        <div class="d-flex align-items-center justify-content-between gap-2 gap-md-3 gap-lg-4">
-            <!-- Brand Logo -->
-            <a href="/" class="aura-brand text-decoration-none">
-                <span class="aura-brand-name">Indoria</span>
+@inject AuraLiving.Services.ICurrencyService CurrencyService
+@inject AuraLiving.Services.ILocalizationService LocalizationService
+@inject AuraLiving.Services.ICountryService CountryService
+
+@{
+    var activeCurrency = CurrencyService.GetCurrentCurrency();
+    var currencies = CurrencyService.GetSupportedCurrencies();
+
+    var activeLanguage = LocalizationService.GetCurrentLanguage();
+    var languages = LocalizationService.GetSupportedLanguages();
+
+    var activeCountry = CountryService.GetCurrentCountry();
+    var countries = CountryService.GetSupportedCountries();
+}
+
+<script>window.isUserAuthenticated = @(User.Identity?.IsAuthenticated == true ? "true" : "false");</script>
+<header class="aura-header homixa-header">
+    <div class="container py-2">
+        <div class="d-flex align-items-center justify-content-between gap-2 gap-md-3">
+            <!-- Left: Indoria Brand Logo -->
+            <a href="/" class="homixa-brand text-decoration-none">
+                <span class="homixa-brand-name">Indoria</span>
             </a>
 
-            <!-- Modern & Simple Search Form -->
-            <form action="/search" method="get" class="aura-search-wrap d-none d-md-block" role="search">
-                <i class="bi bi-search aura-search-icon"></i>
-                <input type="text" name="q" class="form-control aura-search-input" id="topNavSearchInput"
-                       placeholder="Search appliances, brands, suites..." 
-                       aria-label="Search appliances" autocomplete="off" />
-                <div class="aura-search-kbd-wrap">
-                    <kbd class="aura-search-kbd">Ctrl K</kbd>
+            <!-- Center Navigation Links -->
+            <nav class="homixa-main-nav d-none d-lg-flex align-items-center gap-4">
+                <a href="/" class="homixa-nav-link active">@LocalizationService.GetString("Home")</a>
+                <a href="/categories" class="homixa-nav-link">@LocalizationService.GetString("Categories")</a>
+                <a href="/products" class="homixa-nav-link">@LocalizationService.GetString("Shop")</a>
+                <a href="/category/smart-tvs" class="homixa-nav-link">Smart TVs</a>
+                <a href="/category/kitchen-appliances" class="homixa-nav-link">Kitchen</a>
+                <a href="/category/refrigerators" class="homixa-nav-link">Cooling</a>
+                <a href="/category/washing-machines" class="homixa-nav-link">Laundry</a>
+            </nav>
+
+            <!-- Right Actions: Region Selectors, Search Icon, Notifications, Theme Toggle, Account, Cart -->
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                
+                <!-- Regional Preferences Dropdown (Country / Currency / Language) -->
+                <div class="dropdown d-none d-md-block">
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-1 text-nowrap d-flex align-items-center gap-1 border-0" 
+                            type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Region & Currency">
+                        <span>@activeCountry.Flag</span>
+                        <span class="fw-semibold small ms-1">@activeCurrency.Code</span>
+                        <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-2 p-3" style="min-width: 260px;">
+                        <h6 class="dropdown-header px-0 text-uppercase fw-bold text-muted small mb-2">Regional Preferences</h6>
+                        
+                        <!-- Country Picker -->
+                        <div class="mb-2">
+                            <label class="form-label text-xs fw-semibold text-muted mb-1">Shipping Country</label>
+                            <select class="form-select form-select-sm rounded-3" id="headerCountrySelect" onchange="changeAppCountry(this.value)">
+                                @foreach (var country in countries)
+                                {
+                                    <option value="@country.Code" selected="@(country.Code == activeCountry.Code)">
+                                        @country.Flag @country.Name
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Currency Picker -->
+                        <div class="mb-2">
+                            <label class="form-label text-xs fw-semibold text-muted mb-1">Currency</label>
+                            <select class="form-select form-select-sm rounded-3" id="headerCurrencySelect" onchange="changeAppCurrency(this.value)">
+                                @foreach (var curr in currencies)
+                                {
+                                    <option value="@curr.Code" selected="@(curr.Code == activeCurrency.Code)">
+                                        @curr.Code (@curr.Symbol) - @curr.Name
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Language Picker -->
+                        <div>
+                            <label class="form-label text-xs fw-semibold text-muted mb-1">Language</label>
+                            <select class="form-select form-select-sm rounded-3" id="headerLanguageSelect" onchange="changeAppLanguage(this.value)">
+                                @foreach (var lang in languages)
+                                {
+                                    <option value="@lang.Code" selected="@(lang.Code == activeLanguage.Code)">
+                                        @lang.Flag @lang.NativeName
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
                 </div>
-            </form>
 
-            <!-- Actions: Theme Slider, Account, Wishlist, Cart (Icon Only) -->
-            <div class="d-flex align-items-center gap-1 gap-sm-2">
-                <!-- Mobile Search Toggle -->
-                <a href="/search" class="aura-header-btn d-md-none" title="Search" aria-label="Search">
-                    <i class="bi bi-search"></i>
-                </a>
+                <!-- Search Toggle Button + Expanding Capsule -->
+                <div class="aura-search-inline-box" id="auraSearchInlineExpand">
+                    <button type="button" class="homixa-icon-btn" id="searchTriggerBtn" title="Search" aria-label="Search">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <form action="/search" method="get" class="aura-search-capsule" role="search">
+                        <i class="bi bi-search aura-search-capsule-icon"></i>
+                        <input type="text" name="q" class="form-control aura-search-capsule-input" id="topNavSearchInput"
+                               placeholder="Search appliances..." 
+                               aria-label="Search appliances" autocomplete="off" />
+                        <button type="button" class="aura-search-capsule-close" id="searchCloseBtn" aria-label="Close search">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </form>
+                    <!-- Live Instant Search Results Dropdown Panel -->
+                    <div class="aura-search-live-dropdown shadow-lg rounded-4 p-2" id="auraSearchResultsDropdown"></div>
+                </div>
 
-                <!-- One-Tap Sliding Theme Switcher (Light / Midnight Dark) -->
-                <button type="button" 
-                        class="aura-theme-slider-btn me-1" 
-                        id="themeSliderBtn" 
-                        onclick="toggleAppTheme()" 
-                        aria-label="Toggle Light and Midnight Dark Theme" 
-                        title="Tap to slide between Light & Midnight Dark">
-                    <span class="aura-theme-track">
-                        <span class="aura-theme-thumb">
-                            <i class="bi bi-sun-fill" id="themeActiveIcon" style="color: #000000 !important;"></i>
-                        </span>
-                    </span>
+                <!-- Customer Notifications Bell Panel -->
+                <div class="dropdown">
+                    <button type="button" class="homixa-icon-btn position-relative" id="notificationsBellBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications" aria-label="Notifications">
+                        <i class="bi bi-bell"></i>
+                        <span class="homixa-cart-badge aura-unread-count" id="headerUnreadBadge" style="background: #2563eb; color: #fff; display: none;">0</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-2 p-0" style="width: 320px; max-height: 400px; overflow-y: auto;" id="notificationsDropdownPanel">
+                        <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
+                            <span class="fw-bold text-dark small"><i class="bi bi-bell-fill text-primary me-1"></i> Notifications</span>
+                            <button class="btn btn-link btn-sm text-decoration-none p-0 text-muted small" onclick="markAllNotificationsRead()">Mark all as read</button>
+                        </div>
+                        <div class="p-3 text-center text-muted small" id="notificationsListContainer">
+                            <div class="spinner-border spinner-border-sm text-primary my-2" role="status"></div>
+                            <div>Loading alerts...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theme Switcher -->
+                <button type="button" class="homixa-icon-btn" id="themeSliderBtn" onclick="toggleAppTheme()" title="Toggle Theme" aria-label="Toggle Theme">
+                    <i class="bi bi-sun-fill" id="themeActiveIcon"></i>
                 </button>
 
-                <!-- Account Dropdown (Icon Only) -->
+                <!-- Account Icon Dropdown -->
                 <div class="dropdown">
-                    <button class="aura-header-btn dropdown-toggle border-0 bg-transparent" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Account" aria-label="Account">
+                    <button class="homixa-icon-btn border-0 bg-transparent" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Account" aria-label="Account">
                         <i class="bi bi-person"></i>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 mt-2 p-2" style="min-width: 220px;">
-                        <li class="px-3 py-2 border-bottom mb-1">
-                            <div class="fw-bold text-dark">Arjun Mehta</div>
-                            <small class="text-muted">arjun.mehta@example.com</small>
-                        </li>
-                        <li><a class="dropdown-item rounded-2 py-2" href="/account"><i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard</a></li>
-                        <li><a class="dropdown-item rounded-2 py-2" href="/account/orders"><i class="bi bi-box-seam me-2 text-primary"></i> My Orders</a></li>
-                        <li><a class="dropdown-item rounded-2 py-2" href="/account/addresses"><i class="bi bi-geo-alt me-2 text-primary"></i> Saved Addresses</a></li>
-                        <li><a class="dropdown-item rounded-2 py-2" href="/account/returns"><i class="bi bi-arrow-counterclockwise me-2 text-primary"></i> Returns &amp; Refunds</a></li>
-                        <li><a class="dropdown-item rounded-2 py-2" href="/account/profile"><i class="bi bi-person-gear me-2 text-primary"></i> Profile Settings</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item rounded-2 py-2 text-danger" href="/login"><i class="bi bi-box-arrow-right me-2"></i> Sign Out</a></li>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-2 p-2" style="min-width: 220px;">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="px-3 py-2 border-bottom mb-1">
+                                <div class="fw-bold text-dark">@(User.Identity.Name ?? "Patron Account")</div>
+                                <small class="text-muted">@(User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "")</small>
+                            </li>
+                            <li><a class="dropdown-item rounded-3 py-2" href="/account"><i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard</a></li>
+                            <li><a class="dropdown-item rounded-3 py-2" href="/account/orders"><i class="bi bi-box-seam me-2 text-primary"></i> My Orders</a></li>
+                            <li><a class="dropdown-item rounded-3 py-2" href="/account/tickets"><i class="bi bi-headset me-2 text-success"></i> Support Tickets</a></li>
+                            <li><a class="dropdown-item rounded-3 py-2" href="/account/addresses"><i class="bi bi-geo-alt me-2 text-primary"></i> Saved Addresses</a></li>
+                            <li><a class="dropdown-item rounded-3 py-2" href="/account/profile"><i class="bi bi-person-gear me-2 text-primary"></i> Profile Settings</a></li>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li><a class="dropdown-item rounded-3 py-2 text-warning fw-semibold" href="/admin"><i class="bi bi-shield-lock-fill me-2"></i> Admin Console</a></li>
+                                <li><a class="dropdown-item rounded-3 py-2 text-info fw-semibold" href="/admin/tickets"><i class="bi bi-ticket-perforated me-2"></i> Support Console</a></li>
+                            }
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" action="/account/logout" class="d-inline">
+                                    <button type="submit" class="dropdown-item rounded-3 py-2 text-danger border-0 bg-transparent w-100 text-start">
+                                        <i class="bi bi-box-arrow-right me-2"></i> Sign Out
+                                    </button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="px-3 py-2 border-bottom mb-1">
+                                <div class="fw-bold text-dark">Welcome to Indoria</div>
+                                <small class="text-muted">Sign in to access your profile</small>
+                            </li>
+                            <li><a class="dropdown-item rounded-3 py-2 fw-bold text-primary" href="/login"><i class="bi bi-box-arrow-in-right me-2"></i> Sign In</a></li>
+                            <li><a class="dropdown-item rounded-3 py-2" href="/register"><i class="bi bi-person-plus me-2 text-success"></i> Create Account</a></li>
+                            <li><a class="dropdown-item rounded-3 py-2" href="/account/tickets"><i class="bi bi-headset me-2 text-info"></i> Support Desk</a></li>
+                        }
                     </ul>
                 </div>
 
-                <!-- Wishlist Link (Icon Only) -->
-                <a href="/wishlist" class="aura-header-btn position-relative" title="Wishlist" aria-label="Wishlist">
+                <!-- Wishlist Link with Count Badge -->
+                <a href="/wishlist" class="homixa-icon-btn position-relative" title="Wishlist" aria-label="Wishlist">
                     <i class="bi bi-heart"></i>
-                    <span class="aura-badge-count aura-wishlist-count">4</span>
+                    <span class="homixa-cart-badge aura-wishlist-count" style="background: #e11d48; color: #fff;">0</span>
                 </a>
 
-                <!-- Cart Trigger (Icon Only) -->
-                <a href="/cart" class="aura-header-btn position-relative" title="Shopping Bag" aria-label="Shopping Bag">
+                <!-- Cart Link with Count Badge -->
+                <a href="/cart" class="homixa-icon-btn position-relative" title="Shopping Bag" aria-label="Shopping Bag">
                     <i class="bi bi-bag"></i>
-                    <span class="aura-badge-count aura-cart-count">3</span>
+                    <span class="homixa-cart-badge aura-cart-badge">0</span>
                 </a>
             </div>
         </div>
     </div>
-
-    <!-- Category Navigation Bar (Spaced between to stretch across container matching the hero) -->
-    <nav class="aura-category-bar" aria-label="Category navigation">
-        <div class="container d-flex align-items-center justify-content-between flex-nowrap gap-2 gap-lg-3">
-            <a href="/categories" class="aura-category-nav-link text-primary fw-bold">All Categories</a>
-            <a href="/category/refrigerators" class="aura-category-nav-link">Refrigerators</a>
-            <a href="/category/washing-machines" class="aura-category-nav-link">Washing Machines</a>
-            <a href="/category/air-conditioners" class="aura-category-nav-link">Air Conditioners</a>
-            <a href="/category/smart-tvs" class="aura-category-nav-link">Smart Televisions</a>
-            <a href="/category/kitchen-appliances" class="aura-category-nav-link">Kitchen &amp; Cooking</a>
-            <a href="/category/dishwashers" class="aura-category-nav-link">Dishwashers</a>
-            <a href="/category/vacuum-air" class="aura-category-nav-link">Vacuum &amp; Air</a>
-        </div>
-    </nav>
 </header>
