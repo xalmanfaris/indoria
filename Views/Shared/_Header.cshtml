@@ -106,11 +106,21 @@
                     <div class="aura-search-live-dropdown shadow-lg rounded-4 p-2" id="auraSearchResultsDropdown"></div>
                 </div>
 
-                <!-- Customer Notifications Bell Panel -->
+                <!-- 1. Capsule Theme Switcher Pill (Sun / Moon) -->
+                <div class="aura-theme-pill-toggle ms-1" id="themePillToggle" onclick="toggleAppTheme()" title="Toggle Light / Dark Mode" role="button" tabindex="0">
+                    <div class="aura-theme-pill-btn aura-theme-pill-sun">
+                        <i class="bi bi-sun-fill"></i>
+                    </div>
+                    <div class="aura-theme-pill-btn aura-theme-pill-moon">
+                        <i class="bi bi-moon-stars-fill"></i>
+                    </div>
+                </div>
+
+                <!-- 2. Customer Notifications Bell Panel -->
                 <div class="dropdown">
-                    <button type="button" class="homixa-icon-btn position-relative" id="notificationsBellBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications" aria-label="Notifications">
+                    <button type="button" class="aura-nav-icon-btn" id="notificationsBellBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications" aria-label="Notifications">
                         <i class="bi bi-bell"></i>
-                        <span class="homixa-cart-badge aura-unread-count" id="headerUnreadBadge" style="background: #2563eb; color: #fff; display: none;">0</span>
+                        <span class="aura-nav-badge-red aura-unread-count" id="headerUnreadBadge" style="display: none;">0</span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-2 p-0" style="width: 320px; max-height: 400px; overflow-y: auto;" id="notificationsDropdownPanel">
                         <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
@@ -124,15 +134,28 @@
                     </div>
                 </div>
 
-                <!-- Theme Switcher -->
-                <button type="button" class="homixa-icon-btn" id="themeSliderBtn" onclick="toggleAppTheme()" title="Toggle Theme" aria-label="Toggle Theme">
-                    <i class="bi bi-sun-fill" id="themeActiveIcon"></i>
-                </button>
+                <!-- 3. Wishlist Link with Count Badge -->
+                <a href="/wishlist" class="aura-nav-icon-btn" title="Wishlist" aria-label="Wishlist">
+                    <i class="bi bi-heart"></i>
+                    <span class="aura-nav-badge-red aura-wishlist-count">0</span>
+                </a>
 
-                <!-- Account Icon Dropdown -->
+                <!-- 4. Cart Link with Count Badge -->
+                <a href="/cart" class="aura-nav-icon-btn" title="Shopping Bag" aria-label="Shopping Bag">
+                    <i class="bi bi-bag"></i>
+                    <span class="aura-nav-badge-red aura-cart-badge">0</span>
+                </a>
+
+                <!-- 5. User Profile Avatar Dropdown -->
                 <div class="dropdown">
-                    <button class="homixa-icon-btn border-0 bg-transparent" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Account" aria-label="Account">
-                        <i class="bi bi-person"></i>
+                    <button class="btn p-0 border-0 bg-transparent d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Account" aria-label="Account">
+                        <div class="aura-nav-avatar">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="User Profile" class="aura-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                            <div class="aura-avatar-fallback" style="display: none;">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                        </div>
+                        <i class="bi bi-chevron-down text-muted ms-0.5" style="font-size: 0.75rem;"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-2 p-2" style="min-width: 220px;">
                         @if (User.Identity?.IsAuthenticated == true)
@@ -172,18 +195,6 @@
                         }
                     </ul>
                 </div>
-
-                <!-- Wishlist Link with Count Badge -->
-                <a href="/wishlist" class="homixa-icon-btn position-relative" title="Wishlist" aria-label="Wishlist">
-                    <i class="bi bi-heart"></i>
-                    <span class="homixa-cart-badge aura-wishlist-count" style="background: #e11d48; color: #fff;">0</span>
-                </a>
-
-                <!-- Cart Link with Count Badge -->
-                <a href="/cart" class="homixa-icon-btn position-relative" title="Shopping Bag" aria-label="Shopping Bag">
-                    <i class="bi bi-bag"></i>
-                    <span class="homixa-cart-badge aura-cart-badge">0</span>
-                </a>
             </div>
         </div>
     </div>
