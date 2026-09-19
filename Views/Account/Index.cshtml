@@ -3,9 +3,16 @@
     ViewData["Title"] = "Account Dashboard";
     var recentOrders = ViewBag.RecentOrders as List<AuraLiving.Models.OrderViewModel> ?? new List<AuraLiving.Models.OrderViewModel>();
     var addresses = ViewBag.Addresses as List<AuraLiving.Models.AddressViewModel> ?? new List<AuraLiving.Models.AddressViewModel>();
+    var defaultAddress = addresses.FirstOrDefault(a => a.IsDefault) ?? addresses.FirstOrDefault();
+    var breadcrumbs = new List<(string Title, string Url)>
+    {
+        ("My Account", "")
+    };
 }
 
 <div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
     <div class="row g-4">
         <!-- Sidebar Navigation -->
         <div class="col-lg-3">
@@ -14,118 +21,234 @@
 
         <!-- Main Account Content -->
         <div class="col-lg-9">
-            <!-- Welcome Header Card -->
-            <div class="p-4 rounded-4 bg-white border shadow-sm mb-4">
-                <div class="row align-items-center g-3">
-                    <div class="col-md-8">
-                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">Indoria Privilege Tier</span>
-                        <h2 class="fw-bold mb-1">Welcome back, @Model.FullName</h2>
-                        <p class="text-secondary small mb-0">Member since @Model.MemberSince • You have <strong>@Model.RewardsPoints Indoria Points</strong> ready to redeem on your next appliance purchase.</p>
+            <!-- Homixa Hero User Welcome Banner -->
+            <div class="p-4 p-md-5 rounded-4 shadow-lg mb-4 text-white position-relative overflow-hidden" 
+                 style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);">
+                <!-- Background Geometric Glow -->
+                <div class="position-absolute top-0 end-0 translate-middle-y rounded-circle bg-primary opacity-10 blur-3xl" style="width: 300px; height: 300px; pointer-events: none;"></div>
+
+                <div class="row align-items-center g-4 position-relative z-1">
+                    <div class="col-md-7">
+                        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-primary bg-opacity-20 border border-primary border-opacity-30 text-primary-subtle mb-3">
+                            <i class="bi bi-shield-check text-primary-subtle" style="font-size: 0.85rem;"></i>
+                            <span class="small fw-bold uppercase letter-spacing-1 text-white">Indoria Privilege Member</span>
+                        </div>
+                        <h1 class="display-6 fw-bold mb-2 text-white" style="font-family: 'Montserrat', sans-serif; letter-spacing: -0.5px;">
+                            Welcome back, <br /><span class="text-white">@Model.FullName</span>
+                        </h1>
+                        <p class="text-white-50 small mb-0">
+                            Member since <strong>@Model.MemberSince</strong> • You have <strong class="text-white">@Model.RewardsPoints Rewards Points</strong> (₹@((Model.RewardsPoints / 10).ToString("N0")) Value) ready for your next appliance purchase.
+                        </p>
                     </div>
-                    <div class="col-md-4 text-md-end">
-                        <a href="/account/profile" class="btn aura-btn-outline btn-sm rounded-pill">
-                            <i class="bi bi-pencil me-1"></i> Edit Profile
-                        </a>
+
+                    <div class="col-md-5 text-md-end">
+                        <div class="d-flex flex-wrap justify-content-md-end gap-2">
+                            <a href="/account/profile" class="btn btn-light rounded-pill px-4 py-2.5 fw-bold shadow-sm d-inline-flex align-items-center gap-2 text-dark">
+                                Edit Profile
+                            </a>
+                            <a href="/wishlist" class="btn btn-outline-light rounded-pill px-3.5 py-2.5 fw-semibold d-inline-flex align-items-center gap-2">
+                                Wishlist (@Model.WishlistCount)
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Quick Metrics Grid -->
+            <!-- Simplified & Modern Account Stat Overview Grid -->
             <div class="row g-3 mb-4">
-                <div class="col-md-4">
-                    <div class="p-3 bg-white rounded-3 border shadow-sm d-flex align-items-center gap-3">
-                        <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; font-size: 1.3rem;">
-                            <i class="bi bi-box-seam"></i>
+                <!-- Stat 1: Total Orders -->
+                <div class="col-6 col-lg-3">
+                    <a href="/account/orders" class="text-decoration-none">
+                        <div class="aura-stat-card">
+                            <div class="aura-stat-icon bg-primary bg-opacity-10 text-primary">
+                                <i class="bi bi-box-seam-fill"></i>
+                            </div>
+                            <div>
+                                <div class="aura-stat-value">@Model.TotalOrders</div>
+                                <div class="aura-stat-label">Total Orders</div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="fs-4 fw-bold text-dark">@Model.TotalOrders</div>
-                            <small class="text-muted">Total Orders Placed</small>
-                        </div>
-                    </div>
+                    </a>
                 </div>
-                <div class="col-md-4">
-                    <div class="p-3 bg-white rounded-3 border shadow-sm d-flex align-items-center gap-3">
-                        <div class="rounded-circle bg-warning-subtle text-warning d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; font-size: 1.3rem;">
+
+                <!-- Stat 2: Rewards Points -->
+                <div class="col-6 col-lg-3">
+                    <div class="aura-stat-card">
+                        <div class="aura-stat-icon bg-warning bg-opacity-15 text-warning">
                             <i class="bi bi-coin"></i>
                         </div>
                         <div>
-                            <div class="fs-4 fw-bold text-dark">@Model.RewardsPoints</div>
-                            <small class="text-muted">Rewards Points (₹@((Model.RewardsPoints / 10).ToString("N0")) Value)</small>
+                            <div class="d-flex align-items-center gap-1.5">
+                                <span class="aura-stat-value">@Model.RewardsPoints</span>
+                                <span class="badge bg-warning bg-opacity-15 text-warning border border-warning border-opacity-25 px-2 py-0.5 rounded-pill fs-8 fw-bold">₹@((Model.RewardsPoints / 10).ToString("N0"))</span>
+                            </div>
+                            <div class="aura-stat-label">Privilege Points</div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="p-3 bg-white rounded-3 border shadow-sm d-flex align-items-center gap-3">
-                        <div class="rounded-circle bg-danger-subtle text-danger d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; font-size: 1.3rem;">
-                            <i class="bi bi-heart"></i>
+
+                <!-- Stat 3: Wishlist Saved -->
+                <div class="col-6 col-lg-3">
+                    <a href="/wishlist" class="text-decoration-none">
+                        <div class="aura-stat-card">
+                            <div class="aura-stat-icon bg-danger bg-opacity-10 text-danger">
+                                <i class="bi bi-heart-fill"></i>
+                            </div>
+                            <div>
+                                <div class="aura-stat-value">@Model.WishlistCount</div>
+                                <div class="aura-stat-label">Wishlist Items</div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="fs-4 fw-bold text-dark">@Model.WishlistCount</div>
-                            <small class="text-muted">Wishlist Items</small>
+                    </a>
+                </div>
+
+                <!-- Stat 4: Saved Addresses -->
+                <div class="col-6 col-lg-3">
+                    <a href="/account/addresses" class="text-decoration-none">
+                        <div class="aura-stat-card">
+                            <div class="aura-stat-icon bg-success bg-opacity-10 text-success">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div>
+                                <div class="aura-stat-value">@addresses.Count</div>
+                                <div class="aura-stat-label">Saved Addresses</div>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
 
-            <!-- Active Order Snapshot -->
+            <!-- Active Order Tracking Card -->
             @if (recentOrders.Any())
             {
                 var activeOrder = recentOrders.First();
                 <div class="p-4 rounded-4 bg-white border shadow-sm mb-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-3 pb-3 border-bottom">
                         <div>
-                            <span class="text-uppercase fw-bold text-muted small">Active Shipment</span>
+                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-20 px-3 py-1 rounded-pill small fw-bold mb-1">
+                                Active Order Tracking
+                            </span>
                             <h5 class="fw-bold text-dark mb-0">Order #@activeOrder.Id</h5>
                         </div>
-                        <span class="badge bg-primary px-3 py-2">@activeOrder.Status</span>
-                    </div>
-
-                    <div class="p-3 bg-light rounded-3 mb-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
-                        <div>
-                            <i class="bi bi-truck text-primary me-2"></i> <strong>Estimated Arrival:</strong> @activeOrder.EstimatedDelivery
-                        </div>
-                        <a href="/account/orders/@activeOrder.Id" class="btn aura-btn-primary btn-sm rounded-pill px-3">
-                            Track Shipment <i class="bi bi-arrow-right ms-1"></i>
+                        <a href="/account/orders/@activeOrder.Id" class="btn aura-btn-primary btn-sm rounded-pill px-4 py-2 font-weight-bold">
+                            Track Order Details <i class="bi bi-arrow-right ms-1"></i>
                         </a>
                     </div>
 
-                    <div class="d-flex flex-column gap-2">
+                    <!-- Progress Stepper Track -->
+                    <div class="p-3 bg-light rounded-3 mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small text-secondary">Status: <strong class="text-dark">@activeOrder.Status</strong></span>
+                            <span class="small text-success fw-bold">Estimated: @activeOrder.EstimatedDelivery</span>
+                        </div>
+                        <div class="progress" style="height: 8px; border-radius: 50px;">
+                            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" style="width: 70%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Order Items Row -->
+                    <div class="d-flex flex-column gap-3">
                         @foreach (var itm in activeOrder.Items)
                         {
-                            <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
+                            <div class="d-flex align-items-center justify-content-between p-2 rounded-3 bg-light bg-opacity-50">
                                 <div class="d-flex align-items-center gap-3">
-                                    <img src="@itm.Image" alt="@itm.ProductName" style="width: 44px; height: 44px; object-fit: contain;" />
+                                    <div class="bg-white rounded-3 p-2 border text-center" style="width: 54px; height: 54px;">
+                                        <img src="@itm.Image" alt="@itm.ProductName" class="img-fluid h-100 object-fit-contain" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='/images/homixa_hero_appliances.jpg';" />
+                                    </div>
                                     <div>
-                                        <div class="fw-bold text-dark small">@itm.ProductName</div>
-                                        <small class="text-muted">Qty: @itm.Quantity • ₹@itm.Price.ToString("N0")</small>
+                                        <h6 class="fw-bold text-dark mb-0 fs-6">@itm.ProductName</h6>
+                                        <small class="text-muted">Quantity: <strong>@itm.Quantity</strong> • Price: ₹@itm.Price.ToString("N0")</small>
                                     </div>
                                 </div>
-                                <span class="fw-bold text-dark small">₹@itm.Total.ToString("N0")</span>
+                                <div class="text-end">
+                                    <div class="fw-bold text-dark fs-6">₹@itm.Total.ToString("N0")</div>
+                                    <span class="badge bg-success-subtle text-success rounded-pill px-2 py-0.5" style="font-size: 0.7rem;">Express Shipping</span>
+                                </div>
                             </div>
                         }
                     </div>
                 </div>
             }
 
-            <!-- Saved Addresses Summary -->
-            <div class="p-4 rounded-4 bg-white border shadow-sm">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-bold text-dark mb-0">Default Delivery Address</h5>
-                    <a href="/account/addresses" class="text-primary small text-decoration-none fw-semibold">Manage Addresses &rarr;</a>
-                </div>
-                @if (addresses.Any())
-                {
-                    var def = addresses.First(a => a.IsDefault);
-                    <div class="p-3 bg-light rounded-3">
-                        <div class="fw-bold text-dark mb-1">@def.FullName <span class="badge bg-primary ms-1">@def.Type</span></div>
-                        <div class="small text-secondary">
-                            @def.AddressLine1, @def.AddressLine2<br />
-                            @def.City, @def.State - <strong>@def.Pincode</strong><br />
-                            Phone: @def.Phone
+            <!-- Grid: Default Delivery Address & White-Glove Support -->
+            <div class="row g-4">
+                <!-- Saved Address Card -->
+                <div class="col-md-7">
+                    <div class="p-4 rounded-4 bg-white border shadow-sm h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                            <h5 class="fw-bold text-dark mb-0">Default Delivery Address</h5>
+                            <a href="/account/addresses" class="text-primary small text-decoration-none fw-bold">Manage All &rarr;</a>
                         </div>
+                        @if (defaultAddress != null)
+                        {
+                            <div class="p-3 bg-light rounded-3 border">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <strong class="text-dark fs-6">@defaultAddress.FullName</strong>
+                                    <span class="badge bg-dark text-white rounded-pill px-2.5 py-1">@defaultAddress.Type</span>
+                                </div>
+                                <p class="text-secondary small mb-2 style-readable" style="line-height: 1.6;">
+                                    @defaultAddress.AddressLine1 @(!string.IsNullOrEmpty(defaultAddress.AddressLine2) ? ", " + defaultAddress.AddressLine2 : "")<br />
+                                    @defaultAddress.City, @defaultAddress.State - <strong>@defaultAddress.Pincode</strong>
+                                </p>
+                                <div class="text-muted small">
+                                    Phone: <strong>@defaultAddress.Phone</strong>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-4 bg-light rounded-3">
+                                <p class="text-muted small mb-3">No default address configured yet.</p>
+                                <a href="/account/addresses" class="btn aura-btn-primary btn-sm rounded-pill px-4">Add New Address</a>
+                            </div>
+                        }
                     </div>
-                }
+                </div>
+
+                <!-- Customer Service & Support Card -->
+                <div class="col-md-5">
+                    <div class="p-4 rounded-4 bg-white border shadow-sm h-100 text-start">
+                        <div class="d-flex align-items-center gap-2.5 mb-3 pb-2 border-bottom">
+                            <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                                <i class="bi bi-shield-check fs-5"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-dark mb-0">Indoria Concierge Desk</h6>
+                                <small class="text-muted">24/7 Priority Support</small>
+                            </div>
+                        </div>
+
+                        <ul class="list-unstyled mb-4 small text-secondary">
+                            <li class="mb-2 d-flex align-items-center gap-2">
+                                <i class="bi bi-patch-check-fill text-success"></i>
+                                <span>Certified Brand Warranty Active</span>
+                            </li>
+                            <li class="mb-2 d-flex align-items-center gap-2">
+                                <i class="bi bi-tools text-primary"></i>
+                                <span>Free White-Glove In-Home Demo</span>
+                            </li>
+                            <li class="d-flex align-items-center gap-2">
+                                <i class="bi bi-headset text-primary"></i>
+                                <span>Direct Engineer Assistance Dispatch</span>
+                            </li>
+                        </ul>
+
+                        <a href="/contact" class="btn aura-btn-outline w-100 rounded-pill py-2.5 text-center fw-semibold">
+                            Contact Patron Care
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .hover-lift {
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease;
+    }
+    .hover-lift:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px -5px rgba(0, 0, 0, 0.08) !important;
+    }
+</style>
