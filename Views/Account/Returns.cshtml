@@ -1,9 +1,16 @@
 @model List<AuraLiving.Models.ReturnRequestViewModel>
 @{
     ViewData["Title"] = "Returns & Replacements";
+    var breadcrumbs = new List<(string Title, string Url)>
+    {
+        ("My Account", "/account"),
+        ("Returns & Replacements", "")
+    };
 }
 
 <div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
     <div class="row g-4">
         <div class="col-lg-3">
             <partial name="_AccountSidebar" />
@@ -11,13 +18,13 @@
 
         <div class="col-lg-9">
             <div class="p-4 p-md-5 rounded-4 bg-white border shadow-sm">
-                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 pb-3 border-bottom gap-2">
                     <div>
                         <h3 class="fw-bold text-dark mb-1">Returns &amp; Replacements</h3>
-                        <p class="text-muted small mb-0">15-Day hassle-free return window on all verified purchases.</p>
+                        <p class="text-secondary small mb-0">15-Day hassle-free doorstep pickup &amp; replacement guarantee.</p>
                     </div>
-                    <button class="btn aura-btn-primary btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#requestReturnModal">
-                        <i class="bi bi-arrow-counterclockwise me-1"></i> Request New Return
+                    <button class="btn aura-btn-primary btn-sm rounded-pill px-4 py-2 font-weight-bold" data-bs-toggle="modal" data-bs-target="#requestReturnModal">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i> Request Return
                     </button>
                 </div>
 
@@ -26,20 +33,19 @@
                     <div class="d-flex flex-column gap-3">
                         @foreach (var ret in Model)
                         {
-                            <div class="p-4 rounded-4 border bg-light shadow-sm">
+                            <div class="p-4 rounded-4 border bg-white shadow-sm">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <div>
-                                        <span class="text-muted small">Return ID:</span>
-                                        <strong class="text-dark">#@ret.Id</strong>
-                                        <span class="text-muted small ms-2">• Order: #@ret.OrderId</span>
+                                        <span class="badge bg-light text-dark border font-monospace me-2">#@ret.Id</span>
+                                        <span class="text-muted small">Order: <strong>#@ret.OrderId</strong></span>
                                     </div>
-                                    <span class="badge bg-warning text-dark px-3 py-1">@ret.Status</span>
+                                    <span class="badge bg-warning bg-opacity-20 text-dark border border-warning border-opacity-30 rounded-pill px-3 py-1.5 fw-bold">@ret.Status</span>
                                 </div>
                                 <h5 class="fw-bold text-dark mb-1">@ret.ProductName</h5>
                                 <p class="text-secondary small mb-2"><strong>Reason:</strong> @ret.Reason</p>
                                 <div class="d-flex justify-content-between align-items-center text-muted small pt-2 border-top">
-                                    <span>Requested on: @ret.RequestDate</span>
-                                    <span>Estimated Refund: <strong class="text-dark">₹@ret.RefundAmount.ToString("N0")</strong> (to Original Payment Method)</span>
+                                    <span>Requested on: <strong>@ret.RequestDate</strong></span>
+                                    <span>Estimated Refund: <strong class="text-dark fs-6">₹@ret.RefundAmount.ToString("N0")</strong> (Original Payment Method)</span>
                                 </div>
                             </div>
                         }
@@ -47,8 +53,10 @@
                 }
                 else
                 {
-                    <div class="text-center py-4 text-muted">
-                        <p>No active return requests.</p>
+                    <div class="text-center py-5 bg-light rounded-4 border p-5">
+                        <i class="bi bi-arrow-counterclockwise text-muted opacity-50 display-4 mb-2 d-block"></i>
+                        <h5 class="fw-bold text-dark">No Active Return Requests</h5>
+                        <p class="text-muted small mb-0">All your verified purchases are currently within standard warranty coverage.</p>
                     </div>
                 }
             </div>
@@ -56,42 +64,130 @@
     </div>
 </div>
 
+@{
+    var userOrders = ViewBag.UserOrders as List<AuraLiving.Models.OrderViewModel> ?? new List<AuraLiving.Models.OrderViewModel>();
+}
+
 <!-- Request Return Modal -->
 <div class="modal fade" id="requestReturnModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold">Initiate Return / Replacement</h5>
+            <div class="modal-header border-bottom px-4 py-3">
+                <h5 class="modal-title fw-bold text-dark"><i class="bi bi-arrow-counterclockwise text-primary me-2"></i> Initiate Return / Replacement</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form onsubmit="event.preventDefault(); showAuraToast('Return request submitted! An Aura executive will inspect and schedule pickup.', 'success'); bootstrap.Modal.getInstance(document.getElementById('requestReturnModal')).hide();">
+            <form id="createReturnForm" onsubmit="submitReturnRequest(event)">
                 <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">Select Eligible Order</label>
-                        <select class="form-select form-select-sm" required>
-                            <option>Order #AURA-98214 - Samsung Bespoke Fridge</option>
-                            <option>Order #AURA-83421 - Dyson V15 Vacuum</option>
+                        <label class="form-label small fw-bold text-dark">Request Type</label>
+                        <select class="form-select rounded-3 py-2" id="returnTypeSelect" required>
+                            <option value="Return">Doorstep Return &amp; Refund</option>
+                            <option value="Replacement">Product Replacement</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">Reason for Return</label>
-                        <select class="form-select form-select-sm" required>
-                            <option>Dimensions do not fit kitchen space</option>
-                            <option>Transit dent or cosmetic scratch on unboxing</option>
-                            <option>Received incorrect variant / color</option>
-                            <option>Technical malfunction / electrical noise</option>
+                        <label class="form-label small fw-bold text-dark">Select Order &amp; Product</label>
+                        <select class="form-select rounded-3 py-2" id="returnOrderSelect" required>
+                            @if (userOrders.Any())
+                            {
+                                @foreach (var ord in userOrders.Where(o => o.Status != "Cancelled"))
+                                {
+                                    @foreach (var item in ord.Items)
+                                    {
+                                        <option value="@ord.Id" data-product-id="@item.ProductId" data-product-name="@item.ProductName" data-product-image="@item.ProductImage" data-price="@item.Total">
+                                            Order #@ord.Id — @item.ProductName (₹@item.Total.ToString("N0"))
+                                        </option>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <option value="">No recent orders eligible for return</option>
+                            }
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">Additional Comments / Remarks</label>
-                        <textarea class="form-control form-control-sm" rows="3" placeholder="Provide any details to expedite pickup..."></textarea>
+                        <label class="form-label small fw-bold text-dark">Reason for Return / Replacement</label>
+                        <select class="form-select rounded-3 py-2" id="returnReasonSelect" required>
+                            <option value="Dimensions do not fit cabinetry space">Dimensions do not fit cabinetry space</option>
+                            <option value="Transit dent or cosmetic scratch on unboxing">Transit dent or cosmetic scratch on unboxing</option>
+                            <option value="Received incorrect variant / finish">Received incorrect variant / finish</option>
+                            <option value="Technical malfunction / electrical noise">Technical malfunction / electrical noise</option>
+                            <option value="Changed mind / No longer needed">Changed mind / No longer needed</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-dark">Additional Details / Remarks</label>
+                        <textarea class="form-control rounded-3" id="returnDescriptionText" rows="3" placeholder="Provide details for technician inspection or unboxing feedback..."></textarea>
                     </div>
                 </div>
-                <div class="modal-footer border-0 pt-0">
-                    <button type="button" class="btn btn-secondary btn-sm rounded-pill" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn aura-btn-primary btn-sm rounded-pill px-4">Submit Request</button>
+                <div class="modal-footer border-top px-4 py-3">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn aura-btn-primary rounded-pill px-5 fw-bold shadow-sm" id="submitReturnBtn">Submit Request</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        async function submitReturnRequest(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitReturnBtn');
+            const orderSelect = document.getElementById('returnOrderSelect');
+            const selectedOption = orderSelect.options[orderSelect.selectedIndex];
+
+            if (!selectedOption || !selectedOption.value) {
+                alert('Please select an eligible order.');
+                return;
+            }
+
+            const reqType = document.getElementById('returnTypeSelect').value;
+            const orderId = selectedOption.value;
+            const productId = selectedOption.getAttribute('data-product-id') || '';
+            const productName = selectedOption.getAttribute('data-product-name') || '';
+            const productImage = selectedOption.getAttribute('data-product-image') || '';
+            const price = parseFloat(selectedOption.getAttribute('data-price') || '0');
+            const reason = document.getElementById('returnReasonSelect').value;
+            const description = document.getElementById('returnDescriptionText').value;
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Submitting...';
+
+            try {
+                const response = await fetch('/api/v1/returns/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        orderId: orderId,
+                        productId: productId,
+                        productName: productName,
+                        productImage: productImage,
+                        type: reqType,
+                        reason: reason,
+                        description: description,
+                        refundAmount: price
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    if (typeof showAuraToast === 'function') {
+                        showAuraToast(data.message || 'Return request submitted successfully!', 'success');
+                    }
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    alert(data.message || 'Failed to submit return request.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = 'Submit Request';
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred while submitting your request.');
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Submit Request';
+            }
+        }
+    </script>
+}

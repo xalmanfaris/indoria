@@ -1,9 +1,17 @@
-@model List<AuraLiving.Models.ReviewItemViewModel>
+@model List<AuraLiving.Models.ReviewViewModel>
 @{
     ViewData["Title"] = "My Product Reviews";
+    var userOrders = ViewBag.UserOrders as List<AuraLiving.Models.OrderViewModel> ?? new List<AuraLiving.Models.OrderViewModel>();
+    var breadcrumbs = new List<(string Title, string Url)>
+    {
+        ("My Account", "/account"),
+        ("My Product Reviews", "")
+    };
 }
 
 <div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
     <div class="row g-4">
         <div class="col-lg-3">
             <partial name="_AccountSidebar" />
@@ -11,46 +19,315 @@
 
         <div class="col-lg-9">
             <div class="p-4 p-md-5 rounded-4 bg-white border shadow-sm">
-                <h3 class="fw-bold text-dark mb-1">My Product Reviews</h3>
-                <p class="text-muted small mb-4">Share your real-world experience and earn 250 Aura Reward points per review.</p>
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 pb-3 border-bottom gap-2">
+                    <div>
+                        <h3 class="fw-bold text-dark mb-1">My Product Reviews &amp; Ratings</h3>
+                        <p class="text-secondary small mb-0">Share your homeowner experiences and earn 250 Indoria Reward points per verified review.</p>
+                    </div>
+                    <button class="btn aura-btn-primary btn-sm rounded-pill px-4 py-2 font-weight-bold" data-bs-toggle="modal" data-bs-target="#writeReviewModal">
+                        <i class="bi bi-star-fill me-1"></i> Write Review
+                    </button>
+                </div>
 
-                <div class="d-flex flex-column gap-4">
-                    @foreach (var rev in Model)
-                    {
-                        <div class="p-4 rounded-4 border bg-light shadow-sm">
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <div class="d-flex align-items-center gap-3">
-                                    <img src="@rev.ProductImage" alt="@rev.ProductName" style="width: 50px; height: 50px; object-fit: contain;" class="bg-white rounded-3 p-1 border" />
-                                    <div>
-                                        <h6 class="fw-bold text-dark mb-0">@rev.ProductName</h6>
-                                        <small class="text-muted">@rev.Date</small>
+                @if (Model.Any())
+                {
+                    <div class="d-flex flex-column gap-3 mb-4">
+                        <h5 class="fw-bold text-dark mb-1">Published Reviews (@Model.Count)</h5>
+                        @foreach (var rev in Model)
+                        {
+                            <div class="p-4 rounded-4 border bg-white shadow-sm">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="bg-light rounded-3 p-2 border text-center" style="width: 56px; height: 56px;">
+                                            <img src="@(string.IsNullOrEmpty(rev.ProductImage) ? "/images/homixa_hero_appliances.jpg" : rev.ProductImage)" alt="@rev.ProductName" class="img-fluid h-100 object-fit-contain" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='/images/homixa_hero_appliances.jpg';" />
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold text-dark mb-0 fs-6">
+                                                @if (!string.IsNullOrEmpty(rev.ProductSlug))
+                                                {
+                                                    <a href="/product/@rev.ProductSlug" class="text-dark text-decoration-none">@rev.ProductName</a>
+                                                }
+                                                else
+                                                {
+                                                    @rev.ProductName
+                                                }
+                                            </h6>
+                                            <small class="text-muted">Submitted on @rev.Date</small>
+                                        </div>
                                     </div>
+                                    <span class="badge @(rev.IsActive ? "bg-success text-white" : "bg-warning text-dark") rounded-pill px-3 py-1.5 fw-semibold d-inline-flex align-items-center gap-1">
+                                        <i class="bi @(rev.IsActive ? "bi-patch-check-fill" : "bi-clock-history") me-1"></i>
+                                        @(rev.IsActive ? "Published & Verified" : "Under Moderation")
+                                    </span>
                                 </div>
-                                <span class="badge @(rev.IsSubmitted ? "bg-success-subtle text-success border border-success-subtle" : "bg-warning-subtle text-warning border border-warning-subtle")">
-                                    @(rev.IsSubmitted ? "Published" : "Awaiting Review")
-                                </span>
-                            </div>
 
-                            @if (rev.IsSubmitted)
-                            {
                                 <partial name="_RatingStars" model="(double)rev.Rating" />
                                 <h6 class="fw-bold text-dark mt-2 mb-1">@rev.Title</h6>
-                                <p class="text-secondary small mb-3">@rev.Comment</p>
-                                <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="showAuraToast('Edit review demo', 'dark');">
-                                    <i class="bi bi-pencil me-1"></i> Edit Review
-                                </button>
-                            }
-                            else
-                            {
-                                <p class="text-muted small mb-3">How has this appliance been working in your home? Your honest feedback helps fellow homeowners.</p>
-                                <button class="btn aura-btn-primary btn-sm rounded-pill px-4" onclick="showAuraToast('Review editor submitted!', 'success');">
-                                    <i class="bi bi-star me-1"></i> Write Review &amp; Claim 250 Pts
-                                </button>
-                            }
-                        </div>
-                    }
-                </div>
+                                <p class="text-secondary small mb-0 style-readable" style="line-height: 1.6;">@rev.Comment</p>
+                                @if (!string.IsNullOrEmpty(rev.ImageUrl))
+                                {
+                                    <div class="mt-3">
+                                        <a href="@rev.ImageUrl" target="_blank" title="View full image">
+                                            <img src="@rev.ImageUrl" alt="Customer review photo" class="img-fluid rounded-3 border shadow-sm" style="max-height: 180px; object-fit: cover;" onerror="this.style.display='none';" />
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5 bg-light rounded-4 border p-5 mb-4">
+                        <i class="bi bi-star text-muted opacity-50 display-4 mb-2 d-block"></i>
+                        <h5 class="fw-bold text-dark">No Submitted Reviews Yet</h5>
+                        <p class="text-muted small mb-3">Share your verified feedback on your purchased appliances to earn 250 Privilege points per review.</p>
+                        <button class="btn btn-outline-primary btn-sm rounded-pill px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#writeReviewModal">
+                            <i class="bi bi-pencil-square me-1"></i> Write Your First Review
+                        </button>
+                    </div>
+                }
             </div>
         </div>
     </div>
 </div>
+
+<!-- Write Review Modal -->
+<div class="modal fade" id="writeReviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header border-bottom px-4 py-3">
+                <h5 class="modal-title fw-bold text-dark"><i class="bi bi-star-fill text-warning me-2"></i> Write a Product Review</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="userWriteReviewForm" onsubmit="submitUserReview(event)">
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-dark">Select Purchased Product</label>
+                        <select class="form-select rounded-3 py-2" id="reviewProductSelect" required>
+                            @if (userOrders.Any())
+                            {
+                                @foreach (var ord in userOrders)
+                                {
+                                    @foreach (var item in ord.Items)
+                                    {
+                                        <option value="@item.ProductId" data-product-name="@item.ProductName">
+                                            @item.ProductName (Order #@ord.Id)
+                                        </option>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <option value="AURA-PROD-001" data-product-name="Samsung Bespoke 654L French Door Refrigerator">Samsung Bespoke 654L French Door Refrigerator</option>
+                                <option value="AURA-PROD-002" data-product-name="LG Dual Inverter 1.5 Ton Split AC">LG Dual Inverter 1.5 Ton Split AC</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-dark">Your Overall Rating</label>
+                        <select class="form-select rounded-3 py-2" id="reviewRatingSelect" required>
+                            <option value="5">⭐⭐⭐⭐⭐ 5 Stars — Excellent / Highly Recommended</option>
+                            <option value="4">⭐⭐⭐⭐ 4 Stars — Good Performance</option>
+                            <option value="3">⭐⭐⭐ 3 Stars — Average / Acceptable</option>
+                            <option value="2">⭐⭐ 2 Stars — Needs Improvement</option>
+                            <option value="1">⭐ 1 Star — Poor Experience</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-dark">Review Headline / Summary</label>
+                        <input type="text" class="form-control rounded-3" id="reviewTitleInput" placeholder="e.g. Exceptional cooling performance & whisper quiet" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-dark">Detailed Feedback</label>
+                        <textarea class="form-control rounded-3" id="reviewCommentText" rows="3" placeholder="Describe build quality, energy efficiency, installation experience, or daily operation..." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-dark mb-1">Add Photo / Image (Optional)</label>
+                        <div class="btn-group w-100 mb-2 p-1 bg-light rounded-3" role="group">
+                            <button type="button" class="btn btn-sm rounded-2 fw-semibold btn-primary" id="userUploadTabBtn" onclick="window.switchUserImageMode('file')">
+                                <i class="bi bi-cloud-upload me-1"></i> Upload File
+                            </button>
+                            <button type="button" class="btn btn-sm rounded-2 fw-semibold btn-outline-secondary" id="userUrlTabBtn" onclick="window.switchUserImageMode('url')">
+                                <i class="bi bi-link-45deg me-1"></i> Image URL
+                            </button>
+                        </div>
+                        <div id="userFileSection">
+                            <input type="file" class="form-control rounded-3" id="userReviewFileInput" accept="image/*" onchange="window.handleUserFileSelect(event)" />
+                            <div class="form-text small text-muted">Upload JPG, PNG, WEBP (Max 5MB)</div>
+                        </div>
+                        <div id="userUrlSection" style="display: none;">
+                            <input type="url" class="form-control rounded-3" id="userReviewUrlInput" placeholder="https://images.unsplash.com/photo-..." oninput="window.handleUserUrlInput(event)" />
+                            <div class="form-text small text-muted">Paste a direct web image link URL</div>
+                        </div>
+                        <div id="userImagePreviewContainer" class="mt-2 text-center p-2 border rounded-3 bg-light" style="display: none;">
+                            <img id="userImagePreview" src="" alt="Preview" class="img-fluid rounded-3 border shadow-sm mb-2" style="max-height: 150px; object-fit: cover;" />
+                            <div>
+                                <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1" onclick="window.clearUserReviewImage()">
+                                    <i class="bi bi-trash me-1"></i> Remove Photo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top px-4 py-3">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn aura-btn-primary rounded-pill px-5 fw-bold shadow-sm" id="submitReviewBtn">
+                        Submit &amp; Claim 250 Pts
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let currentImageMode = 'file';
+
+        window.switchUserImageMode = function(mode) {
+            currentImageMode = mode;
+            const fileSection = document.getElementById('userFileSection');
+            const urlSection = document.getElementById('userUrlSection');
+            const fileBtn = document.getElementById('userUploadTabBtn');
+            const urlBtn = document.getElementById('userUrlTabBtn');
+
+            if (mode === 'file') {
+                if (fileSection) fileSection.style.display = 'block';
+                if (urlSection) urlSection.style.display = 'none';
+                if (fileBtn) fileBtn.className = 'btn btn-sm rounded-2 fw-semibold btn-primary';
+                if (urlBtn) urlBtn.className = 'btn btn-sm rounded-2 fw-semibold btn-outline-secondary';
+            } else {
+                if (fileSection) fileSection.style.display = 'none';
+                if (urlSection) urlSection.style.display = 'block';
+                if (urlBtn) urlBtn.className = 'btn btn-sm rounded-2 fw-semibold btn-primary';
+                if (fileBtn) fileBtn.className = 'btn btn-sm rounded-2 fw-semibold btn-outline-secondary';
+            }
+        };
+
+        window.handleUserFileSelect = function(e) {
+            const file = e.target.files[0];
+            const container = document.getElementById('userImagePreviewContainer');
+            const preview = document.getElementById('userImagePreview');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    if (preview) preview.src = evt.target.result;
+                    if (container) container.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                if (container) container.style.display = 'none';
+            }
+        };
+
+        window.handleUserUrlInput = function(e) {
+            const url = e.target.value.trim();
+            const container = document.getElementById('userImagePreviewContainer');
+            const preview = document.getElementById('userImagePreview');
+            if (url) {
+                if (preview) preview.src = url;
+                if (container) container.style.display = 'block';
+            } else {
+                if (container) container.style.display = 'none';
+            }
+        };
+
+        window.clearUserReviewImage = function() {
+            const fileInput = document.getElementById('userReviewFileInput');
+            const urlInput = document.getElementById('userReviewUrlInput');
+            const preview = document.getElementById('userImagePreview');
+            const container = document.getElementById('userImagePreviewContainer');
+            if (fileInput) fileInput.value = '';
+            if (urlInput) urlInput.value = '';
+            if (preview) preview.src = '';
+            if (container) container.style.display = 'none';
+        };
+
+        window.submitUserReview = async function(e) {
+            if (e) e.preventDefault();
+            const submitBtn = document.getElementById('submitReviewBtn');
+            const productSelect = document.getElementById('reviewProductSelect');
+            const selectedOption = productSelect ? productSelect.options[productSelect.selectedIndex] : null;
+
+            const productId = selectedOption ? selectedOption.value : '';
+            const rating = parseInt(document.getElementById('reviewRatingSelect')?.value || '5');
+            const title = document.getElementById('reviewTitleInput')?.value?.trim();
+            const comment = document.getElementById('reviewCommentText')?.value?.trim();
+
+            if (!productId || !title || !comment) {
+                alert('Please fill out all required fields.');
+                return;
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Submitting...';
+            }
+
+            let finalImageUrl = null;
+            const fileInput = document.getElementById('userReviewFileInput');
+            const urlInputVal = document.getElementById('userReviewUrlInput')?.value?.trim();
+
+            try {
+                if (currentImageMode === 'file' && fileInput && fileInput.files && fileInput.files.length > 0) {
+                    const formData = new FormData();
+                    formData.append('file', fileInput.files[0]);
+
+                    const uploadRes = await fetch('/catalog/reviews/upload-image', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const uploadData = await uploadRes.json();
+                    if (uploadRes.ok && uploadData.success) {
+                        finalImageUrl = uploadData.imageUrl;
+                    } else {
+                        alert(uploadData.message || 'Image upload failed.');
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.innerText = 'Submit & Claim 250 Pts';
+                        }
+                        return;
+                    }
+                } else if (urlInputVal) {
+                    finalImageUrl = urlInputVal;
+                }
+
+                const response = await fetch('/catalog/reviews/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        productId: productId,
+                        rating: rating,
+                        title: title,
+                        comment: comment,
+                        imageUrl: finalImageUrl,
+                        author: '@(User.Identity?.Name ?? "VIP Customer")',
+                        city: 'Mumbai, MH'
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    if (typeof showAuraToast === 'function') {
+                        showAuraToast('Review submitted! 250 Privilege points added to your account.', 'success');
+                    }
+                    setTimeout(() => window.location.reload(), 800);
+                } else {
+                    alert(data.message || 'Error submitting review.');
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = 'Submit & Claim 250 Pts';
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred while submitting your review.');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = 'Submit & Claim 250 Pts';
+                }
+            }
+        };
+    </script>
+}

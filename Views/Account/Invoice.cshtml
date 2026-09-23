@@ -1,0 +1,343 @@
+@model AuraLiving.Models.OrderViewModel
+@{
+    Layout = null;
+    var subtotal = Model.SubTotal > 0 ? Model.SubTotal : Model.Items.Sum(i => i.Price * i.Quantity);
+    var discount = Model.Discount;
+    var grandTotal = Model.GrandTotal > 0 ? Model.GrandTotal : (subtotal - discount);
+    
+    // Estimate GST split (18% inclusive / exclusive calculation for tax receipt compliance)
+    var taxableAmount = Math.Round(grandTotal / 1.18m, 2);
+    var totalGst = grandTotal - taxableAmount;
+    var cgst = Math.Round(totalGst / 2m, 2);
+    var sgst = totalGst - cgst;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tax Invoice #INV-@Model.Id | Indoria Luxury Appliances</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --aura-navy: #0f172a;
+            --aura-gold: #d97706;
+            --aura-border: #e2e8f0;
+            --aura-bg-subtle: #f8fafc;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #334155;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .no-print-bar {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 12px 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .invoice-card {
+            max-width: 860px;
+            margin: 30px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+            padding: 48px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .invoice-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #d97706, #f59e0b, #3b82f6);
+        }
+
+        .brand-logo-text {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 26px;
+            letter-spacing: -0.5px;
+            color: #0f172a;
+        }
+
+        .brand-subtitle {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .invoice-badge {
+            display: inline-block;
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+            font-weight: 700;
+            font-size: 12px;
+            padding: 6px 16px;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+            margin-bottom: 24px;
+        }
+
+        .invoice-table th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 16px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .invoice-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+            font-size: 13px;
+        }
+
+        .summary-box {
+            background-color: #f8fafc;
+            border-radius: 12px;
+            padding: 20px 24px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .total-row {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0f172a;
+            border-top: 2px solid #cbd5e1;
+            padding-top: 10px;
+            margin-top: 8px;
+        }
+
+        .authenticity-seal {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 12px 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: #fff;
+        }
+
+        @@media print {
+            body {
+                background: #ffffff !important;
+            }
+            .no-print-bar {
+                display: none !important;
+            }
+            .invoice-card {
+                box-shadow: none !important;
+                border: none !important;
+                margin: 0 !important;
+                padding: 20px !important;
+                max-width: 100% !important;
+            }
+            @@page {
+                size: A4;
+                margin: 15mm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Non-printable Top Utility Navigation Bar -->
+    <div class="no-print-bar d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+            <a href="/account/orders/@Model.Id" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                <i class="bi bi-arrow-left me-1"></i> Return to Order Details
+            </a>
+            <span class="fs-7 text-light text-opacity-75">Official Tax Receipt Preview for Order #@Model.Id</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-warning rounded-pill px-4 fw-bold shadow-sm" onclick="window.print();">
+                <i class="bi bi-printer-fill me-1"></i> Print / Save as PDF
+            </button>
+        </div>
+    </div>
+
+    <!-- Official Printable Invoice Container -->
+    <div class="invoice-card">
+        <!-- Invoice Header Row -->
+        <div class="row align-items-start mb-4 pb-4 border-bottom">
+            <div class="col-7">
+                <div class="brand-logo-text">INDORIA <span style="color: #d97706;">LUXURY</span></div>
+                <div class="brand-subtitle">Homixa Appliance Flagship Commerce</div>
+                <div class="small text-muted mt-2" style="font-size: 12px; line-height: 1.5;">
+                    <strong>Indoria Home Appliances Private Limited</strong><br />
+                    Plot 84, Luxury Appliance Boulevard, Cyber City Phase-2<br />
+                    Gurugram, Haryana - 122002 | Customer Hotline: 1800-202-9988<br />
+                    <strong>GSTIN:</strong> 06AAACO9823M1Z5 | <strong>CIN:</strong> U52100HR2024PTC098231
+                </div>
+            </div>
+            <div class="col-5 text-end">
+                <h2 class="fw-extrabold text-dark mb-1" style="font-family: 'Outfit'; letter-spacing: 1px;">TAX INVOICE</h2>
+                <div class="text-secondary fw-semibold mb-2" style="font-size: 13px;">Invoice No: <strong class="text-dark">INV-@Model.Id</strong></div>
+                <div class="invoice-badge mb-2">
+                    <i class="bi bi-patch-check-fill me-1"></i> @(Model.Status == "Cancelled" ? "CANCELLED" : "CONFIRMED & PAID")
+                </div>
+                <div class="small text-muted">Date: <strong>@Model.OrderDate.ToString("dd MMMM yyyy, hh:mm tt")</strong></div>
+            </div>
+        </div>
+
+        <!-- Customer & Order Metadata Grid -->
+        <div class="row g-4 mb-4">
+            <div class="col-6">
+                <div class="p-3.5 rounded-3 bg-light border h-100">
+                    <div class="small fw-bold text-uppercase text-secondary mb-2" style="font-size: 11px; letter-spacing: 1px;">Billed To / Customer Details</div>
+                    <div class="fw-bold text-dark fs-6">@(string.IsNullOrEmpty(Model.ShippingAddress?.FullName) ? Model.CustomerName : Model.ShippingAddress.FullName)</div>
+                    <div class="small text-muted mt-1" style="line-height: 1.6;">
+                        <strong>Email:</strong> @(string.IsNullOrEmpty(Model.CustomerEmail) ? Model.ShippingAddress?.Email : Model.CustomerEmail)<br />
+                        <strong>Phone:</strong> @(Model.ShippingAddress?.Phone ?? "+91 98201 45890")<br />
+                        <strong>Place of Supply:</strong> @(Model.ShippingAddress?.State ?? "Haryana") (Code: 06)
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="p-3.5 rounded-3 bg-light border h-100">
+                    <div class="small fw-bold text-uppercase text-secondary mb-2" style="font-size: 11px; letter-spacing: 1px;">White-Glove Delivery &amp; Demo Site</div>
+                    <div class="fw-bold text-dark fs-6"><i class="bi bi-geo-alt-fill text-warning me-1"></i> Delivery Address</div>
+                    <div class="small text-muted mt-1" style="line-height: 1.6;">
+                        @Model.ShippingAddress?.StreetAddress, @Model.ShippingAddress?.City<br />
+                        @Model.ShippingAddress?.State - <strong>@Model.ShippingAddress?.Pincode</strong><br />
+                        <strong>Payment Method:</strong> <span class="badge bg-secondary text-white">@Model.PaymentMethod</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Purchased Item Details Table -->
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%;">#</th>
+                    <th style="width: 45%;">Item Description &amp; Specifications</th>
+                    <th style="width: 15%;" class="text-center">HSN Code</th>
+                    <th style="width: 10%;" class="text-center">Qty</th>
+                    <th style="width: 12%;" class="text-end">Unit Price</th>
+                    <th style="width: 13%;" class="text-end">Net Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int itemNum = 1; }
+                @foreach (var item in Model.Items)
+                {
+                    var hsn = item.ProductName.Contains("TV") ? "85287217" : 
+                              item.ProductName.Contains("Refrig") || item.ProductName.Contains("Fridge") ? "84181010" :
+                              item.ProductName.Contains("Wash") ? "84501100" :
+                              item.ProductName.Contains("Air") || item.ProductName.Contains("AC") ? "84151010" : "85166000";
+                    var lineTotal = item.UnitPrice > 0 ? (item.UnitPrice * item.Quantity) : item.Total;
+                    <tr>
+                        <td class="fw-semibold text-muted">@itemNum.ToString("D2")</td>
+                        <td>
+                            <div class="fw-bold text-dark">@item.ProductName</div>
+                            <div class="small text-muted">SKU: @item.ProductId • Brand Certified Guarantee • 2-Yr Comprehensive Warranty</div>
+                        </td>
+                        <td class="text-center text-muted font-monospace small">@hsn</td>
+                        <td class="text-center fw-bold text-dark">@item.Quantity</td>
+                        <td class="text-end text-dark">₹@item.UnitPrice.ToString("N0")</td>
+                        <td class="text-end fw-bold text-dark">₹@lineTotal.ToString("N0")</td>
+                    </tr>
+                    itemNum++;
+                }
+            </tbody>
+        </table>
+
+        <!-- Summary & Tax Computation Section -->
+        <div class="row g-4 pt-2">
+            <div class="col-7 d-flex flex-column justify-content-between">
+                <div class="authenticity-seal mb-3">
+                    <i class="bi bi-shield-check text-warning fs-2"></i>
+                    <div>
+                        <div class="fw-bold text-dark fs-7">Homixa Certified Original Receipt</div>
+                        <div class="small text-muted" style="font-size: 11px;">100% Brand Sealed Product • Includes Free Certified Installation</div>
+                    </div>
+                </div>
+
+                <div class="small text-muted style-readable" style="font-size: 11px; line-height: 1.5;">
+                    <strong>Terms &amp; Warranty Conditions:</strong><br />
+                    1. Goods once sold carry official 2-Year Manufacturer Comprehensive Warranty &amp; 10-Year Compressor/Motor Guarantee.<br />
+                    2. 15-day return and replacement coverage active from date of installation.<br />
+                    3. Computer-generated tax invoice. No signature required.
+                </div>
+            </div>
+
+            <div class="col-5">
+                <div class="summary-box">
+                    <div class="d-flex justify-content-between small text-secondary mb-2">
+                        <span>Items Subtotal</span>
+                        <span class="text-dark fw-bold">₹@subtotal.ToString("N0")</span>
+                    </div>
+
+                    @if (discount > 0)
+                    {
+                        <div class="d-flex justify-content-between small text-success mb-2">
+                            <span>Voucher Discount</span>
+                            <span class="fw-bold">-₹@discount.ToString("N0")</span>
+                        </div>
+                    }
+
+                    <div class="d-flex justify-content-between small text-secondary mb-2">
+                        <span>Taxable Value</span>
+                        <span class="text-dark">₹@taxableAmount.ToString("N0")</span>
+                    </div>
+                    <div class="d-flex justify-content-between small text-secondary mb-2">
+                        <span>CGST (9%)</span>
+                        <span class="text-dark">₹@cgst.ToString("N0")</span>
+                    </div>
+                    <div class="d-flex justify-content-between small text-secondary mb-2">
+                        <span>SGST (9%)</span>
+                        <span class="text-dark">₹@sgst.ToString("N0")</span>
+                    </div>
+                    <div class="d-flex justify-content-between small text-secondary mb-2">
+                        <span>White-Glove Delivery</span>
+                        <span class="text-success fw-bold">FREE</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center total-row">
+                        <span>Grand Total</span>
+                        <span class="text-warning">₹@grandTotal.ToString("N0")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Seal Bar -->
+        <div class="text-center border-top mt-4 pt-3 text-muted small" style="font-size: 11px;">
+            Thank you for choosing <strong>Indoria Luxury Appliances</strong>. For support or installation appointments, call <strong>1800-202-9988</strong> or visit <a href="http://localhost:5159" class="text-decoration-none text-muted fw-semibold">www.indoria.com</a>
+        </div>
+    </div>
+
+</body>
+</html>

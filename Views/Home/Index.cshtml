@@ -1,314 +1,382 @@
 @model AuraLiving.Models.HomeViewModel
 @{
-    ViewData["Title"] = "Engineered Luxury & Smart Living";
+    ViewData["Title"] = "Indoria - Upgrade Your Home with Premium Appliances";
 }
 
-<!-- Hero Banner Section - Modern Floating Curved Visual (Doesn't touch the window frames) -->
-<div class="container mt-3 mt-md-4 mb-4 mb-lg-5">
-    <section class="aura-hero-banner">
-        <img src="/images/hero-bg.jpg" 
-             alt="Modern Architectural Appliance Suite" 
-             class="aura-hero-bg-img" />
-        <div class="aura-hero-overlay"></div>
-        <div class="container position-relative px-3 px-md-5" style="z-index: 3;">
-            <div class="aura-hero-content">
-                <!-- Floating Pulse Badge -->
-                <div class="aura-hero-badge">
-                    <span class="aura-pulse-dot"></span> 2026 Architectural Suite • Bespoke Living
-                </div>
-
-                <h1 class="aura-hero-title">
-                    Precision Engineering.<br class="d-none d-sm-inline" /> Crafted for Modern Sanctuaries.
+<!-- Homixa Hero Section (Matching UI Reference Image) -->
+<div class="container pt-1 pb-4 pb-lg-5">
+    <section class="homixa-hero-section">
+        <div class="row align-items-start justify-content-between g-4 mb-4 mb-lg-5">
+            <!-- Left Column: Big Bold Headline with Green Badges -->
+            <div class="col-lg-7">
+                <h1 class="homixa-hero-title">
+                    @Localizer["Elevate Your Living Space"] 
+                    <span class="homixa-inline-badge"><i class="bi bi-house-door-fill"></i></span> 
+                    @Localizer["Modern Home Appliances"] 
+                    <span class="homixa-inline-badge"><i class="bi bi-arrow-up-right"></i></span>
                 </h1>
+            </div>
 
-                <p class="aura-hero-lead">
-                    Discover whisper-quiet inverter cooling, acoustic OLED cinema, and precision culinary induction suites engineered to integrate seamlessly into your living spaces.
+            <!-- Right Column: Subtitle paragraph & Pill Buttons -->
+            <div class="col-lg-5 col-xl-4 pt-lg-2">
+                <p class="homixa-hero-desc mb-4">
+                    @Localizer["Curated Launch Deals & Private Offers"]
                 </p>
-
-                <div class="d-flex flex-wrap gap-2 gap-md-3 mb-3">
-                    <a href="/products" class="btn btn-light px-3 px-sm-4 py-2.5 py-sm-3 rounded-pill fw-bold text-dark shadow-sm">
-                        Explore Collection <i class="bi bi-arrow-up-right ms-2"></i>
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <a href="/products" class="btn homixa-btn-primary">
+                        @Localizer["Shop Now"] <i class="bi bi-arrow-right ms-2"></i>
                     </a>
-                    <a href="/category/refrigerators" class="btn btn-outline-light px-3 px-sm-4 py-2.5 py-sm-3 rounded-pill fw-bold" style="backdrop-filter: blur(8px); background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.4);">
-                        Smart Refrigerators
+                    <a href="/categories" class="btn homixa-btn-outline">
+                        @Localizer["Categories"]
                     </a>
-                </div>
-
-                <!-- Integrated Hero Specs Bar -->
-                <div class="aura-hero-specs-bar">
-                    <div class="aura-hero-spec-item">
-                        <i class="bi bi-truck text-info fs-5"></i>
-                        <span>White-Glove Delivery</span>
-                    </div>
-                    <div class="aura-hero-spec-item">
-                        <i class="bi bi-tools text-primary fs-5"></i>
-                        <span>Free Certified Install</span>
-                    </div>
-                    <div class="aura-hero-spec-item">
-                        <i class="bi bi-shield-check text-success fs-5"></i>
-                        <span>2-Year Indoria Care</span>
-                    </div>
                 </div>
             </div>
         </div>
-    </section>
-</div>
 
-<div class="container py-2">
-
-    <!-- Shop by Curated Categories -->
-    <section class="mb-5">
-        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-end gap-2 mb-4">
-            <div>
-                <div class="aura-section-tag"><i class="bi bi-grid-fill me-1"></i> SPACES &amp; NEEDS</div>
-                <h2 class="aura-section-heading mb-0">Curated Collections</h2>
-            </div>
-            <a href="/categories" class="btn aura-btn-outline rounded-pill px-4 btn-sm">
-                All Categories <i class="bi bi-arrow-up-right ms-1"></i>
-            </a>
-        </div>
-
-        <div class="row row-cols-2 row-cols-md-4 g-2 g-sm-3 g-md-4">
-            @foreach (var cat in Model.Categories.Take(8))
-            {
-                <div class="col">
-                    <partial name="_CategoryCard" model="cat" />
-                </div>
-            }
+        <!-- Full-Width Photorealistic Hero Image Container with Rounded Corners -->
+        <div class="homixa-hero-img-wrap mb-5">
+            <img src="/images/homixa_hero_appliances.jpg" 
+                 alt="Homixa Premium Appliances Suite" 
+                                class="homixa-hero-img" />
         </div>
     </section>
+
+
 
     <!-- Interactive Flagship Showcase with Modern Filter Pills -->
     <section class="mb-5">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-end gap-3 mb-4">
             <div>
-                <div class="aura-section-tag"><i class="bi bi-stars me-1"></i> MASTERPIECE ENGINEERING</div>
-                <h2 class="aura-section-heading mb-0">Flagship Appliances</h2>
+                <div class="aura-section-tag"><i class="bi bi-stars me-1"></i> @Localizer["Featured Appliances"]</div>
+                <h2 class="aura-section-heading mb-0">@Localizer["Featured Appliances"]</h2>
             </div>
             <div class="aura-filter-pills" id="homeProductFilters" role="tablist">
-                <button type="button" class="aura-pill-btn active" data-filter="all">All Flagships</button>
-                <button type="button" class="aura-pill-btn" data-filter="refrigerators">Cooling</button>
-                <button type="button" class="aura-pill-btn" data-filter="washing-machines">Laundry</button>
-                <button type="button" class="aura-pill-btn" data-filter="smart-tvs">OLED Cinema</button>
-                <button type="button" class="aura-pill-btn" data-filter="air-conditioners">Climate</button>
-                <button type="button" class="aura-pill-btn" data-filter="kitchen-appliances">Kitchen</button>
+                <button type="button" class="aura-pill-btn active" data-filter="all">@Localizer["All Categories"]</button>
+                <button type="button" class="aura-pill-btn" data-filter="refrigerators">@Localizer["Cooling"]</button>
+                <button type="button" class="aura-pill-btn" data-filter="washing-machines">@Localizer["Laundry"]</button>
+                <button type="button" class="aura-pill-btn" data-filter="smart-tvs">@Localizer["Smart TVs"]</button>
+                <button type="button" class="aura-pill-btn" data-filter="air-conditioners">@Localizer["Air Conditioners"]</button>
+                <button type="button" class="aura-pill-btn" data-filter="kitchen-appliances">@Localizer["Kitchen"]</button>
             </div>
         </div>
 
-        <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-2 g-sm-3 g-md-4" id="homeProductGrid">
+        <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 row-cols-xxl-5 g-2 g-sm-3 g-md-4" id="homeProductGrid">
             @{
-                var combinedFlagships = Model.FeaturedProducts.Concat(Model.BestSellers).DistinctBy(p => p.Id).Take(8);
+                var combinedFlagships = Model.FeaturedProducts.DistinctBy(p => p.Id).ToList();
             }
-            @foreach (var product in combinedFlagships)
+            @if (!combinedFlagships.Any())
             {
-                <div class="col home-product-item" data-category="@product.CategorySlug">
-                    <partial name="_ProductCard" model="product" />
+                <div class="col-12 w-100 text-center py-5">
+                    <div class="p-4 rounded-4 bg-light border text-center">
+                        <i class="bi bi-box-seam display-4 text-muted mb-3 d-block"></i>
+                        <h4 class="fw-bold text-dark mb-2">@Localizer["Out of Stock"]</h4>
+                        <p class="text-secondary small mb-3">Products added from the Admin Console will appear here in real-time.</p>
+                        <a href="/admin/products" class="btn aura-btn-primary btn-sm rounded-pill px-4">@Localizer["Admin Console"]</a>
+                    </div>
                 </div>
+            }
+            else
+            {
+                @foreach (var product in combinedFlagships)
+                {
+                    <div class="col home-product-item" data-category="@product.CategorySlug">
+                        <partial name="_ProductCard" model="product" />
+                    </div>
+                }
             }
         </div>
 
         <div class="text-center mt-4 pt-2">
             <a href="/products" class="btn aura-btn-outline rounded-pill px-5 py-2.5 fw-semibold shadow-sm">
-                Explore Complete Catalog <i class="bi bi-arrow-up-right ms-1"></i>
+                @Localizer["Shop Now"] <i class="bi bi-arrow-up-right ms-1"></i>
             </a>
-        </div>
-    </section>
-
-    <!-- Bento Innovation & Craft Showcase (Unique Asymmetric Feature) -->
-    <section class="mb-5">
-        <div class="text-center mb-4">
-            <div class="aura-section-tag"><i class="bi bi-cpu-fill me-1"></i> ARCHITECTURAL INNOVATION</div>
-            <h2 class="aura-section-heading">The Art of Modern Living</h2>
-            <p class="text-muted small mx-auto" style="max-width: 580px;">Discover appliances where cutting-edge thermal engineering and acoustic perfection integrate seamlessly into contemporary interiors.</p>
-        </div>
-
-        <div class="row g-3 g-md-4">
-            <!-- Box 1: Wide OLED Cinema Feature -->
-            <div class="col-12 col-lg-6">
-                <div class="aura-bento-card h-100">
-                    <img src="https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&w=1200&q=80" 
-                         alt="Sony Bravia OLED Cinema Experience" 
-                         class="aura-bento-bg" />
-                    <div class="aura-bento-overlay"></div>
-                    <div class="aura-bento-content">
-                        <div class="d-flex flex-wrap gap-1 mb-2">
-                            <span class="aura-bento-badge">
-                                <i class="bi bi-tv-fill text-warning"></i> Acoustic OLED Cinema
-                            </span>
-                            <span class="badge bg-dark bg-opacity-75 border border-light border-opacity-25 small" style="backdrop-filter: blur(8px);">4K 120Hz</span>
-                            <span class="badge bg-dark bg-opacity-75 border border-light border-opacity-25 small" style="backdrop-filter: blur(8px);">Cognitive XR</span>
-                        </div>
-                        <h3 class="fw-bold mb-2 fs-4 text-white">Sony 4K OLED &amp; QD-OLED Suites</h3>
-                        <p class="text-light opacity-90 small mb-3">Self-lit pixels deliver pure black and infinite contrast, paired with Acoustic Surface Audio+ radiating sound directly through the screen glass.</p>
-                        <a href="/category/smart-tvs" class="btn btn-sm btn-light rounded-pill px-3 fw-bold text-dark shadow-sm">
-                            Explore Cinema <i class="bi bi-arrow-up-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Box 2: Whisper-Quiet Climate -->
-            <div class="col-12 col-sm-6 col-lg-3">
-                <div class="aura-bento-card h-100">
-                    <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80" 
-                         alt="Daikin Inverter AC" 
-                         class="aura-bento-bg" />
-                    <div class="aura-bento-overlay"></div>
-                    <div class="aura-bento-content">
-                        <div class="d-flex flex-wrap gap-1 mb-2">
-                            <span class="aura-bento-badge">
-                                <i class="bi bi-snow text-info"></i> Whisper Climate
-                            </span>
-                            <span class="badge bg-dark bg-opacity-75 border border-light border-opacity-25 small" style="backdrop-filter: blur(8px);">&lt;19dB Silent</span>
-                        </div>
-                        <h4 class="fw-bold mb-1 fs-5 text-white">Daikin &amp; Dyson Air</h4>
-                        <p class="text-light opacity-90 small mb-3">Sub-19dB silent cooling with integrated medical-grade HEPA air purification.</p>
-                        <a href="/category/air-conditioners" class="text-white small fw-bold text-decoration-underline">
-                            View ACs <i class="bi bi-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Box 3: German Culinary Suite -->
-            <div class="col-12 col-sm-6 col-lg-3">
-                <div class="aura-bento-card h-100">
-                    <img src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=800&q=80" 
-                         alt="Bosch German Engineered Kitchen" 
-                         class="aura-bento-bg" />
-                    <div class="aura-bento-overlay"></div>
-                    <div class="aura-bento-content">
-                        <div class="d-flex flex-wrap gap-1 mb-2">
-                            <span class="aura-bento-badge">
-                                <i class="bi bi-fire text-danger"></i> German Precision
-                            </span>
-                            <span class="badge bg-dark bg-opacity-75 border border-light border-opacity-25 small" style="backdrop-filter: blur(8px);">FlameSelect 9</span>
-                        </div>
-                        <h4 class="fw-bold mb-1 fs-5 text-white">Bosch Series 8 Hobs</h4>
-                        <p class="text-light opacity-90 small mb-3">FlameSelect flame control with 9 calibrated power levels for chef-grade mastery.</p>
-                        <a href="/category/kitchen-appliances" class="text-white small fw-bold text-decoration-underline">
-                            View Suites <i class="bi bi-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
     <!-- Promotional Campaign Banner with Live Timer -->
     <partial name="_PromoBanner" />
 
-    <!-- Minimalist Authorised Brands Strip -->
+    <!-- Authorized Direct Manufacturer Warranty Honors Strip -->
     <section class="mb-5">
-        <div class="aura-brand-strip text-center">
-            <div class="small text-uppercase fw-bold text-muted mb-3" style="letter-spacing: 0.1em; font-size: 0.72rem;">
-                Authorized Direct Manufacturer Warranty Honors
+        <div class="aura-brand-strip-card text-center">
+            <div class="d-flex align-items-center justify-content-center gap-2 mb-4">
+                <i class="bi bi-shield-patch-check-fill text-primary fs-5"></i>
+                <span class="small text-uppercase fw-bold text-muted" style="letter-spacing: 0.12em; font-size: 0.75rem;">
+                    @Localizer["Authorized Direct Manufacturer Warranty Honors"]
+                </span>
             </div>
-            <div class="row row-cols-2 row-cols-sm-3 row-cols-md-6 g-2 align-items-center justify-content-center">
-                <div class="col"><a href="/search?q=Samsung" class="aura-brand-item w-100">SAMSUNG</a></div>
-                <div class="col"><a href="/search?q=Bosch" class="aura-brand-item w-100">BOSCH</a></div>
-                <div class="col"><a href="/search?q=LG" class="aura-brand-item w-100">LG</a></div>
-                <div class="col"><a href="/search?q=Sony" class="aura-brand-item w-100">SONY</a></div>
-                <div class="col"><a href="/search?q=Dyson" class="aura-brand-item w-100">DYSON</a></div>
-                <div class="col"><a href="/search?q=Daikin" class="aura-brand-item w-100">DAIKIN</a></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- The Indoria Standard: Service Pillars -->
-    <section class="mb-5">
-        <div class="text-center mb-4">
-            <div class="aura-section-tag"><i class="bi bi-shield-fill-check me-1"></i> THE INDORIA PROMISE</div>
-            <h2 class="aura-section-heading">Engineered For Zero Hassle</h2>
-        </div>
-
-        <div class="row g-2 g-sm-3 g-md-4">
-            <div class="col-6 col-lg-3">
-                <div class="aura-value-card">
-                    <div class="aura-value-icon">
-                        <i class="bi bi-truck"></i>
-                    </div>
-                    <div>
-                        <h5 class="fw-bold mb-1 fs-6">White-Glove Delivery</h5>
-                        <p class="text-muted small mb-0">Air-ride shockproof transit with scheduled delivery windows in 20+ metro regions.</p>
-                    </div>
+            <div class="row row-cols-2 row-cols-sm-4 row-cols-lg-8 g-3 align-items-center justify-content-center">
+                <!-- SAMSUNG -->
+                <div class="col">
+                    <a href="/search?q=Samsung" class="homixa-brand-logo-card" title="Samsung Official Warranty Store">
+                        <span class="fw-black text-dark" style="font-size: 1.15rem; letter-spacing: 1px; font-weight: 900;">SAMSUNG</span>
+                    </a>
                 </div>
-            </div>
-            <div class="col-6 col-lg-3">
-                <div class="aura-value-card">
-                    <div class="aura-value-icon">
-                        <i class="bi bi-wrench-adjustable"></i>
-                    </div>
-                    <div>
-                        <h5 class="fw-bold mb-1 fs-6">Free Certified Install</h5>
-                        <p class="text-muted small mb-0">Authorized brand engineers handle unboxing, civil plumbing, calibration, and demo.</p>
-                    </div>
+                <!-- BOSCH -->
+                <div class="col">
+                    <a href="/search?q=Bosch" class="homixa-brand-logo-card" title="Bosch Official Warranty Store">
+                        <span class="badge bg-danger text-white me-1 fw-bold px-1.5 py-0.5" style="font-size: 0.7rem;">B</span>
+                        <span class="fw-black text-dark" style="font-size: 1.15rem; letter-spacing: 1px; font-weight: 900;">BOSCH</span>
+                    </a>
                 </div>
-            </div>
-            <div class="col-6 col-lg-3">
-                <div class="aura-value-card">
-                    <div class="aura-value-icon">
-                        <i class="bi bi-shield-check"></i>
-                    </div>
-                    <div>
-                        <h5 class="fw-bold mb-1 fs-6">2-Year Indoria Care</h5>
-                        <p class="text-muted small mb-0">Comprehensive mechanical protection and zero-depreciation coverage on all suites.</p>
-                    </div>
+                <!-- LG -->
+                <div class="col">
+                    <a href="/search?q=LG" class="homixa-brand-logo-card" title="LG Official Warranty Store">
+                        <svg viewBox="0 0 32 32" width="22" height="22" fill="none" class="me-1">
+                            <circle cx="16" cy="16" r="14" fill="#a50034"/>
+                            <path d="M12 9v14h8" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="20" cy="12" r="2" fill="#ffffff"/>
+                        </svg>
+                        <span class="fw-black text-dark" style="font-size: 1.2rem; font-weight: 900;">LG</span>
+                    </a>
                 </div>
-            </div>
-            <div class="col-6 col-lg-3">
-                <div class="aura-value-card">
-                    <div class="aura-value-icon">
-                        <i class="bi bi-arrow-repeat"></i>
-                    </div>
-                    <div>
-                        <h5 class="fw-bold mb-1 fs-6">15-Day Easy Returns</h5>
-                        <p class="text-muted small mb-0">Doorstep pickup and instant resolution if any transit or technical mismatch occurs.</p>
-                    </div>
+                <!-- WHIRLPOOL -->
+                <div class="col">
+                    <a href="/search?q=Whirlpool" class="homixa-brand-logo-card" title="Whirlpool Official Warranty Store">
+                        <i class="bi bi-arrow-repeat text-warning fs-5"></i>
+                        <span class="fw-bold text-dark" style="font-size: 1rem;">Whirlpool</span>
+                    </a>
+                </div>
+                <!-- HAIER -->
+                <div class="col">
+                    <a href="/search?q=Haier" class="homixa-brand-logo-card" title="Haier Official Warranty Store">
+                        <span class="fw-bold text-primary fs-5" style="letter-spacing: 1px;">Haier</span>
+                    </a>
+                </div>
+                <!-- SONY -->
+                <div class="col">
+                    <a href="/search?q=Sony" class="homixa-brand-logo-card" title="Sony Official Warranty Store">
+                        <span class="fw-bold text-dark" style="font-family: 'Times New Roman', serif; font-size: 1.2rem; letter-spacing: 2px;">SONY</span>
+                    </a>
+                </div>
+                <!-- DYSON -->
+                <div class="col">
+                    <a href="/search?q=Dyson" class="homixa-brand-logo-card" title="Dyson Official Warranty Store">
+                        <span class="fw-bold text-dark" style="font-size: 1.25rem; letter-spacing: -0.5px; text-transform: lowercase;">dyson</span>
+                    </a>
+                </div>
+                <!-- DAIKIN -->
+                <div class="col">
+                    <a href="/search?q=Daikin" class="homixa-brand-logo-card" title="Daikin Official Warranty Store">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="#009fe3" class="me-1">
+                            <polygon points="2,22 22,2 22,22"/>
+                        </svg>
+                        <span class="fw-bold" style="font-size: 0.95rem; letter-spacing: 1px; color: #009fe3;">DAIKIN</span>
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Verified Patron Experiences -->
-    <section class="mb-5">
-        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-end gap-2 mb-4">
-            <div>
-                <div class="aura-section-tag"><i class="bi bi-chat-quote-fill me-1"></i> VERIFIED EXPERIENCES</div>
-                <h2 class="aura-section-heading mb-0">What Our Patrons Say</h2>
+    @if (Model.Testimonials != null && Model.Testimonials.Any())
+    {
+        <section class="mb-5">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-end gap-3 mb-4">
+                <div>
+                    <div class="aura-section-tag"><i class="bi bi-chat-quote-fill text-warning me-1"></i> @Localizer["VERIFIED EXPERIENCES"]</div>
+                    <h2 class="aura-section-heading mb-0">@Localizer["What Our Patrons Say"]</h2>
+                </div>
+                <div class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill d-flex align-items-center gap-2">
+                    <i class="bi bi-patch-check-fill text-success fs-6"></i>
+                    <strong class="small">@Localizer["4.9 / 5 Verified Satisfaction"]</strong>
+                </div>
             </div>
-            <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
-                <i class="bi bi-patch-check-fill me-1"></i> 4.9 / 5 Verified Satisfaction
-            </span>
-        </div>
 
-        <div class="row g-3 g-md-4">
-            @foreach (var test in Model.Testimonials)
-            {
-                <div class="col-12 col-md-4">
-                    <div class="p-4 rounded-4 bg-white border h-100 d-flex flex-column justify-content-between shadow-sm">
-                        <div>
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <partial name="_RatingStars" model="(double)test.Rating" />
-                                <span class="badge bg-light text-muted border rounded-pill">Verified Buyer</span>
-                            </div>
-                            <h5 class="fw-bold mb-2 fs-6">"@test.Title"</h5>
-                            <p class="text-secondary small mb-4">
-                                @test.Comment
-                            </p>
-                        </div>
-                        <div class="d-flex align-items-center gap-3 pt-3 border-top">
-                            <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center shadow-sm" style="width: 38px; height: 38px; font-size: 0.9rem;">
-                                @test.Author.Substring(0, 1)
-                            </div>
+            <div class="row g-4">
+                @foreach (var test in Model.Testimonials)
+                {
+                    <div class="col-12 col-md-4">
+                        <div class="homixa-testimonial-card h-100 d-flex flex-column justify-content-between">
                             <div>
-                                <div class="fw-bold text-dark small">@test.Author</div>
-                                <small class="text-muted" style="font-size: 0.75rem;">@test.City • @test.Date</small>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <partial name="_RatingStars" model="(double)test.Rating" />
+                                    @if (test.VerifiedBuyer)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 small">
+                                            <i class="bi bi-patch-check-fill me-1"></i> @Localizer["Verified Owner"]
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1 small">
+                                            <i class="bi bi-person-check-fill me-1"></i> @Localizer["Customer Review"]
+                                        </span>
+                                    }
+                                </div>
+                                @if (!string.IsNullOrEmpty(test.ProductName) && !string.IsNullOrEmpty(test.ProductSlug))
+                                {
+                                    <a href="/product/@test.ProductSlug" class="badge bg-light text-dark border text-truncate max-w-100 d-inline-block mb-2 text-decoration-none" title="@test.ProductName">
+                                        <i class="bi bi-bag-check-fill text-primary me-1"></i> @test.ProductName
+                                    </a>
+                                }
+                                <h5 class="fw-bold mb-2 text-dark fs-6">"@test.Title"</h5>
+                                <p class="text-secondary small mb-4" style="line-height: 1.65;">
+                                    @test.Comment
+                                </p>
+                            </div>
+                            <div class="d-flex align-items-center gap-3 pt-3 border-top mt-auto">
+                                <div class="homixa-testimonial-avatar">
+                                    @(string.IsNullOrEmpty(test.Author) ? "C" : test.Author.Substring(0, 1).ToUpper())
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark small">@(string.IsNullOrEmpty(test.Author) ? "Community Reviewer" : test.Author)</div>
+                                    <small class="text-muted" style="font-size: 0.75rem;">@(string.IsNullOrEmpty(test.City) ? "India" : test.City) • @test.Date</small>
+                                </div>
                             </div>
                         </div>
                     </div>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- Luxury SwiperJS Instagram Feed Section (@@ebsor_infosystems) -->
+    <section class="mb-5 pt-3 position-relative aura-insta-feed-section">
+        <!-- Center-Aligned Luxury Header -->
+        <div class="insta-section-header text-center mb-4">
+            <div class="insta-header-badge d-inline-flex align-items-center gap-2 mb-2 px-3 py-1 rounded-pill">
+                <i class="bi bi-instagram text-danger"></i>
+                <span class="fw-semibold text-dark">@@@Model.InstagramFeed.Username</span>
+            </div>
+            <h2 class="insta-header-title text-uppercase fw-extrabold tracking-wider mb-2">
+                INSTAGRAM FEED
+            </h2>
+            <div class="insta-header-underline mx-auto"></div>
+        </div>
+
+        <!-- Profile Bar Header -->
+        <div class="insta-profile-bar d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 mb-4 p-3.5 p-md-4 rounded-4 shadow-sm bg-white border">
+            <div class="d-flex align-items-center gap-3">
+                <div class="insta-avatar-gradient-ring">
+                    <img src="@Model.InstagramFeed.ProfilePicUrl" alt="@@@Model.InstagramFeed.Username" class="insta-avatar-img" />
+                </div>
+                <div>
+                    <div class="d-flex align-items-center gap-2">
+                        <h4 class="fw-bold mb-0 text-dark fs-5">@@@Model.InstagramFeed.Username</h4>
+                        <i class="bi bi-patch-check-fill text-primary" title="Verified Official Account"></i>
+                    </div>
+                    <p class="text-secondary small mb-0 mt-0.5" style="line-height: 1.4;">@Model.InstagramFeed.Bio</p>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-3 flex-wrap justify-content-center">
+                <div class="text-center px-3 py-1.5 bg-light rounded-3 border">
+                    <span class="d-block fw-bold text-dark fs-6">@Model.InstagramFeed.FollowersCount</span>
+                    <small class="text-muted fw-semibold" style="font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase;">Followers</small>
+                </div>
+                <div class="text-center px-3 py-1.5 bg-light rounded-3 border">
+                    <span class="d-block fw-bold text-dark fs-6">@Model.InstagramFeed.PostsCount</span>
+                    <small class="text-muted fw-semibold" style="font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase;">Posts</small>
+                </div>
+                <a href="@Model.InstagramFeed.ProfileUrl" target="_blank" rel="noopener noreferrer" class="btn insta-follow-btn text-white rounded-pill px-4 py-2.5 fw-bold d-flex align-items-center gap-2 shadow-sm">
+                    <i class="bi bi-instagram fs-6"></i>
+                    <span>Follow Us on Instagram</span>
+                    <i class="bi bi-arrow-up-right small ms-1"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Swiper Carousel Container -->
+        <div class="insta-gallery-wrapper position-relative">
+            <!-- Custom Navigation Buttons -->
+            <button type="button" class="insta-swiper-prev shadow-lg" aria-label="Previous Slide">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+            <button type="button" class="insta-swiper-next shadow-lg" aria-label="Next Slide">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+
+            @if (Model.InstagramFeed?.Posts != null && Model.InstagramFeed.Posts.Any())
+            {
+                <div class="swiper insta-swiper-container rounded-4 overflow-hidden">
+                    <div class="swiper-wrapper">
+                        @foreach (var post in Model.InstagramFeed.Posts)
+                        {
+                            <div class="swiper-slide">
+                                <a href="@post.Permalink" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer" 
+                                   onclick="trackInstagramClick('@post.Id', '@post.Permalink')"
+                                   class="insta-card d-block position-relative rounded-4 overflow-hidden text-decoration-none shadow-sm">
+                                    <div class="ratio ratio-1x1 bg-dark">
+                                        <img src="@post.ImageUrl" 
+                                             alt="Instagram Post by ebsor_infosystems" 
+                                             loading="lazy" 
+                                             decoding="async" 
+                                             class="insta-card-img" />
+                                    </div>
+                                    <!-- Top Badges Bar -->
+                                    <div class="position-absolute top-0 start-0 end-0 p-3 d-flex align-items-center justify-content-between z-3">
+                                        @if (post.IsReel)
+                                        {
+                                            <span class="badge bg-danger text-white rounded-pill px-2.5 py-1 small fw-bold shadow-sm">
+                                                <i class="bi bi-play-circle-fill me-1"></i> REEL
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-primary text-white rounded-pill px-2.5 py-1 small fw-semibold shadow-sm">
+                                                <i class="bi bi-camera-fill me-1"></i> POST
+                                            </span>
+                                        }
+                                        <span class="badge bg-dark bg-opacity-75 backdrop-blur text-white rounded-pill px-2.5 py-1 small">
+                                            <i class="bi bi-clock me-1"></i> @post.RelativeTimeString
+                                        </span>
+                                    </div>
+                                    <!-- Hover Dark Overlay -->
+                                    <div class="insta-card-overlay d-flex flex-column justify-content-between p-3.5 text-white">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span class="badge bg-white bg-opacity-25 backdrop-blur text-white rounded-pill px-2.5 py-1 small">
+                                                <i class="bi bi-instagram me-1"></i> @@ebsor_infosystems
+                                            </span>
+                                        </div>
+                                        <div class="text-center my-auto py-2">
+                                            <div class="insta-icon-circle mx-auto mb-2">
+                                                <i class="bi @(post.IsReel ? "bi-play-btn-fill" : "bi-instagram") fs-4"></i>
+                                            </div>
+                                            <p class="insta-card-caption text-white small mb-0 fw-medium">
+                                                @post.Caption
+                                            </p>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-between pt-2 border-top border-white border-opacity-25">
+                                            <span class="small opacity-90"><i class="bi bi-heart-fill text-danger me-1"></i> @post.LikesCount</span>
+                                            <span class="small opacity-90 fw-semibold">Open @(post.IsReel ? "Reel" : "Post") <i class="bi bi-arrow-right ms-1"></i></span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <!-- Empty / Fallback State -->
+                <div class="card border-0 rounded-4 shadow-sm bg-white text-center p-5">
+                    <div class="insta-empty-icon mx-auto mb-3">
+                        <i class="bi bi-instagram display-4 text-primary"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-2">Follow us on Instagram</h4>
+                    <p class="text-secondary small mb-4 mx-auto" style="max-width: 460px;">
+                        Discover our latest product drops, behind-the-scenes stories, and exclusive community deals on @@ebsor_infosystems.
+                    </p>
+                    <a href="https://www.instagram.com/ebsor_infosystems/" target="_blank" rel="noopener noreferrer" class="btn insta-follow-btn rounded-pill px-5 py-2.5 fw-bold text-white shadow-sm mx-auto">
+                        <i class="bi bi-instagram me-2"></i> View Instagram Profile
+                    </a>
                 </div>
             }
         </div>
     </section>
 </div>
+
+@section Styles {
+    <!-- SwiperJS 11 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+}
+
+@section Scripts {
+    <!-- SwiperJS 11 JS & Custom Feed Controller -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="~/js/instagram-feed.js" asp-append-version="true"></script>
+}
+

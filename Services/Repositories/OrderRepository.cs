@@ -20,12 +20,18 @@ public class OrderRepository : IOrderRepository
     private readonly IDbConnectionFactory _connectionFactory;
     private readonly ICartRepository _cartRepository;
     private readonly INotificationService _notificationService;
+    private readonly IProductRepository _productRepository;
 
-    public OrderRepository(IDbConnectionFactory connectionFactory, ICartRepository cartRepository, INotificationService notificationService)
+    public OrderRepository(
+        IDbConnectionFactory connectionFactory, 
+        ICartRepository cartRepository, 
+        INotificationService notificationService,
+        IProductRepository productRepository)
     {
         _connectionFactory = connectionFactory;
         _cartRepository = cartRepository;
         _notificationService = notificationService;
+        _productRepository = productRepository;
     }
 
     public async Task<string> CreateOrderAsync(OrderViewModel order, string userId, string customerEmail = "", string customerName = "")
@@ -95,6 +101,16 @@ public class OrderRepository : IOrderRepository
             if (!string.IsNullOrEmpty(userId))
             {
                 await _cartRepository.ClearCartAsync(userId);
+            }
+
+            // Real-time stock reduction for ordered items
+            if (order.Items != null && order.Items.Any())
+            {
+                foreach (var item in order.Items)
+                {
+                    int qty = item.Quantity > 0 ? item.Quantity : 1;
+                    await _productRepository.AdjustStockAsync(item.ProductId, -qty);
+                }
             }
 
             // Send Email / SMS / In-App Notification
@@ -174,17 +190,37 @@ public class OrderRepository : IOrderRepository
 
         try
         {
+            var existingOrder = await GetOrderByIdAsync(id);
+            if (existingOrder == null) return false;
+
+            var updatedTimeline = SynchronizeTimelineSteps(existingOrder.Timeline, status, existingOrder.OrderDate, existingOrder.EstimatedDelivery, existingOrder.CancellationReason);
+            string timelineJson = JsonSerializer.Serialize(updatedTimeline);
+
             using var connection = _connectionFactory.CreateConnection();
-            string sql = "UPDATE Orders SET Status = @Status WHERE Id = @Id;";
-            int affected = await connection.ExecuteAsync(sql, new { Id = id, Status = status });
+            string sql = "UPDATE Orders SET Status = @Status, TimelineJson = @TimelineJson WHERE Id = @Id;";
+            int affected = await connection.ExecuteAsync(sql, new { Id = id, Status = status, TimelineJson = timelineJson });
 
             if (affected > 0)
             {
-                var order = await GetOrderByIdAsync(id);
-                if (order != null && !string.IsNullOrEmpty(order.UserId))
+                // Restore stock if transitioning to Cancelled or Refunded from an active state
+                bool wasActive = !existingOrder.Status.Equals("Cancelled", StringComparison.OrdinalIgnoreCase) && 
+                                 !existingOrder.Status.Equals("Refunded", StringComparison.OrdinalIgnoreCase);
+                bool isNowCancelledOrRefunded = status.Equals("Cancelled", StringComparison.OrdinalIgnoreCase) || 
+                                                status.Equals("Refunded", StringComparison.OrdinalIgnoreCase);
+
+                if (wasActive && isNowCancelledOrRefunded && existingOrder.Items != null)
+                {
+                    foreach (var item in existingOrder.Items)
+                    {
+                        int qty = item.Quantity > 0 ? item.Quantity : 1;
+                        await _productRepository.AdjustStockAsync(item.ProductId, qty);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(existingOrder.UserId))
                 {
                     await _notificationService.SendNotificationAsync(
-                        order.UserId,
+                        existingOrder.UserId,
                         $"Order #{id} Status Updated",
                         $"Your order status has been updated to '{status}'.",
                         "Order",
@@ -210,6 +246,11 @@ public class OrderRepository : IOrderRepository
             using var connection = _connectionFactory.CreateConnection();
             var order = await GetOrderByIdAsync(orderId);
             if (order == null) return false;
+
+            if (order.Status.Equals("Cancelled", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
 
             var timeline = order.Timeline ?? new List<OrderTimelineStep>();
             foreach (var step in timeline) { step.IsCurrent = false; }
@@ -241,6 +282,16 @@ public class OrderRepository : IOrderRepository
 
             if (affected > 0)
             {
+                // Restore stock count for items in cancelled order
+                if (order.Items != null)
+                {
+                    foreach (var item in order.Items)
+                    {
+                        int qty = item.Quantity > 0 ? item.Quantity : 1;
+                        await _productRepository.AdjustStockAsync(item.ProductId, qty);
+                    }
+                }
+
                 await _notificationService.SendNotificationAsync(
                     !string.IsNullOrEmpty(order.UserId) ? order.UserId : userId,
                     $"Order #{orderId} Cancelled",
@@ -292,7 +343,75 @@ public class OrderRepository : IOrderRepository
             try { vm.Timeline = JsonSerializer.Deserialize<List<OrderTimelineStep>>(row.TimelineJson) ?? new(); } catch { }
         }
 
+        vm.Timeline = SynchronizeTimelineSteps(vm.Timeline, vm.Status, vm.OrderDate, vm.EstimatedDelivery, vm.CancellationReason);
+
         return vm;
+    }
+
+    public static List<OrderTimelineStep> SynchronizeTimelineSteps(List<OrderTimelineStep>? existing, string status, DateTime orderDate, string estimatedDelivery, string? cancellationReason = null)
+    {
+        var dateStr = orderDate.ToString("MMM dd, yyyy - hh:mm tt");
+        var procTime = orderDate.AddHours(2).ToString("MMM dd, yyyy - hh:mm tt");
+        var nowStr = DateTime.Now.ToString("MMM dd, yyyy - hh:mm tt");
+        var estDelivery = string.IsNullOrWhiteSpace(estimatedDelivery) ? "Next 24-48 Hours" : estimatedDelivery;
+
+        if (status.Equals("Cancelled", StringComparison.OrdinalIgnoreCase))
+        {
+            var steps = existing != null && existing.Any() ? existing : new List<OrderTimelineStep>
+            {
+                new() { Title = "Order Confirmed", Description = "Your order has been placed and payment confirmed.", Timestamp = dateStr, IsCompleted = true, IsCurrent = false }
+            };
+            foreach (var step in steps) { step.IsCurrent = false; }
+            var cancelStep = steps.FirstOrDefault(s => s.Title.Contains("Cancelled", StringComparison.OrdinalIgnoreCase));
+            if (cancelStep == null)
+            {
+                steps.Add(new OrderTimelineStep
+                {
+                    Title = "Order Cancelled",
+                    Description = $"Order cancelled. Reason: {(string.IsNullOrWhiteSpace(cancellationReason) ? "Customer request" : cancellationReason)}",
+                    Timestamp = nowStr,
+                    IsCompleted = true,
+                    IsCurrent = true
+                });
+            }
+            else
+            {
+                cancelStep.IsCompleted = true;
+                cancelStep.IsCurrent = true;
+            }
+            return steps;
+        }
+
+        if (status.Equals("Shipped", StringComparison.OrdinalIgnoreCase) || status.Equals("In Transit", StringComparison.OrdinalIgnoreCase))
+        {
+            return new List<OrderTimelineStep>
+            {
+                new() { Title = "Order Confirmed", Description = "Your order has been placed and payment confirmed.", Timestamp = dateStr, IsCompleted = true, IsCurrent = false },
+                new() { Title = "Processing & Quality Check", Description = "Appliance undergoes pre-dispatch multi-point check.", Timestamp = procTime, IsCompleted = true, IsCurrent = false },
+                new() { Title = "Out for White-Glove Express Delivery", Description = "Dispatched via specialized appliance logistics.", Timestamp = nowStr, IsCompleted = true, IsCurrent = true },
+                new() { Title = "Delivered & Technician Installation", Description = "Unboxed, installed, and tested by certified team.", Timestamp = "Scheduled for " + estDelivery, IsCompleted = false, IsCurrent = false }
+            };
+        }
+
+        if (status.Equals("Delivered", StringComparison.OrdinalIgnoreCase) || status.Equals("Completed", StringComparison.OrdinalIgnoreCase))
+        {
+            return new List<OrderTimelineStep>
+            {
+                new() { Title = "Order Confirmed", Description = "Your order has been placed and payment confirmed.", Timestamp = dateStr, IsCompleted = true, IsCurrent = false },
+                new() { Title = "Processing & Quality Check", Description = "Appliance undergoes pre-dispatch multi-point check.", Timestamp = procTime, IsCompleted = true, IsCurrent = false },
+                new() { Title = "Out for White-Glove Express Delivery", Description = "Dispatched via specialized appliance logistics.", Timestamp = orderDate.AddDays(1).ToString("MMM dd, yyyy - hh:mm tt"), IsCompleted = true, IsCurrent = false },
+                new() { Title = "Delivered & Technician Installation", Description = "Unboxed, installed, and tested by certified team.", Timestamp = nowStr, IsCompleted = true, IsCurrent = true }
+            };
+        }
+
+        // Default: Processing / Confirmed
+        return new List<OrderTimelineStep>
+        {
+            new() { Title = "Order Confirmed", Description = "Your order has been placed and payment confirmed.", Timestamp = dateStr, IsCompleted = true, IsCurrent = false },
+            new() { Title = "Processing & Quality Check", Description = "Appliance undergoes pre-dispatch multi-point check.", Timestamp = procTime, IsCompleted = true, IsCurrent = true },
+            new() { Title = "Out for White-Glove Express Delivery", Description = "Dispatched via specialized appliance logistics.", Timestamp = "Scheduled for " + estDelivery, IsCompleted = false, IsCurrent = false },
+            new() { Title = "Delivered & Technician Installation", Description = "Unboxed, installed, and tested by certified team.", Timestamp = "Pending", IsCompleted = false, IsCurrent = false }
+        };
     }
 
     private class OrderEntityRow

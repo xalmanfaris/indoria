@@ -17,7 +17,7 @@
                             <span class="badge bg-warning text-dark"><span id="qvRating">4.8</span> <i class="bi bi-star-fill"></i></span>
                             <small class="text-muted" id="qvReviews">(200+ reviews)</small>
                             <span class="text-muted opacity-25">|</span>
-                            <span class="badge bg-success-subtle text-success border border-success-subtle">In Stock</span>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle">@Localizer["In Stock"]</span>
                         </div>
 
                         <div class="d-flex align-items-baseline gap-2 mb-3">
@@ -31,10 +31,10 @@
 
                         <div class="d-flex gap-2">
                             <button class="btn aura-btn-primary flex-grow-1 py-2" onclick="showAuraToast('Added to your Bag!', 'success'); bootstrap.Modal.getInstance(document.getElementById('quickViewModal')).hide();">
-                                <i class="bi bi-bag-plus me-1"></i> Add to Bag
+                                <i class="bi bi-bag-plus me-1"></i> @Localizer["Add to Cart"]
                             </button>
                             <a href="#" id="qvLink" class="btn aura-btn-outline px-3 py-2">
-                                Full Specs <i class="bi bi-arrow-right"></i>
+                                @Localizer["Order Details"] <i class="bi bi-arrow-right"></i>
                             </a>
                         </div>
                     </div>

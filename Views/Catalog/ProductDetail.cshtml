@@ -15,127 +15,161 @@
 
     <!-- Main Product Grid: Gallery + Purchasing Details -->
     <div class="row g-4 g-lg-5 mb-5">
-        <!-- Image Gallery -->
+        <!-- Left Column: Glass Image Gallery & Service Guarantees -->
         <div class="col-lg-6">
-            <div class="sticky-top" style="top: 90px;">
-                <!-- Main Image Preview -->
-                <div class="aura-pdp-gallery-main position-relative">
-                    <button class="aura-wishlist-btn" title="Add to Wishlist" data-product-name="@Model.Name">
+            <div class="sticky-top" style="top: 100px;">
+                <!-- Main Image Gallery Frame -->
+                <div class="aura-pdp-gallery-frame" id="pdpGalleryMain">
+                    <!-- Wishlist Glass Capsule Button -->
+                    <button class="aura-wishlist-btn" title="Add to Wishlist" data-product-id="@Model.Id" data-product-name="@Model.Name" aria-label="Save to Wishlist">
                         <i class="bi bi-heart"></i>
                     </button>
+
+                    <!-- Energy Rating Glass Badge -->
                     @if (Model.EnergyRating >= 4)
                     {
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-warning text-dark px-3 py-2 fw-bold">
-                            <i class="bi bi-lightning-charge-fill"></i> @Model.EnergyRating★ Energy Rated
-                        </span>
+                        <div class="aura-pdp-energy-badge">
+                            <i class="bi bi-lightning-charge-fill text-warning"></i> @Model.EnergyRating★ Energy Rating
+                        </div>
                     }
-                    <img id="pdpMainImage" src="@Model.MainImage" alt="@Model.Name" class="img-fluid" />
+
+                    <!-- Product Main Image -->
+                    <img id="pdpMainImage" src="@Model.MainImage" alt="@Model.Name" class="img-fluid" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='/images/homixa_hero_appliances.jpg';" />
+
+                    <!-- Video Preview Container -->
+                    @if (!string.IsNullOrEmpty(Model.VideoUrl))
+                    {
+                        <video id="pdpMainVideo" controls autoplay muted loop playsinline class="w-100 h-100 object-fit-contain d-none rounded-4">
+                            <source src="@Model.VideoUrl" type="video/webm" />
+                            <source src="@Model.VideoUrl" type="video/mp4" />
+                            Your browser does not support HTML5 video playback.
+                        </video>
+                    }
                 </div>
 
-                <!-- Thumbnails -->
-                @if (Model.GalleryImages.Any())
-                {
-                    <div class="aura-pdp-thumb-list">
-                        <div class="aura-pdp-thumb active" data-src="@Model.MainImage">
-                            <img src="@Model.MainImage" alt="Angle 1" />
-                        </div>
-                        @for (int i = 0; i < Model.GalleryImages.Count; i++)
+                <!-- Thumbnail Selector Track -->
+                <div class="aura-pdp-thumb-list">
+                    <div class="aura-pdp-thumb active" data-type="image" data-src="@Model.MainImage">
+                        <img src="@Model.MainImage" alt="Main Front View" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='/images/homixa_hero_appliances.jpg';" />
+                    </div>
+                    @for (int i = 0; i < Model.GalleryImages.Count; i++)
+                    {
+                        if (Model.GalleryImages[i] != Model.MainImage)
                         {
-                            <div class="aura-pdp-thumb" data-src="@Model.GalleryImages[i]">
-                                <img src="@Model.GalleryImages[i]" alt="Angle @(i + 2)" />
+                            <div class="aura-pdp-thumb" data-type="image" data-src="@Model.GalleryImages[i]">
+                                <img src="@Model.GalleryImages[i]" alt="Angle @(i + 2)" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='/images/homixa_hero_appliances.jpg';" />
                             </div>
                         }
-                    </div>
-                }
+                    }
+                    @if (!string.IsNullOrEmpty(Model.VideoUrl))
+                    {
+                        <div class="aura-pdp-thumb position-relative" data-type="video" data-video-src="@Model.VideoUrl" title="Click to Play Product Video">
+                            <video src="@Model.VideoUrl" muted class="w-100 h-100 object-fit-cover rounded-3"></video>
+                            <div class="position-absolute top-50 start-50 translate-middle bg-dark bg-opacity-75 text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; font-size: 0.85rem; z-index: 2;">
+                                <i class="bi bi-play-fill"></i>
+                            </div>
+                        </div>
+                    }
+                </div>
 
-                <!-- Trust Guarantee Pills -->
-                <div class="row g-2 mt-4 text-center">
-                    <div class="col-4">
-                        <div class="p-2 rounded-3 bg-white border small">
-                            <i class="bi bi-patch-check text-primary fs-5 d-block mb-1"></i>
-                            <strong class="d-block">100% Genuine</strong>
-                            <span class="text-muted" style="font-size: 0.7rem;">Direct brand warranty</span>
+                <!-- Indoria Trust Guarantee Cards -->
+                <div class="row g-2 g-sm-3 mt-3">
+                    <div class="col-4 col-sm-4">
+                        <div class="aura-trust-card h-100 px-1 px-sm-2 py-2 py-sm-3">
+                            <div class="aura-trust-icon-wrap">
+                                <i class="bi bi-patch-check"></i>
+                            </div>
+                            <strong class="d-block text-dark small text-truncate">100% Genuine</strong>
+                            <span class="text-muted d-none d-sm-block" style="font-size: 0.72rem;">Direct brand warranty</span>
                         </div>
                     </div>
-                    <div class="col-4">
-                        <div class="col-4 w-100 p-2 rounded-3 bg-white border small">
-                            <i class="bi bi-tools text-primary fs-5 d-block mb-1"></i>
-                            <strong class="d-block">Free Installation</strong>
-                            <span class="text-muted" style="font-size: 0.7rem;">Brand authorized tech</span>
+                    <div class="col-4 col-sm-4">
+                        <div class="aura-trust-card h-100 px-1 px-sm-2 py-2 py-sm-3">
+                            <div class="aura-trust-icon-wrap">
+                                <i class="bi bi-tools"></i>
+                            </div>
+                            <strong class="d-block text-dark small text-truncate">Free Install</strong>
+                            <span class="text-muted d-none d-sm-block" style="font-size: 0.72rem;">Brand certified tech</span>
                         </div>
                     </div>
-                    <div class="col-4">
-                        <div class="col-4 w-100 p-2 rounded-3 bg-white border small">
-                            <i class="bi bi-arrow-repeat text-primary fs-5 d-block mb-1"></i>
-                            <strong class="d-block">15-Day Return</strong>
-                            <span class="text-muted" style="font-size: 0.7rem;">Zero-hassle pickup</span>
+                    <div class="col-4 col-sm-4">
+                        <div class="aura-trust-card h-100 px-1 px-sm-2 py-2 py-sm-3">
+                            <div class="aura-trust-icon-wrap">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </div>
+                            <strong class="d-block text-dark small text-truncate">15-Day Return</strong>
+                            <span class="text-muted d-none d-sm-block" style="font-size: 0.72rem;">Hassle-free pickup</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Product Purchasing Details -->
+        <!-- Right Column: Purchasing Details & Controls -->
         <div class="col-lg-6">
-            <!-- Brand & SKU -->
-            <div class="d-flex align-items-center justify-content-between mb-2">
-                <span class="text-uppercase fw-bold text-primary small letter-spacing-1">@Model.Brand</span>
-                <span class="text-muted small">SKU: @Model.Id</span>
+            <!-- Brand Tag & Stock Status -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="aura-pdp-brand-tag">
+                    <span class="aura-stock-pulse-dot"></span> @Model.Brand Official Store
+                </span>
+                <span class="text-muted small">SKU: <strong class="text-dark">@Model.Id</strong></span>
             </div>
 
             <!-- Title -->
-            <h1 class="h2 fw-bold text-dark mb-3">@Model.Name</h1>
+            <h1 class="aura-pdp-title mb-3">@Model.Name</h1>
 
-            <!-- Ratings & Stock Status -->
-            <div class="d-flex flex-wrap align-items-center gap-3 mb-4 pb-3 border-bottom">
-                <div class="d-flex align-items-center gap-2">
-                    <span class="badge bg-warning text-dark px-2 py-1">
-                        @Model.Rating.ToString("0.0") <i class="bi bi-star-fill"></i>
+            <!-- Ratings & Verification Bar -->
+            <div class="d-flex flex-wrap align-items-center gap-2 gap-sm-3 mb-4 pb-3 border-bottom">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="aura-rating-pill" style="font-size: 0.85rem; padding: 0.25rem 0.75rem;">
+                        <i class="bi bi-star-fill text-warning me-1"></i>@Model.Rating.ToString("0.0")
                     </span>
                     <partial name="_RatingStars" model="Model.Rating" />
-                    <a href="#reviewsSection" class="small text-muted text-decoration-none">(@Model.ReviewCount verified ratings)</a>
+                    <a href="#reviewsSection" class="small text-muted text-decoration-none">(@Model.ReviewCount verified reviews)</a>
                 </div>
-                <span class="text-muted opacity-25">|</span>
-                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1">
-                    <i class="bi bi-check2-circle me-1"></i> In Stock (@Model.StockCount units ready)
+                <span class="text-muted opacity-25 d-none d-sm-inline">|</span>
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill fw-bold">
+                    <i class="bi bi-check2-circle me-1"></i> In Stock (@Model.StockCount units)
                 </span>
             </div>
 
-            <!-- Price Breakdown -->
-            <div class="mb-4">
-                <div class="d-flex align-items-baseline gap-3 mb-1">
-                    <span class="display-6 fw-bold text-dark">₹@Model.Price.ToString("N0")</span>
+            <!-- Price Hero Card -->
+            <div class="aura-pdp-price-card">
+                <div class="d-flex flex-wrap align-items-baseline gap-2 gap-sm-3 mb-1">
+                    <span class="aura-pdp-price-display">₹@Model.Price.ToString("N0")</span>
                     @if (Model.OriginalPrice > Model.Price)
                     {
-                        <span class="fs-5 text-muted text-decoration-line-through">₹@Model.OriginalPrice.ToString("N0")</span>
-                        <span class="badge bg-success fs-6 fw-bold">Save ₹@((Model.OriginalPrice - Model.Price).ToString("N0")) (@Model.DiscountPercent% OFF)</span>
+                        <span class="fs-6 fs-sm-5 text-muted text-decoration-line-through">₹@Model.OriginalPrice.ToString("N0")</span>
+                        <span class="aura-pdp-discount-tag">Save ₹@((Model.OriginalPrice - Model.Price).ToString("N0")) (@Model.DiscountPercent% OFF)</span>
                     }
                 </div>
-                <small class="text-muted d-block">Inclusive of all taxes &amp; environmental cess. Free doorstep transit insurance included.</small>
+                <small class="text-muted d-block mt-2">
+                    <i class="bi bi-shield-check me-1 text-success"></i> Inclusive of all taxes &amp; environmental cess. Includes free transit damage coverage.
+                </small>
             </div>
 
-            <!-- Bank Offers / EMI Box -->
-            <div class="p-3 rounded-3 bg-light border mb-4">
+            <!-- Bank Offers & Instant Cashback Box -->
+            <div class="aura-bank-offers-card mb-4">
                 <div class="d-flex align-items-center gap-2 mb-2">
-                    <i class="bi bi-tag-fill text-primary"></i>
-                    <strong class="text-dark small">Premier Bank Offers Available</strong>
+                    <i class="bi bi-tag-fill text-success fs-5"></i>
+                    <strong class="text-dark">Premier Bank &amp; Instant Offers</strong>
                 </div>
                 <ul class="list-unstyled mb-0 small text-secondary">
                     <li class="mb-1"><i class="bi bi-check-circle-fill text-success me-1"></i> Flat <strong>₹5,000 instant discount</strong> on HDFC &amp; ICICI Bank Credit Cards.</li>
-                    <li><i class="bi bi-check-circle-fill text-success me-1"></i> No Cost EMI from <strong>₹@Model.EmiPerMonth.ToString("N0")/month</strong> for up to 24 months.</li>
+                    <li><i class="bi bi-check-circle-fill text-success me-1"></i> No Cost EMI starting at <strong>₹@Model.EmiPerMonth.ToString("N0")/mo</strong> for up to 24 months.</li>
                 </ul>
             </div>
 
-            <!-- Variant Selectors: Capacity & Color -->
+            <!-- Variant Selectors: Size/Capacity & Color/Finish -->
             @if (Model.CapacityVariants.Any())
             {
-                <div class="mb-3 aura-variant-group">
-                    <label class="fw-bold small text-dark d-block mb-2">Select Capacity / Size:</label>
+                <div class="mb-4">
+                    <label class="fw-bold small text-dark d-block mb-2">Select Capacity / Variant:</label>
                     <div class="d-flex flex-wrap gap-2">
                         @for (int i = 0; i < Model.CapacityVariants.Count; i++)
                         {
                             <button type="button" class="aura-variant-pill @(i == 0 ? "active" : "")">
-                                @Model.CapacityVariants[i]
+                                <i class="bi bi-check2 me-1"></i> @Model.CapacityVariants[i]
                             </button>
                         }
                     </div>
@@ -144,35 +178,35 @@
 
             @if (Model.ColorVariants.Any())
             {
-                <div class="mb-4 aura-variant-group">
+                <div class="mb-4">
                     <label class="fw-bold small text-dark d-block mb-2">Select Finish &amp; Color:</label>
                     <div class="d-flex flex-wrap gap-2">
                         @for (int i = 0; i < Model.ColorVariants.Count; i++)
                         {
                             <button type="button" class="aura-variant-pill @(i == 0 ? "active" : "")">
-                                <i class="bi bi-circle-fill text-secondary me-1" style="font-size: 0.7rem;"></i> @Model.ColorVariants[i]
+                                <i class="bi bi-palette me-1" style="font-size: 0.75rem;"></i> @Model.ColorVariants[i]
                             </button>
                         }
                     </div>
                 </div>
             }
 
-            <!-- Pincode Delivery Estimator Demo -->
-            <div class="aura-pincode-box">
+            <!-- Pincode Express Delivery Widget -->
+            <div class="aura-pincode-card mb-4">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <label class="fw-bold small text-dark mb-0">
-                        <i class="bi bi-geo-alt me-1 text-primary"></i> Check Express Delivery &amp; Installation
+                        <i class="bi bi-geo-alt-fill text-primary me-1"></i> Express Delivery &amp; Demo Check
                     </label>
-                    <span class="text-muted small">Enter 6-digit PIN</span>
+                    <span class="text-muted small">6-Digit PIN</span>
                 </div>
-                <div class="input-group input-group-sm">
+                <div class="aura-pincode-input-group">
                     <input type="text" id="pincodeInput" class="form-control" placeholder="e.g. 400001 or 560001" maxlength="6" value="400001" />
-                    <button class="btn aura-btn-primary" type="button" id="checkPincodeBtn">Check Availability</button>
+                    <button class="btn aura-btn-primary aura-pincode-btn" type="button" id="checkPincodeBtn">Check PIN</button>
                 </div>
-                <div id="pincodeResult" class="mt-2 alert alert-success py-2 px-3 small d-flex align-items-center gap-2 mb-0">
-                    <i class="bi bi-check-circle-fill text-success fs-6"></i>
+                <div id="pincodeResult" class="mt-2 alert alert-success py-2 px-3 small d-flex align-items-center gap-2 mb-0 border-0 rounded-4">
+                    <i class="bi bi-truck text-success fs-5"></i>
                     <div>
-                        <strong>Free Express Delivery to 400001</strong><br/>
+                        <strong>Free Express Doorstep Delivery to 400001</strong><br/>
                         <span class="text-muted">Estimated: @Model.DeliveryEstimate • Free Certified Demo Included</span>
                     </div>
                 </div>
@@ -180,36 +214,36 @@
 
             <!-- Quantity & Purchasing Buttons -->
             <div class="d-flex flex-column gap-3 mb-4">
-                <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-3 mb-1">
                     <label class="fw-bold small text-dark">Quantity:</label>
-                    <div class="input-group input-group-sm aura-qty-stepper" style="width: 120px;">
-                        <button class="btn btn-outline-secondary aura-qty-minus" type="button">-</button>
-                        <input type="text" class="form-control text-center aura-qty-input fw-bold" value="1" readonly />
-                        <button class="btn btn-outline-secondary aura-qty-plus" type="button">+</button>
+                    <div class="input-group input-group-sm aura-qty-stepper" style="width: 130px;">
+                        <button class="btn btn-outline-secondary aura-qty-minus rounded-start-pill" type="button">-</button>
+                        <input type="text" class="form-control text-center aura-qty-input fw-bold border-0 bg-transparent" value="1" readonly />
+                        <button class="btn btn-outline-secondary aura-qty-plus rounded-end-pill" type="button">+</button>
                     </div>
                 </div>
 
-                <div class="d-flex gap-3">
-                    <button class="btn aura-btn-dark py-3 px-4 flex-grow-1 fw-bold aura-btn-cart" data-product-name="@Model.Name">
-                        <i class="bi bi-bag-plus me-2"></i> Add to Bag
+                <div class="d-flex flex-column flex-sm-row gap-3">
+                    <button class="btn aura-btn-pdp-bag flex-grow-1 aura-btn-cart" data-product-id="@Model.Id" data-product-name="@Model.Name">
+                        <i class="bi bi-bag-plus fs-5"></i> Add to Bag
                     </button>
-                    <a href="/checkout" class="btn aura-btn-primary py-3 px-4 flex-grow-1 fw-bold text-center">
-                        <i class="bi bi-lightning-charge me-1"></i> Buy Now
+                    <a href="/checkout" class="btn aura-btn-pdp-buy flex-grow-1 text-center">
+                        <i class="bi bi-lightning-charge-fill fs-5"></i> Buy Now
                     </a>
                 </div>
             </div>
 
-            <!-- Key Features Highlights -->
+            <!-- Key Features Highlights Card -->
             @if (Model.KeyFeatures.Any())
             {
-                <div class="p-3 rounded-3 bg-white border">
-                    <h6 class="fw-bold mb-2">Key Highlights:</h6>
+                <div class="aura-trust-card text-start p-4">
+                    <h6 class="fw-bold text-dark mb-3"><i class="bi bi-stars text-primary me-2"></i> Key Highlights:</h6>
                     <ul class="list-unstyled mb-0 small text-secondary">
                         @foreach (var feature in Model.KeyFeatures)
                         {
                             <li class="mb-2 d-flex align-items-start gap-2">
-                                <i class="bi bi-check-circle-fill text-primary flex-shrink-0 mt-1"></i>
-                                <span>@feature</span>
+                                <i class="bi bi-check-circle-fill text-success flex-shrink-0 mt-1"></i>
+                                <span class="text-dark fw-medium">@feature</span>
                             </li>
                         }
                     </ul>
@@ -218,81 +252,73 @@
         </div>
     </div>
 
-    <!-- Tabbed Detailed Information: Specs, Description, Warranty & Reviews -->
-    <div class="bg-white rounded-4 border p-4 p-md-5 mb-5 shadow-sm">
-        <ul class="nav nav-tabs nav-fill mb-4" id="pdpTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active fw-bold py-3" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button" role="tab">
-                    <i class="bi bi-list-check me-2"></i> Technical Specifications
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link fw-bold py-3" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
-                    <i class="bi bi-info-circle me-2"></i> Product Overview
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link fw-bold py-3" id="warranty-tab" data-bs-toggle="tab" data-bs-target="#warranty" type="button" role="tab">
-                    <i class="bi bi-shield-check me-2"></i> Warranty &amp; Installation
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link fw-bold py-3" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviewsSection" type="button" role="tab">
-                    <i class="bi bi-chat-left-text me-2"></i> Verified Reviews (@Model.ReviewCount)
-                </button>
-            </li>
-        </ul>
+    <!-- Tabbed Information Navigation Container -->
+    <div class="aura-pdp-nav-container mb-5">
+        <div class="aura-pdp-tabs-pill-wrap mb-4" id="pdpTab" role="tablist">
+            <button class="nav-link active flex-grow-1" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button" role="tab">
+                <i class="bi bi-list-check me-2"></i> Specifications
+            </button>
+            <button class="nav-link flex-grow-1" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                <i class="bi bi-info-circle me-2"></i> Overview
+            </button>
+            <button class="nav-link flex-grow-1" id="warranty-tab" data-bs-toggle="tab" data-bs-target="#warranty" type="button" role="tab">
+                <i class="bi bi-shield-check me-2"></i> Warranty &amp; Service
+            </button>
+            <button class="nav-link flex-grow-1" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviewsSection" type="button" role="tab">
+                <i class="bi bi-chat-left-text me-2"></i> Reviews (@Model.ReviewCount)
+            </button>
+        </div>
 
-        <div class="tab-content" id="pdpTabContent">
+        <div class="tab-content pt-2" id="pdpTabContent">
             <!-- Technical Specs Table -->
             <div class="tab-pane fade show active" id="specs" role="tabpanel">
-                <h4 class="fw-bold mb-3">Complete Engineering Specifications</h4>
+                <h4 class="fw-bold mb-4 text-dark">Engineering &amp; Technical Specifications</h4>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle border">
+                    <table class="table table-hover align-middle border-0">
                         <tbody>
                             @foreach (var spec in Model.Specifications)
                             {
                                 <tr>
-                                    <th class="text-secondary fw-semibold py-3 px-4" style="width: 35%;">@spec.Key</th>
-                                    <td class="text-dark fw-medium py-3 px-4">@spec.Value</td>
+                                    <th class="text-secondary fw-semibold py-3 px-4 bg-light rounded-start-3" style="width: 35%;">@spec.Key</th>
+                                    <td class="text-dark fw-bold py-3 px-4 bg-light rounded-end-3">@spec.Value</td>
                                 </tr>
                             }
                             <tr>
-                                <th class="text-secondary fw-semibold py-3 px-4">Country of Origin</th>
-                                <td class="text-dark fw-medium py-3 px-4">India / Assembled with Imported Precision Components</td>
+                                <th class="text-secondary fw-semibold py-3 px-4 bg-light rounded-start-3">Country of Origin</th>
+                                <td class="text-dark fw-bold py-3 px-4 bg-light rounded-end-3">India / Assembled with Imported Precision Components</td>
                             </tr>
                             <tr>
-                                <th class="text-secondary fw-semibold py-3 px-4">In The Box</th>
-                                <td class="text-dark fw-medium py-3 px-4">1x Main Appliance Unit, Certified Power Cord, Civil Installation Kit, User Manual &amp; Indoria Official 2-Year Warranty Card</td>
+                                <th class="text-secondary fw-semibold py-3 px-4 bg-light rounded-start-3">In The Box</th>
+                                <td class="text-dark fw-bold py-3 px-4 bg-light rounded-end-3">1x Main Appliance Unit, Certified Power Cord, Installation Kit, User Manual &amp; Indoria 2-Year Official Warranty Booklet</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Overview -->
+            <!-- Product Overview -->
             <div class="tab-pane fade" id="overview" role="tabpanel">
-                <h4 class="fw-bold mb-3">Architectural Philosophy &amp; Craft</h4>
-                <p class="text-secondary mb-4" style="font-size: 1.05rem; line-height: 1.8;">
+                <h4 class="fw-bold mb-3 text-dark">Architectural Philosophy &amp; Craft</h4>
+                <p class="text-secondary mb-4 fs-6 style-readable" style="line-height: 1.85;">
                     @Model.FullDescription
                 </p>
                 <div class="row g-4 mt-2">
                     <div class="col-md-4">
-                        <div class="p-3 bg-light rounded-3">
-                            <h6 class="fw-bold text-dark mb-1">Acoustic Engineering</h6>
-                            <p class="text-muted small mb-0">Engineered with sound-dampening insulation and brushless inverter motors for near-inaudible performance in open-concept kitchens.</p>
+                        <div class="aura-trust-card text-start p-4 h-100">
+                            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-volume-down text-primary me-2"></i> Acoustic Engineering</h6>
+                            <p class="text-muted small mb-0">Engineered with sound-dampening insulation and inverter motors for near-inaudible performance in modern open kitchens.</p>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="p-3 bg-light rounded-3">
-                            <h6 class="fw-bold text-dark mb-1">Intelligent Power Usage</h6>
-                            <p class="text-muted small mb-0">Microprocessors continuously tune active cooling and heating power based on real-time room temperature and load density.</p>
+                        <div class="aura-trust-card text-start p-4 h-100">
+                            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-cpu text-primary me-2"></i> Intelligent AI Power Tuning</h6>
+                            <p class="text-muted small mb-0">Microprocessors tune active cooling and heating power in real-time based on ambient weather and load density.</p>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="p-3 bg-light rounded-3">
-                            <h6 class="fw-bold text-dark mb-1">Sustainable Longevity</h6>
-                            <p class="text-muted small mb-0">Constructed from anti-corrosion marine-grade alloys, reinforced tempered safety glass, and recyclable eco-polymers.</p>
+                        <div class="aura-trust-card text-start p-4 h-100">
+                            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-recycle text-primary me-2"></i> Sustainable Longevity</h6>
+                            <p class="text-muted small mb-0">Constructed from anti-corrosion marine-grade alloys, tempered safety glass, and recyclable eco-polymers.</p>
                         </div>
                     </div>
                 </div>
@@ -300,27 +326,27 @@
 
             <!-- Warranty & Installation -->
             <div class="tab-pane fade" id="warranty" role="tabpanel">
-                <h4 class="fw-bold mb-3">Indoria White-Glove Support &amp; Official Warranty</h4>
+                <h4 class="fw-bold mb-4 text-dark">Indoria White-Glove Service &amp; Official Warranty</h4>
                 <div class="row g-4">
                     <div class="col-md-6">
-                        <div class="p-4 border rounded-3 bg-light h-100">
-                            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-shield-check text-primary me-2"></i> Comprehensive Warranty</h5>
-                            <p class="text-secondary small mb-2">Every appliance purchased through Indoria includes:</p>
-                            <ul class="small text-secondary ps-3">
-                                <li><strong>@Model.WarrantyYears Years</strong> comprehensive on-site manufacturer warranty.</li>
-                                <li><strong>Up to 10-20 Years</strong> warranty on key motor / compressor / inverter components.</li>
-                                <li>Direct priority dispatch of brand certified engineers with zero service charges during coverage.</li>
+                        <div class="aura-trust-card text-start p-4 h-100">
+                            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-shield-check text-primary me-2"></i> Comprehensive Coverage</h5>
+                            <p class="text-secondary small mb-3">Every appliance delivered by Indoria includes guaranteed direct support:</p>
+                            <ul class="small text-secondary ps-3 mb-0">
+                                <li class="mb-2"><strong>@Model.WarrantyYears Years</strong> comprehensive on-site manufacturer warranty.</li>
+                                <li class="mb-2"><strong>Up to 10-20 Years</strong> warranty on key motor / compressor / inverter components.</li>
+                                <li>Direct priority dispatch of brand-certified engineers with zero service charges during coverage.</li>
                             </ul>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="p-4 border rounded-3 bg-light h-100">
-                            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-truck-flatbed text-primary me-2"></i> Free Certified Installation</h5>
-                            <p class="text-secondary small mb-2">How your delivery and setup unfolds:</p>
-                            <ul class="small text-secondary ps-3">
-                                <li>White-glove delivery fleet unboxes and inspects appliance in your presence.</li>
-                                <li>Certified technicians execute level placement, plumbing connection, and electrical safety check.</li>
-                                <li>Technician performs live demo of primary modes and signs off warranty booklet.</li>
+                        <div class="aura-trust-card text-start p-4 h-100">
+                            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-truck-flatbed text-primary me-2"></i> White-Glove Setup</h5>
+                            <p class="text-secondary small mb-3">How your delivery and setup unfolds seamlessly:</p>
+                            <ul class="small text-secondary ps-3 mb-0">
+                                <li class="mb-2">Certified delivery team unboxes and inspects the appliance in your presence.</li>
+                                <li class="mb-2">Certified technicians execute level placement, plumbing connection, and safety check.</li>
+                                <li>Technician performs live demo of primary modes and validates warranty registration.</li>
                             </ul>
                         </div>
                     </div>
@@ -329,76 +355,212 @@
 
             <!-- Verified Reviews -->
             <div class="tab-pane fade" id="reviewsSection" role="tabpanel">
+                @{
+                    int totalRevCount = Model.Reviews.Count;
+                    int fiveStar = totalRevCount > 0 ? Model.Reviews.Count(r => r.Rating == 5) : 0;
+                    int fourStar = totalRevCount > 0 ? Model.Reviews.Count(r => r.Rating == 4) : 0;
+                    int threeStar = totalRevCount > 0 ? Model.Reviews.Count(r => r.Rating == 3) : 0;
+                    int lowerStar = totalRevCount > 0 ? Model.Reviews.Count(r => r.Rating <= 2) : 0;
+                    int p5 = totalRevCount > 0 ? (fiveStar * 100 / totalRevCount) : 86;
+                    int p4 = totalRevCount > 0 ? (fourStar * 100 / totalRevCount) : 11;
+                    int p3 = totalRevCount > 0 ? (threeStar * 100 / totalRevCount) : 2;
+                    int p12 = totalRevCount > 0 ? (lowerStar * 100 / totalRevCount) : 1;
+                    string defaultAuthor = User.Identity?.IsAuthenticated == true ? (User.Identity.Name ?? "") : "";
+                }
+
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom gap-3">
+                    <div>
+                        <h4 class="fw-bold text-dark mb-1">Customer &amp; Community Reviews</h4>
+                        <p class="text-muted small mb-0">Open ratings &amp; feedback from community shoppers and verified owners.</p>
+                    </div>
+                    <button class="btn aura-btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#writeReviewCollapse" aria-expanded="false" aria-controls="writeReviewCollapse">
+                        <i class="bi bi-pencil-square me-2"></i>Write a Review
+                    </button>
+                </div>
+
+                <!-- Collapsible Write a Review Form -->
+                <div class="collapse mb-4" id="writeReviewCollapse">
+                    <div class="card aura-review-form-card border rounded-4 overflow-hidden shadow-sm">
+                        <div class="card-header aura-review-form-header p-4 border-0 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="fw-bold mb-1 text-white"><i class="bi bi-star-fill text-warning me-2"></i>Write a Review for @Model.Name</h5>
+                                <small class="text-white-50">Anyone can submit a review! Your rating &amp; comment will be saved and filtered specifically for this product.</small>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white" data-bs-toggle="collapse" data-bs-target="#writeReviewCollapse"></button>
+                        </div>
+                        <div class="card-body p-4">
+                            <form id="productReviewForm" onsubmit="window.submitProdReview(event); return false;">
+                                <input type="hidden" id="reviewProductId" value="@Model.Id" />
+                                
+                                <div class="row g-3 mb-3">
+                                    <!-- Star Rating Picker -->
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold text-dark mb-1">Select Star Rating <span class="text-danger">*</span></label>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="aura-star-picker d-flex fs-3 text-warning gap-1 cursor-pointer" id="starPicker">
+                                                <i class="bi bi-star-fill aura-star-item" data-value="1"></i>
+                                                <i class="bi bi-star-fill aura-star-item" data-value="2"></i>
+                                                <i class="bi bi-star-fill aura-star-item" data-value="3"></i>
+                                                <i class="bi bi-star-fill aura-star-item" data-value="4"></i>
+                                                <i class="bi bi-star-fill aura-star-item" data-value="5"></i>
+                                            </div>
+                                            <input type="hidden" id="reviewRatingInput" value="5" />
+                                            <span class="badge bg-warning text-dark fw-bold px-3 py-2 rounded-pill ms-2" id="starRatingText">5.0 - Outstanding</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Author Name & City -->
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small text-dark mb-1">Your Name</label>
+                                        <input type="text" id="reviewAuthorInput" class="form-control rounded-3" placeholder="e.g. Rajesh Sharma (or leave empty for Community Reviewer)" value="@defaultAuthor" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small text-dark mb-1">City / Location</label>
+                                        <input type="text" id="reviewCityInput" class="form-control rounded-3" placeholder="e.g. Bengaluru, Mumbai" />
+                                    </div>
+
+                                    <!-- Review Title -->
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold small text-dark mb-1">Review Title / Headline</label>
+                                        <input type="text" id="reviewTitleInput" class="form-control rounded-3" placeholder="e.g. Incredible performance and silent operation!" />
+                                    </div>
+
+                                    <!-- Comment / Review Text -->
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold small text-dark mb-1">Detailed Comment / Feedback <span class="text-danger">*</span></label>
+                                        <textarea id="reviewCommentInput" class="form-control rounded-3" rows="3" placeholder="Share your experience, thoughts on performance, setup, or recommendations..." required></textarea>
+                                    </div>
+
+                                    <!-- Review Image Upload / URL -->
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold small text-dark mb-1">Add Product Photo / Image (Optional)</label>
+                                        <div class="btn-group w-100 mb-2 p-1 bg-light rounded-3" role="group">
+                                            <button type="button" class="btn btn-sm rounded-2 fw-semibold btn-primary" id="prodUploadTabBtn" onclick="window.switchProdImageMode('file')">
+                                                <i class="bi bi-cloud-upload me-1"></i> Upload Image File
+                                            </button>
+                                            <button type="button" class="btn btn-sm rounded-2 fw-semibold btn-outline-secondary" id="prodUrlTabBtn" onclick="window.switchProdImageMode('url')">
+                                                <i class="bi bi-link-45deg me-1"></i> Image Link URL
+                                            </button>
+                                        </div>
+                                        <div id="prodFileSection">
+                                            <input type="file" class="form-control rounded-3" id="prodReviewFileInput" accept="image/*" onchange="window.handleProdFileSelect(event)" />
+                                            <div class="form-text small text-muted">Upload JPG, PNG, WEBP (Max 5MB)</div>
+                                        </div>
+                                        <div id="prodUrlSection" style="display: none;">
+                                            <input type="url" class="form-control rounded-3" id="prodReviewUrlInput" placeholder="https://images.unsplash.com/photo-..." oninput="window.handleProdUrlInput(event)" />
+                                            <div class="form-text small text-muted">Paste a direct web image URL</div>
+                                        </div>
+                                        <div id="prodImagePreviewContainer" class="mt-2 text-center p-2 border rounded-3 bg-light" style="display: none;">
+                                            <img id="prodImagePreview" src="" alt="Preview" class="img-fluid rounded-3 border shadow-sm mb-2" style="max-height: 160px; object-fit: cover;" />
+                                            <div>
+                                                <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1" onclick="window.clearProdReviewImage()">
+                                                    <i class="bi bi-trash me-1"></i> Remove Photo
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="reviewFormAlert" class="alert alert-danger d-none py-2 px-3 small rounded-3 mb-3"></div>
+
+                                <div class="d-flex justify-content-end gap-2">
+                                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-toggle="collapse" data-bs-target="#writeReviewCollapse">Cancel</button>
+                                    <button type="button" id="submitReviewBtn" class="btn aura-btn-primary rounded-pill px-5 fw-bold" onclick="window.submitProdReview(event)">
+                                        <i class="bi bi-send me-1"></i> Post Review
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row g-4 mb-4">
-                    <div class="col-lg-4 text-center border-end">
-                        <div class="display-4 fw-bold text-dark">@Model.Rating.ToString("0.0")</div>
+                    <div class="col-lg-4 text-center border-end-lg border-bottom border-bottom-lg-0 pb-3 pb-lg-0 mb-3 mb-lg-0">
+                        <div class="display-3 fw-bold text-dark" id="displayProductRating">@Model.Rating.ToString("0.0")</div>
                         <partial name="_RatingStars" model="Model.Rating" />
-                        <div class="text-muted small mt-2">Based on @Model.ReviewCount verified homeowner purchases</div>
+                        <div class="text-muted small mt-2" id="displayReviewCountText">Based on @Model.ReviewCount reviews &amp; ratings</div>
                     </div>
                     <div class="col-lg-8">
                         <div class="d-flex align-items-center gap-3 mb-2">
                             <span class="small text-muted" style="width: 45px;">5 Star</span>
-                            <div class="progress flex-grow-1" style="height: 8px;">
-                                <div class="progress-bar bg-warning" style="width: 86%;"></div>
+                            <div class="progress flex-grow-1" style="height: 8px; border-radius: 50px;">
+                                <div class="progress-bar bg-warning" id="bar5Star" style="width: @(p5)%;"></div>
                             </div>
-                            <span class="small text-muted" style="width: 35px;">86%</span>
+                            <span class="small text-muted" id="percent5Star" style="width: 35px;">@(p5)%</span>
                         </div>
                         <div class="d-flex align-items-center gap-3 mb-2">
                             <span class="small text-muted" style="width: 45px;">4 Star</span>
-                            <div class="progress flex-grow-1" style="height: 8px;">
-                                <div class="progress-bar bg-warning" style="width: 11%;"></div>
+                            <div class="progress flex-grow-1" style="height: 8px; border-radius: 50px;">
+                                <div class="progress-bar bg-warning" id="bar4Star" style="width: @(p4)%;"></div>
                             </div>
-                            <span class="small text-muted" style="width: 35px;">11%</span>
+                            <span class="small text-muted" id="percent4Star" style="width: 35px;">@(p4)%</span>
                         </div>
                         <div class="d-flex align-items-center gap-3 mb-2">
                             <span class="small text-muted" style="width: 45px;">3 Star</span>
-                            <div class="progress flex-grow-1" style="height: 8px;">
-                                <div class="progress-bar bg-warning" style="width: 2%;"></div>
+                            <div class="progress flex-grow-1" style="height: 8px; border-radius: 50px;">
+                                <div class="progress-bar bg-warning" id="bar3Star" style="width: @(p3)%;"></div>
                             </div>
-                            <span class="small text-muted" style="width: 35px;">2%</span>
+                            <span class="small text-muted" id="percent3Star" style="width: 35px;">@(p3)%</span>
                         </div>
                         <div class="d-flex align-items-center gap-3">
                             <span class="small text-muted" style="width: 45px;">1-2 Star</span>
-                            <div class="progress flex-grow-1" style="height: 8px;">
-                                <div class="progress-bar bg-secondary" style="width: 1%;"></div>
+                            <div class="progress flex-grow-1" style="height: 8px; border-radius: 50px;">
+                                <div class="progress-bar bg-secondary" id="bar12Star" style="width: @(p12)%;"></div>
                             </div>
-                            <span class="small text-muted" style="width: 35px;">1%</span>
+                            <span class="small text-muted" id="percent12Star" style="width: 35px;">@(p12)%</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Review Cards -->
-                <div class="d-flex flex-column gap-3 mt-4">
+                <div class="d-flex flex-column gap-3 mt-4" id="reviewsListContainer">
                     @if (Model.Reviews.Any())
                     {
                         @foreach (var rev in Model.Reviews)
                         {
-                            <div class="p-4 rounded-3 border bg-light">
+                            <div class="aura-trust-card text-start p-4">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; font-size: 0.85rem;">
-                                            @rev.Author.Substring(0, 1)
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="rounded-circle bg-dark text-white fw-bold d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-size: 0.9rem;">
+                                            @(string.IsNullOrEmpty(rev.Author) ? "U" : rev.Author.Substring(0, 1).ToUpper())
                                         </div>
                                         <div>
-                                            <strong class="d-block text-dark small">@rev.Author</strong>
-                                            <span class="text-muted" style="font-size: 0.75rem;">@rev.City • @rev.Date</span>
+                                            <strong class="d-block text-dark">@(string.IsNullOrEmpty(rev.Author) ? "Community Reviewer" : rev.Author)</strong>
+                                            <span class="text-muted" style="font-size: 0.78rem;">@(string.IsNullOrEmpty(rev.City) ? "India" : rev.City) • @(string.IsNullOrEmpty(rev.Date) ? rev.CreatedAt.ToString("MMM dd, yyyy") : rev.Date)</span>
                                         </div>
                                     </div>
-                                    <span class="badge bg-success-subtle text-success border border-success-subtle small">
-                                        <i class="bi bi-patch-check-fill me-1"></i> Verified Owner
-                                    </span>
+                                    @if (rev.VerifiedBuyer)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1">
+                                            <i class="bi bi-patch-check-fill me-1"></i> Verified Buyer
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1">
+                                            <i class="bi bi-person-check-fill me-1"></i> Community Reviewer
+                                        </span>
+                                    }
                                 </div>
                                 <partial name="_RatingStars" model="(double)rev.Rating" />
                                 <h6 class="fw-bold text-dark mt-2 mb-1">@rev.Title</h6>
-                                <p class="text-secondary small mb-2">@rev.Comment</p>
+                                <p class="text-secondary small mb-2" style="line-height: 1.6;">@rev.Comment</p>
+                                @if (!string.IsNullOrEmpty(rev.ImageUrl))
+                                {
+                                    <div class="mb-2 mt-2">
+                                        <a href="@rev.ImageUrl" target="_blank" title="View full image">
+                                            <img src="@rev.ImageUrl" alt="Customer review photo" class="img-fluid rounded-3 border shadow-sm" style="max-height: 200px; object-fit: cover;" onerror="this.style.display='none';" />
+                                        </a>
+                                    </div>
+                                }
                                 <small class="text-muted"><i class="bi bi-hand-thumbs-up me-1"></i> @rev.HelpfulCount people found this review helpful</small>
                             </div>
                         }
                     }
                     else
                     {
-                        <div class="p-4 rounded-3 border bg-light text-center">
-                            <p class="text-muted small mb-0">Be the first to review this new release!</p>
+                        <div class="aura-trust-card p-4 text-center" id="noReviewsPlaceholder">
+                            <p class="text-muted small mb-0">No reviews yet! Be the first to write a review and rate this product.</p>
                         </div>
                     }
                 </div>
@@ -415,12 +577,12 @@
                     <span class="text-uppercase fw-bold text-primary small letter-spacing-1">Complementary Flagships</span>
                     <h3 class="fw-bold mb-0">Recommended In This Category</h3>
                 </div>
-                <a href="/category/@Model.CategorySlug" class="btn aura-btn-outline btn-sm rounded-pill px-3">
-                    View More <i class="bi bi-arrow-right ms-1"></i>
+                <a href="/category/@Model.CategorySlug" class="btn aura-btn-outline btn-sm rounded-pill px-4 py-2 fw-bold">
+                    View Category <i class="bi bi-arrow-right ms-1"></i>
                 </a>
             </div>
 
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2 g-sm-3 g-lg-4">
                 @foreach (var prod in related)
                 {
                     <div class="col">
@@ -431,3 +593,388 @@
         </div>
     }
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const thumbs = document.querySelectorAll('.aura-pdp-thumb');
+        const mainImg = document.getElementById('pdpMainImage');
+        const mainVid = document.getElementById('pdpMainVideo');
+        const galleryMain = document.getElementById('pdpGalleryMain');
+
+        // Gallery Switcher (Image & Video)
+        thumbs.forEach(thumb => {
+            thumb.addEventListener('click', () => {
+                thumbs.forEach(t => t.classList.remove('active'));
+                thumb.classList.add('active');
+
+                const type = thumb.getAttribute('data-type');
+                if (type === 'video' && mainVid) {
+                    if (mainImg) {
+                        mainImg.classList.add('d-none');
+                        mainImg.style.transform = 'scale(1)';
+                    }
+                    mainVid.classList.remove('d-none');
+                    mainVid.currentTime = 0;
+                    mainVid.load();
+                    mainVid.play().catch(e => console.log('Autoplay prevented', e));
+                } else {
+                    if (mainVid) {
+                        mainVid.pause();
+                        mainVid.classList.add('d-none');
+                    }
+                    if (mainImg) {
+                        const src = thumb.getAttribute('data-src');
+                        if (src) mainImg.src = src;
+                        mainImg.classList.remove('d-none');
+                    }
+                }
+            });
+        });
+
+        // Interactive 2.2x Hover Magnifying Zoom & Lightbox Preview
+        if (galleryMain && mainImg) {
+            galleryMain.addEventListener('mousemove', (e) => {
+                if (mainVid && !mainVid.classList.contains('d-none')) return;
+
+                const rect = galleryMain.getBoundingClientRect();
+                const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+                const y = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
+
+                mainImg.style.transformOrigin = `${x.toFixed(2)}% ${y.toFixed(2)}%`;
+                mainImg.style.transform = 'scale(2.2)';
+                galleryMain.classList.add('zoomed');
+            });
+
+            galleryMain.addEventListener('mouseleave', () => {
+                if (mainImg) {
+                    mainImg.style.transform = 'scale(1)';
+                    mainImg.style.transformOrigin = 'center center';
+                }
+                galleryMain.classList.remove('zoomed');
+            });
+
+            galleryMain.addEventListener('click', (e) => {
+                if (e.target.closest('.aura-wishlist-btn') || e.target.closest('.aura-pdp-energy-badge')) return;
+                if (mainVid && !mainVid.classList.contains('d-none')) return;
+
+                if (typeof openImageLightboxModal === 'function' && mainImg.src) {
+                    openImageLightboxModal(mainImg.src, mainImg.alt || 'Product View');
+                }
+            });
+        }
+
+        // Interactive Star Rating Picker
+        const starPicker = document.getElementById('starPicker');
+        const ratingInput = document.getElementById('reviewRatingInput');
+        const ratingText = document.getElementById('starRatingText');
+        const ratingLabels = {
+            1: '1.0 - Poor',
+            2: '2.0 - Fair',
+            3: '3.0 - Good',
+            4: '4.0 - Very Good',
+            5: '5.0 - Outstanding'
+        };
+
+        if (starPicker) {
+            const stars = starPicker.querySelectorAll('.aura-star-item');
+
+            function updateStarsDisplay(val) {
+                stars.forEach(s => {
+                    const v = parseInt(s.getAttribute('data-value'));
+                    if (v <= val) {
+                        s.classList.remove('bi-star');
+                        s.classList.add('bi-star-fill');
+                    } else {
+                        s.classList.remove('bi-star-fill');
+                        s.classList.add('bi-star');
+                    }
+                });
+                if (ratingText) ratingText.textContent = ratingLabels[val] || `${val}.0`;
+            }
+
+            stars.forEach(s => {
+                s.addEventListener('mouseenter', () => {
+                    const val = parseInt(s.getAttribute('data-value'));
+                    updateStarsDisplay(val);
+                });
+                s.addEventListener('click', () => {
+                    const val = parseInt(s.getAttribute('data-value'));
+                    ratingInput.value = val;
+                    updateStarsDisplay(val);
+                });
+            });
+
+            starPicker.addEventListener('mouseleave', () => {
+                const currentVal = parseInt(ratingInput.value) || 5;
+                updateStarsDisplay(currentVal);
+            });
+        }
+
+        // Review Image Attachment Mode Switch & Preview Handlers
+        window.currentProdImageMode = 'file';
+
+        window.switchProdImageMode = function(mode) {
+            window.currentProdImageMode = mode;
+            const fileSection = document.getElementById('prodFileSection');
+            const urlSection = document.getElementById('prodUrlSection');
+            const fileBtn = document.getElementById('prodUploadTabBtn');
+            const urlBtn = document.getElementById('prodUrlTabBtn');
+
+            if (mode === 'file') {
+                if (fileSection) fileSection.style.display = 'block';
+                if (urlSection) urlSection.style.display = 'none';
+                if (fileBtn) { fileBtn.classList.add('btn-primary'); fileBtn.classList.remove('btn-outline-secondary'); }
+                if (urlBtn) { urlBtn.classList.remove('btn-primary'); urlBtn.classList.add('btn-outline-secondary'); }
+            } else {
+                if (fileSection) fileSection.style.display = 'none';
+                if (urlSection) urlSection.style.display = 'block';
+                if (urlBtn) { urlBtn.classList.add('btn-primary'); urlBtn.classList.remove('btn-outline-secondary'); }
+                if (fileBtn) { fileBtn.classList.remove('btn-primary'); fileBtn.classList.add('btn-outline-secondary'); }
+            }
+        };
+
+        window.handleProdFileSelect = function(e) {
+            const file = e.target.files[0];
+            const container = document.getElementById('prodImagePreviewContainer');
+            const preview = document.getElementById('prodImagePreview');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    if (preview) preview.src = evt.target.result;
+                    if (container) container.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                if (container) container.style.display = 'none';
+            }
+        };
+
+        window.handleProdUrlInput = function(e) {
+            const url = e.target.value.trim();
+            const container = document.getElementById('prodImagePreviewContainer');
+            const preview = document.getElementById('prodImagePreview');
+            if (url) {
+                if (preview) preview.src = url;
+                if (container) container.style.display = 'block';
+            } else {
+                if (container) container.style.display = 'none';
+            }
+        };
+
+        window.clearProdReviewImage = function() {
+            const fileInput = document.getElementById('prodReviewFileInput');
+            const urlInput = document.getElementById('prodReviewUrlInput');
+            const preview = document.getElementById('prodImagePreview');
+            const container = document.getElementById('prodImagePreviewContainer');
+            if (fileInput) fileInput.value = '';
+            if (urlInput) urlInput.value = '';
+            if (preview) preview.src = '';
+            if (container) container.style.display = 'none';
+        };
+
+        // Submit Review AJAX Handler
+        window.submitProdReview = async function(e) {
+            if (e) e.preventDefault();
+            const submitBtn = document.getElementById('submitReviewBtn');
+            const reviewAlert = document.getElementById('reviewFormAlert');
+
+            const productId = document.getElementById('reviewProductId')?.value;
+            const rating = parseInt(document.getElementById('reviewRatingInput')?.value || '5');
+            const rawAuthor = document.getElementById('reviewAuthorInput')?.value?.trim();
+            const author = rawAuthor || 'Community Reviewer';
+            const city = document.getElementById('reviewCityInput')?.value?.trim();
+            const title = document.getElementById('reviewTitleInput')?.value?.trim();
+            const comment = document.getElementById('reviewCommentInput')?.value?.trim();
+
+            if (!comment) {
+                if (reviewAlert) {
+                    reviewAlert.textContent = 'Please write a review comment.';
+                    reviewAlert.classList.remove('d-none');
+                }
+                return;
+            }
+
+            if (reviewAlert) reviewAlert.classList.add('d-none');
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Posting...';
+            }
+
+            let finalImageUrl = null;
+            const fileInput = document.getElementById('prodReviewFileInput');
+            const urlInputVal = document.getElementById('prodReviewUrlInput')?.value?.trim();
+
+            try {
+                if (window.currentProdImageMode === 'file' && fileInput && fileInput.files && fileInput.files.length > 0) {
+                    const formData = new FormData();
+                    formData.append('file', fileInput.files[0]);
+
+                    const uploadRes = await fetch('/catalog/reviews/upload-image', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const uploadData = await uploadRes.json();
+                    if (uploadRes.ok && uploadData.success) {
+                        finalImageUrl = uploadData.imageUrl;
+                    } else {
+                        if (reviewAlert) {
+                            reviewAlert.textContent = uploadData.message || 'Image upload failed.';
+                            reviewAlert.classList.remove('d-none');
+                        }
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '<i class="bi bi-send me-1"></i> Post Review';
+                        }
+                        return;
+                    }
+                } else if (urlInputVal) {
+                    finalImageUrl = urlInputVal;
+                }
+
+                const response = await fetch('/catalog/reviews/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        productId: productId,
+                        rating: rating,
+                        author: author,
+                        city: city,
+                        title: title,
+                        comment: comment,
+                        imageUrl: finalImageUrl
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    if (typeof showAuraToast === 'function') {
+                        showAuraToast('Thank you! Your review has been saved.', 'success');
+                    } else {
+                        alert('Review posted successfully!');
+                    }
+
+                    // Update rating display & count
+                    const ratingEl = document.getElementById('displayProductRating');
+                    if (ratingEl) ratingEl.textContent = Number(data.rating).toFixed(1);
+
+                    const countEl = document.getElementById('displayReviewCountText');
+                        if (countEl) countEl.textContent = `Based on ${data.reviewCount} reviews & ratings`;
+
+                        // Render new review card into list
+                        const container = document.getElementById('reviewsListContainer');
+                        const noReviews = document.getElementById('noReviewsPlaceholder');
+                        if (noReviews) noReviews.remove();
+
+                        const firstChar = author ? author.charAt(0).toUpperCase() : 'C';
+                        const locationStr = city ? city : 'India';
+                        const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+
+                        let starsHtml = '';
+                        for (let i = 1; i <= 5; i++) {
+                            starsHtml += i <= rating ? '<i class="bi bi-star-fill text-warning me-1"></i>' : '<i class="bi bi-star text-muted me-1"></i>';
+                        }
+
+                        let imageHtml = '';
+                        if (finalImageUrl) {
+                            imageHtml = `
+                                <div class="mb-2 mt-2">
+                                    <a href="${finalImageUrl}" target="_blank" title="View full image">
+                                        <img src="${finalImageUrl}" alt="Customer review photo" class="img-fluid rounded-3 border shadow-sm" style="max-height: 200px; object-fit: cover;" onerror="this.style.display='none';" />
+                                    </a>
+                                </div>
+                            `;
+                        }
+
+                        const newCardHtml = `
+                            <div class="aura-trust-card text-start p-4 border border-primary border-opacity-25 bg-primary bg-opacity-10">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="rounded-circle bg-dark text-white fw-bold d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-size: 0.9rem;">
+                                            ${firstChar}
+                                        </div>
+                                        <div>
+                                            <strong class="d-block text-dark">${author}</strong>
+                                            <span class="text-muted" style="font-size: 0.78rem;">${locationStr} • ${todayStr}</span>
+                                        </div>
+                                    </div>
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1">
+                                        <i class="bi bi-person-check-fill me-1"></i> Community Reviewer
+                                    </span>
+                                </div>
+                                <div class="mb-1">${starsHtml}</div>
+                                <h6 class="fw-bold text-dark mt-2 mb-1">${title || 'Product Review'}</h6>
+                                <p class="text-secondary small mb-2" style="line-height: 1.6;">${comment}</p>
+                                ${imageHtml}
+                                <small class="text-muted"><i class="bi bi-hand-thumbs-up me-1"></i> 0 people found this review helpful</small>
+                            </div>
+                        `;
+
+                        if (container) {
+                            container.insertAdjacentHTML('afterbegin', newCardHtml);
+                        }
+
+                        // Reset form fields and collapse form
+                        document.getElementById('reviewCommentInput').value = '';
+                        document.getElementById('reviewTitleInput').value = '';
+                        clearProdReviewImage();
+
+                        const collapseEl = document.getElementById('writeReviewCollapse');
+                        if (collapseEl && typeof bootstrap !== 'undefined') {
+                            const bsCollapse = bootstrap.Collapse.getInstance(collapseEl) || new bootstrap.Collapse(collapseEl);
+                            bsCollapse.hide();
+                        }
+                    } else {
+                        if (reviewAlert) {
+                            reviewAlert.textContent = data.message || 'Failed to submit review.';
+                            reviewAlert.classList.remove('d-none');
+                        }
+                    }
+                } catch (err) {
+                    if (reviewAlert) {
+                        reviewAlert.textContent = 'An error occurred while connecting to the server.';
+                        reviewAlert.classList.remove('d-none');
+                    }
+                } finally {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="bi bi-send me-1"></i> Post Review';
+                    }
+                }
+        };
+    });
+</script>
+
+<!-- Mobile Floating Sticky Action Bar (< lg screens) -->
+<div class="aura-mobile-sticky-pdp d-lg-none position-fixed bottom-0 start-0 end-0 bg-white border-top shadow-lg p-2.5" style="z-index: 1025; padding: 0.75rem 1rem;">
+    <div class="container d-flex align-items-center justify-content-between gap-2">
+        <div class="flex-shrink-0">
+            <div class="fw-bold text-dark fs-6" id="mobileStickyPrice">₹@Model.Price.ToString("N0")</div>
+            @if (Model.OriginalPrice > Model.Price)
+            {
+                <small class="text-muted text-decoration-line-through d-none d-sm-block" style="font-size: 0.72rem;">₹@Model.OriginalPrice.ToString("N0")</small>
+            }
+        </div>
+        <div class="d-flex gap-2 flex-grow-1 justify-content-end" style="max-width: 260px;">
+            <button type="button" class="btn aura-btn-secondary px-2 px-sm-3 py-2 text-nowrap rounded-pill small flex-grow-1" style="font-size: 0.8rem;" onclick="addToCart('@Model.Id', '@Model.Name', @Model.Price, '@Model.MainImage')">
+                <i class="bi bi-cart-plus me-1"></i> Add to Cart
+            </button>
+            <button type="button" class="btn aura-btn-primary px-2 px-sm-3 py-2 text-nowrap rounded-pill small flex-grow-1" style="font-size: 0.8rem;" onclick="buyNowDirect('@Model.Id', '@Model.Name', @Model.Price, '@Model.MainImage')">
+                <i class="bi bi-lightning-charge-fill me-1"></i> Buy Now
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function buyNowDirect(id, name, price, image) {
+        if (typeof addToCart === 'function') {
+            addToCart(id, name, price, image);
+            window.location.href = '/checkout';
+        }
+    }
+</script>
+

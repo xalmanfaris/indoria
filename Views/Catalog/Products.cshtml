@@ -10,19 +10,12 @@
 <div class="container py-4">
     <partial name="_Breadcrumb" model="breadcrumbs" />
 
-    <!-- Banner Header -->
-    <div class="p-4 p-md-5 rounded-4 bg-white border mb-4 shadow-sm">
-        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">Full Collection</span>
-        <h1 class="fw-bold mb-2">Explore Premium Home Appliances</h1>
-        <p class="text-secondary mb-0">Engineered for architectural sophistication, energy efficiency, and reliable longevity. Backed by 100% genuine brand warranties.</p>
-    </div>
-
     <!-- Product Grid & Filters -->
     <div class="row g-4">
         <!-- Filter Sidebar Desktop -->
         <div class="col-lg-3">
             <button class="btn btn-outline-dark w-100 d-lg-none mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#mobileFilterCollapse" aria-expanded="false">
-                <i class="bi bi-funnel me-1"></i> Filter &amp; Sort
+                <i class="bi bi-funnel me-1"></i> @Localizer["Filter Products"]
             </button>
             <div class="collapse d-lg-block" id="mobileFilterCollapse">
                 <partial name="_ProductListingFilter" model="Model" />
@@ -38,13 +31,13 @@
                 </div>
                 
                 <div class="d-flex align-items-center gap-2">
-                    <label class="small text-muted text-nowrap">Sort by:</label>
+                    <label class="small text-muted text-nowrap">@Localizer["Sort By"]:</label>
                     <select class="form-select form-select-sm" style="width: 190px;" onchange="location.href = updateQueryString('sortBy', this.value);">
-                        <option value="popularity" selected="@(Model.SortBy == "popularity")">Most Popular</option>
-                        <option value="rating" selected="@(Model.SortBy == "rating")">Highest Rated</option>
-                        <option value="price-low" selected="@(Model.SortBy == "price-low")">Price: Low to High</option>
-                        <option value="price-high" selected="@(Model.SortBy == "price-high")">Price: High to Low</option>
-                        <option value="newest" selected="@(Model.SortBy == "newest")">Newest Launches</option>
+                        <option value="popularity" selected="@(Model.SortBy == "popularity")">@Localizer["Featured"]</option>
+                        <option value="rating" selected="@(Model.SortBy == "rating")">@Localizer["Rating"]</option>
+                        <option value="price-low" selected="@(Model.SortBy == "price-low")">@Localizer["Price: Low to High"]</option>
+                        <option value="price-high" selected="@(Model.SortBy == "price-high")">@Localizer["Price: High to Low"]</option>
+                        <option value="newest" selected="@(Model.SortBy == "newest")">@Localizer["Newest Arrivals"]</option>
                     </select>
                 </div>
             </div>
@@ -87,10 +80,10 @@
                 <!-- Empty State -->
                 <div class="text-center py-5 bg-white rounded-4 border p-5">
                     <i class="bi bi-search text-muted opacity-50" style="font-size: 3.5rem;"></i>
-                    <h4 class="fw-bold mt-3">No matching appliances found</h4>
+                    <h4 class="fw-bold mt-3">@Localizer["Out of Stock"]</h4>
                     <p class="text-muted small mb-4">Try adjusting your filters or search keywords.</p>
                     <a href="/products" class="btn aura-btn-primary px-4 py-2">
-                        Reset All Filters
+                        @Localizer["Filter Products"]
                     </a>
                 </div>
             }

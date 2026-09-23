@@ -1,55 +1,202 @@
 @model List<AuraLiving.Models.CategoryViewModel>
 @{
-    ViewData["Title"] = "All Categories - Premium Home Appliances";
+    ViewData["Title"] = "All Categories - Indoria Appliance Store";
     var breadcrumbs = new List<(string Title, string Url)>
     {
         ("All Categories", "")
     };
+    int totalCategoryCount = Model.Count;
+    int totalProducts = Model.Sum(c => c.ProductCount);
 }
 
 <div class="container py-4">
     <partial name="_Breadcrumb" model="breadcrumbs" />
 
-    <div class="mb-4">
-        <h1 class="fw-bold mb-2">Explore All Appliance Categories</h1>
-        <p class="text-muted">Browse our comprehensive selection of high-efficiency kitchen systems, cinema displays, laundry care, and silent climate appliances.</p>
+    <!-- Clean Page Header -->
+    <div class="row align-items-center mb-4 g-3">
+        <div class="col-md-7">
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <h1 class="h2 fw-extrabold text-dark mb-0">@Localizer["Categories"]</h1>
+                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-1 small fw-bold">
+                    @totalCategoryCount @Localizer["Categories"]
+                </span>
+            </div>
+            <p class="text-muted small mb-0">
+                @Localizer["Curated Launch Deals & Private Offers"]
+            </p>
+        </div>
+        <div class="col-md-5">
+            <!-- Instant Search Input -->
+            <div class="position-relative">
+                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                <input type="text" id="categorySearchInput" class="form-control form-control-lg rounded-pill ps-5 fs-6 shadow-sm border-theme" placeholder="@Localizer["Search appliances..."]" onkeyup="filterCategories()" />
+                <button type="button" class="btn btn-sm text-muted position-absolute top-50 end-0 translate-middle-y me-3 border-0 d-none" id="clearSearchBtn" onclick="clearCategorySearch()">
+                    <i class="bi bi-x-circle-fill"></i>
+                </button>
+            </div>
+        </div>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <!-- Category Grid -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3 mb-5" id="categoryGrid">
         @foreach (var cat in Model)
         {
-            <div class="col">
-                <div class="p-4 rounded-4 bg-white border h-100 d-flex flex-column justify-content-between hover-shadow transition">
-                    <div>
-                        <div class="d-flex align-items-center gap-3 mb-3">
-                            <div class="aura-category-card-icon m-0" style="width: 48px; height: 48px; font-size: 1.3rem;">
-                                <i class="bi @cat.Icon"></i>
-                            </div>
-                            <div>
-                                <h4 class="fw-bold mb-0">
-                                    <a href="/category/@cat.Slug" class="text-dark text-decoration-none">@cat.Name</a>
-                                </h4>
-                                <small class="text-muted">@cat.ProductCount+ Premium Models</small>
-                            </div>
-                        </div>
+            var iconClass = string.IsNullOrEmpty(cat.Icon) ? "bi-grid-fill" : cat.Icon;
+            var subCatsList = cat.SubCategories ?? new List<string>();
+            var searchText = (cat.Name + " " + cat.Description + " " + string.Join(" ", subCatsList)).ToLower();
 
-                        <p class="text-secondary small mb-3">@cat.Description</p>
+            <div class="col category-card-col" data-search="@searchText">
+                <div class="card h-100 border-0 rounded-4 shadow-sm cat-simple-card position-relative transition-all overflow-hidden" onclick="location.href='/category/@cat.Slug'" style="cursor: pointer;">
+                    <div class="card-body p-4 d-flex flex-column justify-content-between">
+                        <div>
+                            <!-- Header Icon & Badge Row -->
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="cat-icon-wrapper rounded-3 d-flex align-items-center justify-content-center">
+                                    <i class="bi @iconClass fs-4 text-primary"></i>
+                                </div>
+                                <span class="badge rounded-pill bg-body-tertiary border text-muted px-2.5 py-1 extra-small fw-bold">
+                                    <i class="bi bi-box-seam me-1"></i>@cat.ProductCount Items
+                                </span>
+                            </div>
 
-                        <div class="d-flex flex-wrap gap-1 mb-4">
-                            @foreach (var sub in cat.SubCategories)
+                            <!-- Category Name & Description -->
+                            <h5 class="fw-bold text-dark mb-2 cat-title">@Localizer[cat.Name]</h5>
+                            <p class="text-secondary small mb-3 line-clamp-2" style="line-height: 1.5; font-size: 0.86rem;">
+                                @cat.Description
+                            </p>
+
+                            <!-- Subcategories Chips -->
+                            @if (subCatsList.Any())
                             {
-                                <a href="/category/@cat.Slug?sub=@sub" class="badge bg-light text-muted border text-decoration-none py-2 px-2.5">
-                                    @sub
-                                </a>
+                                <div class="d-flex flex-wrap gap-1 mb-3" onclick="event.stopPropagation();">
+                                    @foreach (var sub in subCatsList.Take(4))
+                                    {
+                                        <a href="/category/@cat.Slug?sub=@Uri.EscapeDataString(sub)" class="badge bg-body-secondary text-dark text-decoration-none rounded-pill px-2.5 py-1 extra-small subcat-chip">
+                                            @sub
+                                        </a>
+                                    }
+                                </div>
                             }
                         </div>
-                    </div>
 
-                    <a href="/category/@cat.Slug" class="btn aura-btn-outline w-100 py-2">
-                        View @cat.Name Collection <i class="bi bi-arrow-right ms-1"></i>
-                    </a>
+                        <!-- Card Footer Link -->
+                        <div class="pt-3 border-top d-flex align-items-center justify-content-between text-primary font-medium small cat-action-link">
+                            <span>@Localizer["Shop Now"]</span>
+                            <i class="bi bi-arrow-right cat-arrow"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         }
     </div>
+
+    <!-- Empty State for Search -->
+    <div id="noCategoriesFound" class="text-center py-5 d-none">
+        <div class="rounded-circle bg-body-tertiary text-muted d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+            <i class="bi bi-search fs-2"></i>
+        </div>
+        <h5 class="fw-bold text-dark mb-1">No matching categories found</h5>
+        <p class="text-muted small mb-3">Try checking for spelling errors or searching another keyword.</p>
+        <button class="btn btn-sm btn-outline-primary rounded-pill px-4" onclick="clearCategorySearch()">View All Categories</button>
+    </div>
 </div>
+
+<style>
+    .extra-small { font-size: 0.75rem; }
+    .font-medium { font-weight: 600; }
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .border-theme {
+        border: 1px solid var(--aura-border, #e2e8f0) !important;
+        background-color: var(--aura-surface, #ffffff);
+        color: var(--aura-dark, #0f172a);
+    }
+    .border-theme:focus {
+        border-color: var(--aura-primary, #3b82f6) !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+    }
+
+    .cat-simple-card {
+        background: var(--aura-surface, #ffffff);
+        border: 1px solid var(--aura-border, #e2e8f0) !important;
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .cat-simple-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08) !important;
+        border-color: var(--aura-primary, #3b82f6) !important;
+    }
+
+    .cat-icon-wrapper {
+        width: 48px;
+        height: 48px;
+        background-color: rgba(59, 130, 246, 0.1);
+        transition: background-color 0.25s ease, transform 0.25s ease;
+    }
+    .cat-simple-card:hover .cat-icon-wrapper {
+        background-color: var(--aura-primary, #3b82f6);
+        transform: scale(1.05);
+    }
+    .cat-simple-card:hover .cat-icon-wrapper i {
+        color: #ffffff !important;
+    }
+
+    .cat-arrow {
+        transition: transform 0.2s ease;
+    }
+    .cat-simple-card:hover .cat-arrow {
+        transform: translateX(4px);
+    }
+
+    .subcat-chip {
+        border: 1px solid var(--aura-border, #e2e8f0);
+        transition: all 0.15s ease;
+    }
+    .subcat-chip:hover {
+        background-color: var(--aura-primary, #3b82f6) !important;
+        color: #ffffff !important;
+        border-color: var(--aura-primary, #3b82f6) !important;
+    }
+</style>
+
+<script>
+    function filterCategories() {
+        const query = document.getElementById('categorySearchInput').value.toLowerCase().trim();
+        const clearBtn = document.getElementById('clearSearchBtn');
+        const cards = document.querySelectorAll('.category-card-col');
+        let visibleCount = 0;
+
+        if (clearBtn) {
+            clearBtn.classList.toggle('d-none', query === '');
+        }
+
+        cards.forEach(card => {
+            const searchText = card.getAttribute('data-search') || '';
+            if (query === '' || searchText.includes(query)) {
+                card.classList.remove('d-none');
+                visibleCount++;
+            } else {
+                card.classList.add('d-none');
+            }
+        });
+
+        const noResults = document.getElementById('noCategoriesFound');
+        if (noResults) {
+            noResults.classList.toggle('d-none', visibleCount > 0);
+        }
+    }
+
+    function clearCategorySearch() {
+        const input = document.getElementById('categorySearchInput');
+        if (input) {
+            input.value = '';
+            filterCategories();
+            input.focus();
+        }
+    }
+</script>

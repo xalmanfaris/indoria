@@ -1,55 +1,171 @@
 @{
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    var userName = User.Identity?.Name ?? "Patron Account";
+    var userRole = User.IsInRole("Admin") ? "Super Admin" : "Indoria Privilege Member";
+
+    // Compute initials from userName dynamically
+    var initials = "IP";
+    if (!string.IsNullOrWhiteSpace(userName))
+    {
+        var parts = userName.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length >= 2)
+        {
+            initials = $"{parts[0][0]}{parts[1][0]}".ToUpper();
+        }
+        else if (parts.Length == 1 && parts[0].Length >= 2)
+        {
+            initials = parts[0].Substring(0, 2).ToUpper();
+        }
+        else if (parts.Length == 1)
+        {
+            initials = parts[0].Substring(0, 1).ToUpper();
+        }
+    }
 }
 
-<div class="aura-account-nav shadow-sm mb-4">
-    <!-- User Quick Summary Card -->
-    <div class="p-3 bg-light border-bottom d-flex align-items-center gap-3">
-        <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; font-size: 1.1rem;">
-            AM
+<div class="homixa-account-sidebar rounded-4 border bg-white shadow-sm overflow-hidden mb-4">
+    <!-- User Profile Header Card -->
+    <div class="p-4 border-bottom text-center position-relative" style="background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);">
+        <div class="position-relative d-inline-block mb-2">
+            <div class="rounded-circle shadow-md d-flex align-items-center justify-content-center text-white fw-bold text-uppercase mx-auto" 
+                 style="width: 64px; height: 64px; font-size: 1.4rem; background: linear-gradient(135deg, #0f172a 0%, #334155 100%); border: 3px solid #ffffff; box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.25);">
+                @initials
+            </div>
+            <span class="position-absolute bottom-0 end-0 bg-success border border-white rounded-circle p-1.5" title="Account Active"></span>
         </div>
-        <div>
-            <div class="fw-bold text-dark">Arjun Mehta</div>
-            <small class="text-muted">Indoria Privilege Member</small>
-        </div>
+        <h5 class="fw-bold text-dark mb-1 text-truncate" style="font-size: 1.05rem;">@userName</h5>
+        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-20 rounded-pill px-3 py-1 small fw-semibold">
+            @userRole
+        </span>
     </div>
 
-    <!-- Links -->
-    <div class="d-flex flex-column">
-        <a href="/account" class="aura-account-nav-link @(currentAction == "Index" ? "active" : "")">
-            <span><i class="bi bi-speedometer2"></i> Overview</span>
-            <i class="bi bi-chevron-right text-muted small"></i>
+    <!-- Navigation Menu Group Desktop -->
+    <div class="p-2 d-none d-lg-flex flex-column gap-1">
+        <a href="/account" class="homixa-sidebar-link @(currentAction == "Index" ? "active" : "")">
+            <span>@Localizer["Dashboard"]</span>
+            <i class="bi bi-chevron-right arrow"></i>
         </a>
-        <a href="/account/orders" class="aura-account-nav-link @(currentAction == "Orders" || currentAction == "OrderDetails" ? "active" : "")">
-            <span><i class="bi bi-box-seam"></i> My Orders</span>
-            <span class="badge bg-primary rounded-pill">2 Active</span>
+
+        <a href="/account/orders" class="homixa-sidebar-link @(currentAction == "Orders" || currentAction == "OrderDetails" ? "active" : "")">
+            <div class="d-flex align-items-center gap-2">
+                <span>@Localizer["My Orders"]</span>
+                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2.5 py-0.5 small fw-bold">@Localizer["In Stock"]</span>
+            </div>
+            <i class="bi bi-chevron-right arrow"></i>
         </a>
-        <a href="/account/addresses" class="aura-account-nav-link @(currentAction == "Addresses" ? "active" : "")">
-            <span><i class="bi bi-geo-alt"></i> Saved Addresses</span>
-            <i class="bi bi-chevron-right text-muted small"></i>
+
+        <a href="/wishlist" class="homixa-sidebar-link">
+            <span>@Localizer["Wishlist Saved"]</span>
+            <i class="bi bi-chevron-right arrow"></i>
         </a>
-        <a href="/account/returns" class="aura-account-nav-link @(currentAction == "Returns" ? "active" : "")">
-            <span><i class="bi bi-arrow-counterclockwise"></i> Returns &amp; Refunds</span>
-            <i class="bi bi-chevron-right text-muted small"></i>
+
+        <a href="/account/addresses" class="homixa-sidebar-link @(currentAction == "Addresses" ? "active" : "")">
+            <span>@Localizer["Saved Addresses"]</span>
+            <i class="bi bi-chevron-right arrow"></i>
         </a>
-        <a href="/account/reviews" class="aura-account-nav-link @(currentAction == "Reviews" ? "active" : "")">
-            <span><i class="bi bi-star"></i> My Product Reviews</span>
-            <i class="bi bi-chevron-right text-muted small"></i>
+
+        <a href="/account/returns" class="homixa-sidebar-link @(currentAction == "Returns" ? "active" : "")">
+            <span>@Localizer["Returns & Claims"]</span>
+            <i class="bi bi-chevron-right arrow"></i>
         </a>
-        <a href="/account/profile" class="aura-account-nav-link @(currentAction == "Profile" ? "active" : "")">
-            <span><i class="bi bi-person-gear"></i> Profile Information</span>
-            <i class="bi bi-chevron-right text-muted small"></i>
+
+        <a href="/account/reviews" class="homixa-sidebar-link @(currentAction == "Reviews" ? "active" : "")">
+            <span>@Localizer["My Product Reviews"]</span>
+            <i class="bi bi-chevron-right arrow"></i>
         </a>
-        <a href="/account/notifications" class="aura-account-nav-link @(currentAction == "Notifications" ? "active" : "")">
-            <span><i class="bi bi-bell"></i> Notification Settings</span>
-            <i class="bi bi-chevron-right text-muted small"></i>
+
+        <div class="my-1 border-top opacity-50"></div>
+
+        <a href="/account/profile" class="homixa-sidebar-link @(currentAction == "Profile" ? "active" : "")">
+            <span>@Localizer["Profile Settings"]</span>
+            <i class="bi bi-chevron-right arrow"></i>
         </a>
-        <a href="/account/settings" class="aura-account-nav-link @(currentAction == "Settings" ? "active" : "")">
-            <span><i class="bi bi-shield-lock"></i> Security &amp; Password</span>
-            <i class="bi bi-chevron-right text-muted small"></i>
+
+        <a href="/account/notifications" class="homixa-sidebar-link @(currentAction == "Notifications" ? "active" : "")">
+            <span>@Localizer["Notifications"]</span>
+            <i class="bi bi-chevron-right arrow"></i>
         </a>
-        <a href="/login" class="aura-account-nav-link text-danger border-0">
-            <span><i class="bi bi-box-arrow-right text-danger"></i> Sign Out</span>
+
+        <a href="/account/settings" class="homixa-sidebar-link @(currentAction == "Settings" ? "active" : "")">
+            <span>@Localizer["Settings"]</span>
+            <i class="bi bi-chevron-right arrow"></i>
         </a>
+
+        <div class="my-1 border-top opacity-50"></div>
+
+        <button type="button" class="homixa-sidebar-link text-danger border-0 w-100 text-start bg-transparent" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
+            <span>@Localizer["Sign Out"]</span>
+            <i class="bi bi-box-arrow-right text-danger fs-6"></i>
+        </button>
+    </div>
+
+    <!-- Responsive Horizontal Scroll Nav Pills for Mobile (< lg) -->
+    <div class="p-2 d-lg-none border-top">
+        <div class="nav nav-pills flex-nowrap overflow-x-auto gap-2 pb-1 text-nowrap" style="-webkit-overflow-scrolling: touch;">
+            <a href="/account" class="nav-link py-1.5 px-3 rounded-pill small @(currentAction == "Index" ? "active bg-primary text-white" : "bg-light text-dark")">
+                @Localizer["Dashboard"]
+            </a>
+            <a href="/account/orders" class="nav-link py-1.5 px-3 rounded-pill small @(currentAction == "Orders" || currentAction == "OrderDetails" ? "active bg-primary text-white" : "bg-light text-dark")">
+                @Localizer["My Orders"]
+            </a>
+            <a href="/wishlist" class="nav-link py-1.5 px-3 rounded-pill small bg-light text-dark">
+                @Localizer["Wishlist"]
+            </a>
+            <a href="/account/addresses" class="nav-link py-1.5 px-3 rounded-pill small @(currentAction == "Addresses" ? "active bg-primary text-white" : "bg-light text-dark")">
+                @Localizer["Addresses"]
+            </a>
+            <a href="/account/returns" class="nav-link py-1.5 px-3 rounded-pill small @(currentAction == "Returns" ? "active bg-primary text-white" : "bg-light text-dark")">
+                @Localizer["Returns"]
+            </a>
+            <a href="/account/reviews" class="nav-link py-1.5 px-3 rounded-pill small @(currentAction == "Reviews" ? "active bg-primary text-white" : "bg-light text-dark")">
+                @Localizer["Reviews"]
+            </a>
+            <a href="/account/profile" class="nav-link py-1.5 px-3 rounded-pill small @(currentAction == "Profile" ? "active bg-primary text-white" : "bg-light text-dark")">
+                @Localizer["Profile"]
+            </a>
+            <a href="/account/notifications" class="nav-link py-1.5 px-3 rounded-pill small @(currentAction == "Notifications" ? "active bg-primary text-white" : "bg-light text-dark")">
+                @Localizer["Alerts"]
+            </a>
+            <a href="/account/settings" class="nav-link py-1.5 px-3 rounded-pill small @(currentAction == "Settings" ? "active bg-primary text-white" : "bg-light text-dark")">
+                @Localizer["Settings"]
+            </a>
+        </div>
     </div>
 </div>
+
+<style>
+    .homixa-sidebar-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1rem;
+        color: #475569;
+        font-weight: 500;
+        font-size: 0.92rem;
+        text-decoration: none;
+        border-radius: 12px;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .homixa-sidebar-link .arrow {
+        font-size: 0.75rem;
+        color: #cbd5e1;
+        transition: transform 0.2s ease;
+    }
+    .homixa-sidebar-link:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+    }
+    .homixa-sidebar-link:hover .arrow {
+        transform: translateX(3px);
+        color: #0f172a;
+    }
+    .homixa-sidebar-link.active {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: #ffffff !important;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    }
+    .homixa-sidebar-link.active .arrow {
+        color: rgba(255, 255, 255, 0.5);
+    }
+</style>

@@ -2,87 +2,64 @@
 
 <div class="aura-product-card">
     <div class="aura-product-img-wrap">
-        <!-- Badges -->
-        <div class="aura-product-badge-group">
-            @if (Model.Badges.Any())
-            {
-                <span class="aura-badge-primary">@Model.Badges.First()</span>
-            }
-            @if (Model.EnergyRating >= 4)
-            {
-                <span class="aura-badge-energy"><i class="bi bi-lightning-charge-fill"></i> @Model.EnergyRating★ Energy</span>
-            }
-            @if (Model.DiscountPercent > 0)
-            {
-                <span class="aura-badge-discount">-@Model.DiscountPercent% OFF</span>
-            }
-        </div>
-
-        <!-- Wishlist Button -->
-        <button class="aura-wishlist-btn" title="Add to Wishlist" data-product-name="@Model.Name" aria-label="Save to Wishlist">
+        <!-- Wishlist Glass Button -->
+        <button class="aura-wishlist-btn" title="@Localizer["Wishlist"]" data-product-id="@Model.Id" data-product-name="@Model.Name" aria-label="@Localizer["Wishlist"]">
             <i class="bi bi-heart"></i>
         </button>
 
         <!-- Product Image -->
-        <a href="/product/@Model.Slug">
-            <img src="@Model.MainImage" alt="@Model.Name" class="aura-product-img" loading="lazy" />
+        <a href="/product/@Model.Slug" class="d-block h-100 w-100 text-center">
+            <img src="@Model.MainImage" alt="@Model.Name" class="aura-product-img" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='/images/homixa_hero_appliances.jpg';" />
         </a>
     </div>
 
     <div class="aura-product-body">
-        <div class="aura-product-brand">@Model.Brand</div>
+        <div class="d-flex align-items-center justify-content-between mb-1">
+            <span class="aura-product-brand">@Model.Brand</span>
+            <span class="aura-rating-pill">
+                <i class="bi bi-star-fill text-warning me-1"></i>@Model.Rating.ToString("0.0") <small class="opacity-75">(@Model.ReviewCount)</small>
+            </span>
+        </div>
         
         <h3 class="aura-product-title">
-            <a href="/product/@Model.Slug" title="@Model.Name">@Model.Name</a>
+            <a href="/product/@Model.Slug" title="@Model.Name">@Localizer[Model.Name]</a>
         </h3>
 
-        <!-- Rating & Reviews -->
-        <div class="aura-rating-wrap">
-            <span class="aura-rating-pill">
-                @Model.Rating.ToString("0.0") <i class="bi bi-star-fill"></i>
-            </span>
-            <span class="aura-review-count">(@Model.ReviewCount reviews)</span>
-        </div>
-
-        <!-- Pricing -->
-        <div class="aura-price-wrap">
-            <span class="aura-price-current">₹@Model.Price.ToString("N0")</span>
-            @if (Model.OriginalPrice > Model.Price)
-            {
-                <span class="aura-price-original">₹@Model.OriginalPrice.ToString("N0")</span>
-            }
-        </div>
-
-        <!-- EMI Tag -->
-        @if (Model.EmiPerMonth > 0)
-        {
-            <div class="aura-emi-tag">
-                <i class="bi bi-credit-card-2-front me-1"></i> No Cost EMI from ₹@Model.EmiPerMonth.ToString("N0")/mo
+        <!-- Pricing & EMI -->
+        <div class="mt-auto">
+            <div class="aura-price-wrap d-flex align-items-baseline gap-2 mb-1">
+                <span class="aura-price-current">₹@Model.Price.ToString("N0")</span>
+                @if (Model.OriginalPrice > Model.Price)
+                {
+                    <span class="aura-price-original">₹@Model.OriginalPrice.ToString("N0")</span>
+                }
             </div>
-        }
 
-        <!-- Stock Tag -->
-        <div class="aura-stock-tag">
-            @(Model.InStock ? "In Stock • Dispatch within 24h" : "Out of Stock")
-        </div>
+            @if (Model.EmiPerMonth > 0)
+            {
+                <div class="aura-emi-tag mb-2">
+                    <i class="bi bi-credit-card-2-front me-1"></i> EMI from ₹@Model.EmiPerMonth.ToString("N0")/mo
+                </div>
+            }
 
-        <!-- Actions -->
-        <div class="aura-card-actions">
-            <button class="aura-btn-cart" data-product-name="@Model.Name">
-                <i class="bi bi-bag-plus"></i> Add to Bag
-            </button>
-            <button class="aura-btn-quickview" title="Quick View" 
-                    data-name="@Model.Name"
-                    data-brand="@Model.Brand"
-                    data-price="@Model.Price"
-                    data-orig-price="@Model.OriginalPrice"
-                    data-image="@Model.MainImage"
-                    data-desc="@Model.ShortDescription"
-                    data-slug="@Model.Slug"
-                    data-rating="@Model.Rating.ToString("0.0")"
-                    data-reviews="@Model.ReviewCount">
-                <i class="bi bi-eye"></i>
-            </button>
+            <!-- Card Capsule Actions -->
+            <div class="aura-card-actions d-flex align-items-center gap-1.5 gap-sm-2 mt-3">
+                <button class="btn aura-btn-cart flex-grow-1 text-nowrap" data-product-id="@Model.Id" data-product-name="@Model.Name">
+                    <i class="bi bi-bag-plus me-1"></i> <span class="aura-btn-cart-text">@Localizer["Add to Cart"]</span>
+                </button>
+                <button class="homixa-icon-btn aura-btn-quickview border d-none d-sm-inline-flex" title="@Localizer["Quick View"]" 
+                        data-name="@Model.Name"
+                        data-brand="@Model.Brand"
+                        data-price="@Model.Price"
+                        data-orig-price="@Model.OriginalPrice"
+                        data-image="@Model.MainImage"
+                        data-desc="@Model.ShortDescription"
+                        data-slug="@Model.Slug"
+                        data-rating="@Model.Rating.ToString("0.0")"
+                        data-reviews="@Model.ReviewCount">
+                    <i class="bi bi-eye"></i>
+                </button>
+            </div>
         </div>
     </div>
 </div>

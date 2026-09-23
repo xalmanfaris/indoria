@@ -1,8 +1,15 @@
 @{
     ViewData["Title"] = "Account Security & Settings";
+    var breadcrumbs = new List<(string Title, string Url)>
+    {
+        ("My Account", "/account"),
+        ("Security & Password", "")
+    };
 }
 
 <div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
     <div class="row g-4">
         <div class="col-lg-3">
             <partial name="_AccountSidebar" />
@@ -10,38 +17,45 @@
 
         <div class="col-lg-9">
             <div class="p-4 p-md-5 rounded-4 bg-white border shadow-sm mb-4">
-                <h3 class="fw-bold text-dark mb-1">Security &amp; Password</h3>
-                <p class="text-muted small mb-4">Manage your credentials and safeguard your account.</p>
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 pb-3 border-bottom gap-2">
+                    <div>
+                        <h3 class="fw-bold text-dark mb-1">Security &amp; Password Settings</h3>
+                        <p class="text-secondary small mb-0">Manage your credentials, active sessions, and safeguard your account identity.</p>
+                    </div>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1.5 rounded-pill fw-bold">
+                        <i class="bi bi-shield-lock-fill text-success me-1"></i> 256-Bit SSL Encrypted
+                    </span>
+                </div>
 
                 <form onsubmit="event.preventDefault(); showAuraToast('Password updated successfully!', 'success'); this.reset();">
                     <div class="row g-3 mb-4" style="max-width: 500px;">
                         <div class="col-12">
-                            <label class="form-label small fw-bold">Current Password</label>
-                            <input type="password" class="form-control" required placeholder="••••••••" />
+                            <label class="form-label small fw-bold text-dark">Current Password</label>
+                            <input type="password" class="form-control rounded-3 py-2" required placeholder="••••••••" />
                         </div>
                         <div class="col-12">
-                            <label class="form-label small fw-bold">New Password</label>
-                            <input type="password" class="form-control" required placeholder="At least 8 characters" />
+                            <label class="form-label small fw-bold text-dark">New Password</label>
+                            <input type="password" class="form-control rounded-3 py-2" required placeholder="At least 8 characters" />
                         </div>
                         <div class="col-12">
-                            <label class="form-label small fw-bold">Confirm New Password</label>
-                            <input type="password" class="form-control" required placeholder="Re-enter new password" />
+                            <label class="form-label small fw-bold text-dark">Confirm New Password</label>
+                            <input type="password" class="form-control rounded-3 py-2" required placeholder="Re-enter new password" />
                         </div>
                     </div>
-                    <button type="submit" class="btn aura-btn-primary rounded-pill px-4 py-2 fw-bold">
+                    <button type="submit" class="btn aura-btn-primary rounded-pill px-5 py-2.5 fw-bold shadow-sm">
                         Update Password
                     </button>
                 </form>
 
                 <hr class="my-4" />
 
-                <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center justify-content-between p-3.5 bg-light rounded-3 border">
                     <div>
-                        <h6 class="fw-bold text-dark mb-1">Two-Factor Authentication (2FA)</h6>
-                        <p class="text-muted small mb-0">Protect logins with SMS OTP verification.</p>
+                        <h6 class="fw-bold text-dark mb-1"><i class="bi bi-phone text-primary me-2"></i> Two-Factor Authentication (2FA)</h6>
+                        <p class="text-muted small mb-0">Protect account logins with instant SMS OTP verification.</p>
                     </div>
-                    <button class="btn btn-outline-primary btn-sm rounded-pill" onclick="showAuraToast('2FA is active on +91 98201 45890', 'success');">
-                        Enabled
+                    <button class="btn btn-outline-success btn-sm rounded-pill px-4 fw-bold" onclick="showAuraToast('2FA is active on your phone', 'success');">
+                        <i class="bi bi-check-circle-fill me-1"></i> Enabled
                     </button>
                 </div>
             </div>

@@ -1,0 +1,455 @@
+@model List<AuraLiving.Models.ProductViewModel>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Product Catalog Management";
+    var categories = ViewBag.Categories as List<AuraLiving.Models.CategoryViewModel> ?? new List<AuraLiving.Models.CategoryViewModel>();
+    var search = ViewBag.Search as string ?? "";
+    var currentCat = ViewBag.Category as string ?? "all";
+
+    var totalProducts = Model?.Count ?? 0;
+    var liveProducts = Model?.Count(p => p.InStock) ?? 0;
+    var lowStockProducts = Model?.Count(p => p.StockCount <= 5) ?? 0;
+    var outOfStockProducts = Model?.Count(p => !p.InStock) ?? 0;
+}
+
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+    <div>
+        <h2 class="fw-bold admin-text-title mb-1 fs-3 fs-md-2">Appliance Catalog Management</h2>
+        <p class="admin-text-muted mb-0 small">Add, update pricing, manage stock levels, or remove products from the storefront.</p>
+    </div>
+    <div class="w-100 w-md-auto">
+        <button class="btn btn-warning rounded-pill px-4 py-2 fw-bold shadow-sm w-100 w-md-auto d-flex align-items-center justify-content-center gap-1.5" data-bs-toggle="modal" data-bs-target="#productModal" onclick="openAddModal()">
+            <i class="bi bi-plus-lg fs-6"></i> <span>Add New Product</span>
+        </button>
+    </div>
+</div>
+
+<!-- KPI Overview Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card-glass p-2.5 p-sm-3.5 h-100">
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <div class="stat-icon-wrapper bg-warning bg-opacity-10 text-warning flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+                <div class="min-w-0 flex-grow-1">
+                    <span class="admin-text-muted fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Total Catalog</span>
+                    <h3 class="fw-bold admin-text-title mt-0 mb-0 fs-4 fs-sm-3">@totalProducts</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card-glass p-2.5 p-sm-3.5 h-100">
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <div class="stat-icon-wrapper bg-success bg-opacity-10 text-success flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="min-w-0 flex-grow-1">
+                    <span class="admin-text-muted fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Live In-Stock</span>
+                    <h3 class="fw-bold text-success mt-0 mb-0 fs-4 fs-sm-3">@liveProducts</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card-glass p-2.5 p-sm-3.5 h-100">
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <div class="stat-icon-wrapper bg-warning bg-opacity-10 text-warning flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div class="min-w-0 flex-grow-1">
+                    <span class="admin-text-muted fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Low Stock (&le;5)</span>
+                    <h3 class="fw-bold text-warning mt-0 mb-0 fs-4 fs-sm-3">@lowStockProducts</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card-glass p-2.5 p-sm-3.5 h-100">
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <div class="stat-icon-wrapper bg-danger bg-opacity-10 text-danger flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                    <i class="bi bi-x-circle"></i>
+                </div>
+                <div class="min-w-0 flex-grow-1">
+                    <span class="admin-text-muted fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Out of Stock</span>
+                    <h3 class="fw-bold text-danger mt-0 mb-0 fs-4 fs-sm-3">@outOfStockProducts</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search & Filter Control Bar -->
+<div class="stat-card-glass p-3 mb-4">
+    <form method="get" action="/admin/products" class="row g-2.5 align-items-center">
+        <div class="col-12 col-md-5">
+            <div class="input-group">
+                <span class="input-group-text border-end-0 bg-body-tertiary text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" name="search" class="form-control border-start-0" placeholder="Search by name, brand, SKU..." value="@search">
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <select name="category" class="form-select" onchange="this.form.submit()">
+                <option value="all" selected="@(currentCat == "all")">All Categories (@totalProducts Products)</option>
+                @foreach (var c in categories)
+                {
+                    <option value="@c.Slug" selected="@(currentCat == c.Slug)">@c.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-12 col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-outline-warning w-100 rounded-pill py-2 fw-semibold"><i class="bi bi-funnel-fill me-1"></i> Filter</button>
+            @if (!string.IsNullOrEmpty(search) || currentCat != "all")
+            {
+                <a href="/admin/products" class="btn btn-outline-secondary rounded-pill px-3 d-flex align-items-center justify-content-center" title="Reset Filters"><i class="bi bi-arrow-counterclockwise"></i></a>
+            }
+        </div>
+    </form>
+</div>
+
+<!-- Mobile Product Cards View (Visible on Screens < 768px) -->
+<div class="d-block d-md-none mb-4">
+    @if (Model == null || !Model.Any())
+    {
+        <div class="stat-card-glass text-center py-5 admin-text-muted">
+            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+            No products match your search or filter criteria. Click <strong>Add New Product</strong> to populate catalog.
+        </div>
+    }
+    else
+    {
+        <div class="d-flex flex-column gap-3">
+            @foreach (var p in Model)
+            {
+                <div class="stat-card-glass p-3">
+                    <div class="d-flex align-items-start gap-3 mb-2.5 pb-2.5 border-bottom">
+                        <img src="@p.MainImage" alt="@p.Name" class="rounded-3 border flex-shrink-0" style="width: 56px; height: 56px; object-fit: cover; background: #fff;" onerror="this.onerror=null;this.src='/images/homixa_hero_appliances.jpg';">
+                        <div class="flex-grow-1 min-w-0">
+                            <div class="fw-bold admin-text-title fs-6 lh-sm mb-1 text-truncate" style="max-width: 210px;">@p.Name</div>
+                            <div class="d-flex flex-wrap align-items-center gap-1.5">
+                                <span class="badge bg-secondary bg-opacity-20 text-body fw-normal fs-8 border">@p.Category</span>
+                                <span class="small admin-text-muted fs-8">Brand: <strong class="admin-text-title">@p.Brand</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+                            <div class="small admin-text-muted fs-8">Price</div>
+                            <div class="d-flex align-items-baseline gap-2">
+                                <span class="fw-bold admin-text-title fs-6">₹@p.Price.ToString("N0")</span>
+                                @if (p.OriginalPrice > p.Price)
+                                {
+                                    <span class="small admin-text-muted text-decoration-line-through fs-8">₹@p.OriginalPrice.ToString("N0")</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            @if (p.StockCount <= 5)
+                            {
+                                <span class="badge bg-danger bg-opacity-20 text-danger border border-danger border-opacity-30 rounded-pill px-2.5 py-1">@p.StockCount Units</span>
+                            }
+                            else if (p.StockCount <= 15)
+                            {
+                                <span class="badge bg-warning bg-opacity-20 text-warning border border-warning border-opacity-30 rounded-pill px-2.5 py-1">@p.StockCount Units</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success bg-opacity-20 text-success border border-success border-opacity-30 rounded-pill px-2.5 py-1">@p.StockCount Units</span>
+                            }
+                            <div class="mt-1">
+                                @if (p.InStock)
+                                {
+                                    <span class="badge bg-success text-white fs-8">Live</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger text-white fs-8">Out of Stock</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2 pt-2 border-top">
+                        <button class="btn btn-outline-warning btn-sm rounded-pill px-3 py-2 w-100 fw-semibold edit-product-btn d-flex align-items-center justify-content-center gap-1.5" 
+                                data-id="@p.Id" 
+                                data-name="@p.Name" 
+                                data-category="@p.Category" 
+                                data-brand="@p.Brand" 
+                                data-price="@p.Price" 
+                                data-origprice="@p.OriginalPrice" 
+                                data-stock="@p.StockCount" 
+                                data-image="@p.MainImage" 
+                                data-image2="@(p.GalleryImages.Count > 0 ? p.GalleryImages[0] : "")"
+                                data-image3="@(p.GalleryImages.Count > 1 ? p.GalleryImages[1] : "")"
+                                data-videourl="@p.VideoUrl"
+                                data-shortdesc="@p.ShortDescription"
+                                data-fulldesc="@p.FullDescription"
+                                data-keyfeatures="@p.RawKeyFeatures"
+                                data-specs="@p.RawSpecifications"
+                                onclick="openEditModalFromBtn(this)">
+                            <i class="bi bi-pencil-fill"></i> <span>Edit Product</span>
+                        </button>
+                        <form method="post" action="/admin/products/delete/@p.Id" onsubmit="return confirm('Are you sure you want to delete @p.Name from catalog?');" class="d-inline">
+                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle p-2 d-flex align-items-center justify-content-center" title="Delete Product" style="width: 36px; height: 36px;">
+                                <i class="bi bi-trash-fill"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<!-- Desktop Product Catalog Table (Visible on Screens >= 768px) -->
+<div class="stat-card-glass p-0 overflow-hidden d-none d-md-block mb-4">
+    <div class="table-responsive">
+        <table class="table table-dark-glass align-middle mb-0">
+            <thead>
+                <tr>
+                    <th style="min-width: 200px;">Product</th>
+                    <th class="text-nowrap">Category</th>
+                    <th class="text-nowrap">Brand</th>
+                    <th class="text-nowrap">Price</th>
+                    <th class="text-nowrap">Stock</th>
+                    <th class="text-nowrap">Status</th>
+                    <th class="text-end pe-4 text-nowrap">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model == null || !Model.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-5 admin-text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            No products match your search or filter criteria. Click <strong>Add New Product</strong> to populate catalog.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <img src="@p.MainImage" alt="@p.Name" class="rounded-3 border flex-shrink-0" style="width: 50px; height: 50px; min-width: 50px; object-fit: cover; background: #fff;" onerror="this.onerror=null;this.src='/images/homixa_hero_appliances.jpg';">
+                                    <div class="min-w-0">
+                                        <div class="fw-bold admin-text-title fs-7 text-truncate" style="max-width: 220px;" title="@p.Name">@p.Name</div>
+                                        <div class="small admin-text-muted fs-8">SKU: <span class="text-warning">@p.Id</span></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-secondary bg-opacity-20 text-body fw-normal fs-8 border text-nowrap">@p.Category</span></td>
+                            <td class="fw-semibold admin-text-title text-nowrap">@p.Brand</td>
+                            <td class="text-nowrap">
+                                <div class="fw-bold admin-text-title">₹@p.Price.ToString("N0")</div>
+                                @if (p.OriginalPrice > p.Price)
+                                {
+                                    <div class="small admin-text-muted text-decoration-line-through fs-8">₹@p.OriginalPrice.ToString("N0")</div>
+                                }
+                            </td>
+                            <td class="text-nowrap">
+                                @if (p.StockCount <= 5)
+                                {
+                                    <span class="badge bg-danger bg-opacity-20 text-danger border border-danger border-opacity-30 rounded-pill px-3 py-1">@p.StockCount Units</span>
+                                }
+                                else if (p.StockCount <= 15)
+                                {
+                                    <span class="badge bg-warning bg-opacity-20 text-warning border border-warning border-opacity-30 rounded-pill px-3 py-1">@p.StockCount Units</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success bg-opacity-20 text-success border border-success border-opacity-30 rounded-pill px-3 py-1">@p.StockCount Units</span>
+                                }
+                            </td>
+                            <td class="text-nowrap">
+                                @if (p.InStock)
+                                {
+                                    <span class="badge bg-success text-white">Live</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger text-white">Out of Stock</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4 text-nowrap">
+                                <div class="d-flex align-items-center justify-content-end gap-2">
+                                    <button class="btn btn-outline-warning btn-sm rounded-circle edit-product-btn" 
+                                            data-id="@p.Id" 
+                                            data-name="@p.Name" 
+                                            data-category="@p.Category" 
+                                            data-brand="@p.Brand" 
+                                            data-price="@p.Price" 
+                                            data-origprice="@p.OriginalPrice" 
+                                            data-stock="@p.StockCount" 
+                                            data-image="@p.MainImage" 
+                                            data-image2="@(p.GalleryImages.Count > 0 ? p.GalleryImages[0] : "")"
+                                            data-image3="@(p.GalleryImages.Count > 1 ? p.GalleryImages[1] : "")"
+                                            data-videourl="@p.VideoUrl"
+                                            data-shortdesc="@p.ShortDescription"
+                                            data-fulldesc="@p.FullDescription"
+                                            data-keyfeatures="@p.RawKeyFeatures"
+                                            data-specs="@p.RawSpecifications"
+                                            onclick="openEditModalFromBtn(this)" 
+                                            title="Edit Product">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </button>
+                                    <form method="post" action="/admin/products/delete/@p.Id" onsubmit="return confirm('Are you sure you want to delete @p.Name from catalog?');" class="d-inline">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle" title="Delete Product">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Product Add / Edit Modal -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <form method="post" action="/admin/products/save" class="modal-content shadow-lg border">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-bold admin-text-title" id="productModalLabel">Add New Appliance</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="max-height: calc(85vh - 130px); overflow-y: auto;">
+                <input type="hidden" id="modalId" name="Id" value="" />
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label small fw-semibold admin-text-muted">Product Title / Name</label>
+                        <input type="text" id="modalName" name="Name" class="form-control" placeholder="e.g. Bosch Serie 8 Front Load Washer" required>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label small fw-semibold admin-text-muted">Category</label>
+                        <select id="modalCategory" name="Category" class="form-select" required>
+                            <option value="Smart TVs">Smart TVs</option>
+                            <option value="Refrigerators">Refrigerators</option>
+                            <option value="Washing Machines">Washing Machines</option>
+                            <option value="Air Conditioners">Air Conditioners</option>
+                            <option value="Kitchen Hoods">Kitchen Hoods</option>
+                            <option value="Dishwashers">Dishwashers</option>
+                            <option value="Microwaves">Microwaves</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label small fw-semibold admin-text-muted">Brand</label>
+                        <input type="text" id="modalBrand" name="Brand" class="form-control" placeholder="e.g. Bosch, LG, Samsung, Haier" required>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <label class="form-label small fw-semibold admin-text-muted">Selling Price (₹)</label>
+                        <input type="number" id="modalPrice" name="Price" class="form-control" placeholder="84990" required>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <label class="form-label small fw-semibold admin-text-muted">Original MRP Price (₹)</label>
+                        <input type="number" id="modalOriginalPrice" name="OriginalPrice" class="form-control" placeholder="104990" required>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <label class="form-label small fw-semibold admin-text-muted">Stock Quantity</label>
+                        <input type="number" id="modalStockCount" name="StockCount" class="form-control" placeholder="12" required>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label small fw-semibold admin-text-muted"><i class="bi bi-image text-warning me-1"></i> Main Product Image URL</label>
+                        <input type="text" id="modalMainImage" name="MainImage" class="form-control" placeholder="/images/bosch-washer-main.webp">
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label small fw-semibold admin-text-muted"><i class="bi bi-camera-reels text-info me-1"></i> Product Demo Video URL</label>
+                        <input type="text" id="modalVideoUrl" name="VideoUrl" class="form-control" placeholder="https://www.youtube.com/embed/... or MP4 URL">
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label small fw-semibold admin-text-muted"><i class="bi bi-images text-primary me-1"></i> Gallery Image URL #2</label>
+                        <input type="text" id="modalImage2" name="Image2" class="form-control" placeholder="Second gallery angle image URL...">
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label small fw-semibold admin-text-muted"><i class="bi bi-images text-primary me-1"></i> Gallery Image URL #3</label>
+                        <input type="text" id="modalImage3" name="Image3" class="form-control" placeholder="Third gallery angle image URL...">
+                    </div>
+
+                    <!-- Specifications & Description Section -->
+                    <div class="col-12 border-top pt-3 mt-3">
+                        <h6 class="fw-bold admin-text-title mb-2"><i class="bi bi-card-checklist text-warning me-1"></i> Product Specifications &amp; Highlights</h6>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small fw-semibold admin-text-muted">Short Description / Summary</label>
+                        <input type="text" id="modalShortDesc" name="ShortDescription" class="form-control" placeholder="e.g. Premium 5-Star Inverter Refrigerator with Multi-Air Flow Cooling">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small fw-semibold admin-text-muted">Key Highlights (One per line or semicolon-separated)</label>
+                        <textarea id="modalKeyFeatures" name="RawKeyFeatures" class="form-control" rows="3" placeholder="Twin Inverter Compressor&#10;10 Year Motor Warranty&#10;5-in-1 Convertible Mode&#10;Touhgened Glass Shelves"></textarea>
+                        <div class="form-text fs-8">These points will appear as bullet highlights on the product page.</div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small fw-semibold admin-text-muted">Technical Specifications (Key: Value - One per line)</label>
+                        <textarea id="modalSpecifications" name="RawSpecifications" class="form-control" rows="4" placeholder="Capacity: 670 Litres&#10;Energy Rating: 5 Star&#10;Display: OLED Touch&#10;Cooling Type: Surround Cooling&#10;Warranty: 2 Years Comprehensive"></textarea>
+                        <div class="form-text fs-8">Format as <strong>Key: Value</strong> per line. These render in the Specifications tab table.</div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small fw-semibold admin-text-muted">Full Description / Overview</label>
+                        <textarea id="modalFullDesc" name="FullDescription" class="form-control" rows="3" placeholder="Detailed architectural and performance overview of the product..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-top bg-body sticky-bottom flex-column flex-sm-row gap-2 gap-sm-0">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4 w-100 w-sm-auto" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-warning rounded-pill px-4 fw-bold text-dark shadow-sm w-100 w-sm-auto" id="modalSubmitBtn">
+                    <i class="bi bi-check-lg me-1"></i> Save Product
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openAddModal() {
+            document.getElementById('productModalLabel').innerText = "Add New Appliance Suite";
+            document.getElementById('modalId').value = "";
+            document.getElementById('modalName').value = "";
+            document.getElementById('modalCategory').value = "Refrigerators";
+            document.getElementById('modalBrand').value = "";
+            document.getElementById('modalPrice').value = "";
+            document.getElementById('modalOriginalPrice').value = "";
+            document.getElementById('modalStockCount').value = "10";
+            document.getElementById('modalMainImage').value = "";
+            document.getElementById('modalImage2').value = "";
+            document.getElementById('modalImage3').value = "";
+            document.getElementById('modalVideoUrl').value = "";
+            document.getElementById('modalShortDesc').value = "";
+            document.getElementById('modalKeyFeatures').value = "";
+            document.getElementById('modalSpecifications').value = "";
+            document.getElementById('modalFullDesc').value = "";
+            document.getElementById('modalSubmitBtn').innerHTML = '<i class="bi bi-plus-circle me-1"></i> Add to Catalog';
+        }
+
+        function openEditModalFromBtn(btn) {
+            document.getElementById('productModalLabel').innerText = "Edit Appliance Details";
+            document.getElementById('modalId').value = btn.getAttribute('data-id') || "";
+            document.getElementById('modalName').value = btn.getAttribute('data-name') || "";
+            document.getElementById('modalCategory').value = btn.getAttribute('data-category') || "Refrigerators";
+            document.getElementById('modalBrand').value = btn.getAttribute('data-brand') || "";
+            document.getElementById('modalPrice').value = btn.getAttribute('data-price') || "";
+            document.getElementById('modalOriginalPrice').value = btn.getAttribute('data-origprice') || "";
+            document.getElementById('modalStockCount').value = btn.getAttribute('data-stock') || "";
+            document.getElementById('modalMainImage').value = btn.getAttribute('data-image') || "";
+            document.getElementById('modalImage2').value = btn.getAttribute('data-image2') || "";
+            document.getElementById('modalImage3').value = btn.getAttribute('data-image3') || "";
+            document.getElementById('modalVideoUrl').value = btn.getAttribute('data-videourl') || "";
+            document.getElementById('modalShortDesc').value = btn.getAttribute('data-shortdesc') || "";
+            document.getElementById('modalKeyFeatures').value = btn.getAttribute('data-keyfeatures') || "";
+            document.getElementById('modalSpecifications').value = btn.getAttribute('data-specs') || "";
+            document.getElementById('modalFullDesc').value = btn.getAttribute('data-fulldesc') || "";
+            document.getElementById('modalSubmitBtn').innerHTML = '<i class="bi bi-check-circle me-1"></i> Update Product';
+
+            const modal = new bootstrap.Modal(document.getElementById('productModal'));
+            modal.show();
+        }
+    </script>
+}

@@ -8,52 +8,42 @@ namespace AuraLiving.Controllers;
 public class HomeController : Controller
 {
     private readonly IMockDataService _dataService;
+    private readonly IProductService _productService;
+    private readonly IInstagramService _instagramService;
 
-    public HomeController(IMockDataService dataService)
+    public HomeController(IMockDataService dataService, IProductService productService, IInstagramService instagramService)
     {
         _dataService = dataService;
+        _productService = productService;
+        _instagramService = instagramService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
+        var dbProducts = await _productService.GetAllProductsAsync();
+        var categories = _dataService.GetCategories();
+
+        // Update category counts based on actual database products
+        foreach (var cat in categories)
+        {
+            cat.ProductCount = dbProducts.Count(p => 
+                (!string.IsNullOrEmpty(p.CategorySlug) && p.CategorySlug.Equals(cat.Slug, StringComparison.OrdinalIgnoreCase)) ||
+                (!string.IsNullOrEmpty(p.Category) && p.Category.Equals(cat.Name, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        var testimonials = await _productService.GetRecentReviewsAsync(6);
+        var instaFeed = await _instagramService.GetFeedAsync();
+
         var model = new HomeViewModel
         {
-            Categories = _dataService.GetCategories(),
-            FeaturedProducts = _dataService.GetFeaturedProducts(),
-            BestSellers = _dataService.GetBestSellers(),
-            FlashDeals = _dataService.GetFlashDeals(),
-            HeroProduct = _dataService.GetAllProducts().First(),
-            Brands = _dataService.GetAllBrands(),
-            Testimonials = new List<ReviewViewModel>
-            {
-                new ReviewViewModel
-                {
-                    Author = "Rajesh Sharma",
-                    City = "South Delhi",
-                    Rating = 5,
-                    Date = "August 2026",
-                    Title = "White-glove delivery & unboxing is flawless",
-                    Comment = "Purchased the Bosch Serie 8 washer and Samsung French Door fridge together. The Aura installation team arrived on time, completed the civil connections cleanly, and briefed our family on operation."
-                },
-                new ReviewViewModel
-                {
-                    Author = "Dr. Ananya Roy",
-                    City = "Kolkata",
-                    Rating = 5,
-                    Date = "July 2026",
-                    Title = "A breath of fresh air in appliance shopping",
-                    Comment = "The curated selection beats walking through chaotic electronics mega-marts. Genuine brand warranties and no hassle checkout."
-                },
-                new ReviewViewModel
-                {
-                    Author = "Chetan Parekh",
-                    City = "Ahmedabad",
-                    Rating = 5,
-                    Date = "September 2026",
-                    Title = "Best price with instant bank cashbacks",
-                    Comment = "Saved ₹12,000 on my Sony BRAVIA OLED TV with their festive card offers. Delivered within 24 hours in pristine condition."
-                }
-            }
+            Categories = categories,
+            FeaturedProducts = dbProducts,
+            BestSellers = dbProducts.OrderByDescending(p => p.Rating).ToList(),
+            FlashDeals = dbProducts.Where(p => p.DiscountPercent >= 10).ToList(),
+            HeroProduct = dbProducts.FirstOrDefault() ?? new ProductViewModel(),
+            Brands = dbProducts.Select(p => p.Brand).Where(b => !string.IsNullOrEmpty(b)).Distinct().OrderBy(b => b).ToList(),
+            Testimonials = testimonials,
+            InstagramFeed = instaFeed
         };
 
         return View(model);

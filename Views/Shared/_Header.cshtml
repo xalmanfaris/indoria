@@ -18,38 +18,53 @@
     <div class="container py-2">
         <div class="d-flex align-items-center justify-content-between gap-2 gap-md-3">
             <!-- Left: Indoria Brand Logo -->
-            <a href="/" class="homixa-brand text-decoration-none">
+            <a href="/" class="homixa-brand text-decoration-none d-flex align-items-center gap-2">
+                <div class="aura-brand-logo-mark">
+                    <svg width="34" height="34" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="40" height="40" rx="12" fill="url(#indoriaGrad)"/>
+                        <path d="M20 9L30 17V29C30 30.1 29.1 31 28 31H12C10.9 31 10 30.1 10 29V17L20 9Z" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 31V21H24V31" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="20" cy="16" r="2.5" fill="#F59E0B"/>
+                        <defs>
+                            <linearGradient id="indoriaGrad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#0F172A"/>
+                                <stop offset="0.55" stop-color="#1E40AF"/>
+                                <stop offset="1" stop-color="#3B82F6"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
                 <span class="homixa-brand-name">Indoria</span>
             </a>
 
             <!-- Center Navigation Links -->
             <nav class="homixa-main-nav d-none d-lg-flex align-items-center gap-4">
-                <a href="/" class="homixa-nav-link active">@LocalizationService.GetString("Home")</a>
-                <a href="/categories" class="homixa-nav-link">@LocalizationService.GetString("Categories")</a>
-                <a href="/products" class="homixa-nav-link">@LocalizationService.GetString("Shop")</a>
-                <a href="/category/smart-tvs" class="homixa-nav-link">Smart TVs</a>
-                <a href="/category/kitchen-appliances" class="homixa-nav-link">Kitchen</a>
-                <a href="/category/refrigerators" class="homixa-nav-link">Cooling</a>
-                <a href="/category/washing-machines" class="homixa-nav-link">Laundry</a>
+                <a href="/" class="homixa-nav-link active">@Localizer["Home"]</a>
+                <a href="/categories" class="homixa-nav-link">@Localizer["Categories"]</a>
+                <a href="/products" class="homixa-nav-link">@Localizer["Shop"]</a>
+                <a href="/category/smart-tvs" class="homixa-nav-link">@Localizer["Smart TVs"]</a>
+                <a href="/category/kitchen-appliances" class="homixa-nav-link">@Localizer["Kitchen"]</a>
+                <a href="/category/refrigerators" class="homixa-nav-link">@Localizer["Cooling"]</a>
+                <a href="/category/washing-machines" class="homixa-nav-link">@Localizer["Laundry"]</a>
             </nav>
 
-            <!-- Right Actions: Region Selectors, Search Icon, Notifications, Theme Toggle, Account, Cart -->
-            <div class="d-flex align-items-center gap-2 gap-sm-3">
+            <!-- Right Actions: Region Selectors, Search Icon, Theme Toggle, Notifications, Wishlist, Cart, Account -->
+            <div class="d-flex align-items-center gap-1 gap-sm-2 gap-md-3">
                 
                 <!-- Regional Preferences Dropdown (Country / Currency / Language) -->
                 <div class="dropdown d-none d-md-block">
                     <button class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-1 text-nowrap d-flex align-items-center gap-1 border-0" 
-                            type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Region & Currency">
+                            type="button" data-bs-toggle="dropdown" aria-expanded="false" title="@Localizer["Regional Preferences"]">
                         <span>@activeCountry.Flag</span>
                         <span class="fw-semibold small ms-1">@activeCurrency.Code</span>
                         <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-2 p-3" style="min-width: 260px;">
-                        <h6 class="dropdown-header px-0 text-uppercase fw-bold text-muted small mb-2">Regional Preferences</h6>
+                        <h6 class="dropdown-header px-0 text-uppercase fw-bold text-muted small mb-2">@Localizer["Regional Preferences"]</h6>
                         
                         <!-- Country Picker -->
                         <div class="mb-2">
-                            <label class="form-label text-xs fw-semibold text-muted mb-1">Shipping Country</label>
+                            <label class="form-label text-xs fw-semibold text-muted mb-1">@Localizer["Shipping Country"]</label>
                             <select class="form-select form-select-sm rounded-3" id="headerCountrySelect" onchange="changeAppCountry(this.value)">
                                 @foreach (var country in countries)
                                 {
@@ -62,7 +77,7 @@
 
                         <!-- Currency Picker -->
                         <div class="mb-2">
-                            <label class="form-label text-xs fw-semibold text-muted mb-1">Currency</label>
+                            <label class="form-label text-xs fw-semibold text-muted mb-1">@Localizer["Currency"]</label>
                             <select class="form-select form-select-sm rounded-3" id="headerCurrencySelect" onchange="changeAppCurrency(this.value)">
                                 @foreach (var curr in currencies)
                                 {
@@ -75,7 +90,7 @@
 
                         <!-- Language Picker -->
                         <div>
-                            <label class="form-label text-xs fw-semibold text-muted mb-1">Language</label>
+                            <label class="form-label text-xs fw-semibold text-muted mb-1">@Localizer["Language"]</label>
                             <select class="form-select form-select-sm rounded-3" id="headerLanguageSelect" onchange="changeAppLanguage(this.value)">
                                 @foreach (var lang in languages)
                                 {
@@ -90,14 +105,14 @@
 
                 <!-- Search Toggle Button + Expanding Capsule -->
                 <div class="aura-search-inline-box" id="auraSearchInlineExpand">
-                    <button type="button" class="homixa-icon-btn" id="searchTriggerBtn" title="Search" aria-label="Search">
+                    <button type="button" class="homixa-icon-btn" id="searchTriggerBtn" title="@Localizer["Search"]" aria-label="@Localizer["Search"]">
                         <i class="bi bi-search"></i>
                     </button>
                     <form action="/search" method="get" class="aura-search-capsule" role="search">
                         <i class="bi bi-search aura-search-capsule-icon"></i>
                         <input type="text" name="q" class="form-control aura-search-capsule-input" id="topNavSearchInput"
-                               placeholder="Search appliances..." 
-                               aria-label="Search appliances" autocomplete="off" />
+                               placeholder="@Localizer["Search appliances..."]" 
+                               aria-label="@Localizer["Search appliances..."]" autocomplete="off" />
                         <button type="button" class="aura-search-capsule-close" id="searchCloseBtn" aria-label="Close search">
                             <i class="bi bi-x-lg"></i>
                         </button>
@@ -107,7 +122,7 @@
                 </div>
 
                 <!-- 1. Capsule Theme Switcher Pill (Sun / Moon) -->
-                <div class="aura-theme-pill-toggle ms-1" id="themePillToggle" onclick="toggleAppTheme()" title="Toggle Light / Dark Mode" role="button" tabindex="0">
+                <div class="aura-theme-pill-toggle ms-1 d-none d-sm-inline-flex" id="themePillToggle" onclick="toggleAppTheme()" title="Toggle Light / Dark Mode" role="button" tabindex="0">
                     <div class="aura-theme-pill-btn aura-theme-pill-sun">
                         <i class="bi bi-sun-fill"></i>
                     </div>
@@ -117,38 +132,38 @@
                 </div>
 
                 <!-- 2. Customer Notifications Bell Panel -->
-                <div class="dropdown">
-                    <button type="button" class="aura-nav-icon-btn" id="notificationsBellBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications" aria-label="Notifications">
+                <div class="dropdown d-none d-sm-inline-block">
+                    <button type="button" class="aura-nav-icon-btn" id="notificationsBellBtn" data-bs-toggle="dropdown" aria-expanded="false" title="@Localizer["Notifications"]" aria-label="@Localizer["Notifications"]">
                         <i class="bi bi-bell"></i>
                         <span class="aura-nav-badge-red aura-unread-count" id="headerUnreadBadge" style="display: none;">0</span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-2 p-0" style="width: 320px; max-height: 400px; overflow-y: auto;" id="notificationsDropdownPanel">
                         <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
-                            <span class="fw-bold text-dark small"><i class="bi bi-bell-fill text-primary me-1"></i> Notifications</span>
-                            <button class="btn btn-link btn-sm text-decoration-none p-0 text-muted small" onclick="markAllNotificationsRead()">Mark all as read</button>
+                            <span class="fw-bold text-dark small"><i class="bi bi-bell-fill text-primary me-1"></i> @Localizer["Notifications"]</span>
+                            <button class="btn btn-link btn-sm text-decoration-none p-0 text-muted small" onclick="markAllNotificationsRead()">@Localizer["Mark all as read"]</button>
                         </div>
                         <div class="p-3 text-center text-muted small" id="notificationsListContainer">
                             <div class="spinner-border spinner-border-sm text-primary my-2" role="status"></div>
-                            <div>Loading alerts...</div>
+                            <div>@Localizer["Loading alerts..."]</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- 3. Wishlist Link with Count Badge -->
-                <a href="/wishlist" class="aura-nav-icon-btn" title="Wishlist" aria-label="Wishlist">
+                <a href="/wishlist" class="aura-nav-icon-btn d-none d-sm-inline-flex" title="@Localizer["Wishlist"]" aria-label="@Localizer["Wishlist"]">
                     <i class="bi bi-heart"></i>
-                    <span class="aura-nav-badge-red aura-wishlist-count">0</span>
+                    <span class="aura-nav-badge-red aura-wishlist-count" style="display: none;">0</span>
                 </a>
 
                 <!-- 4. Cart Link with Count Badge -->
-                <a href="/cart" class="aura-nav-icon-btn" title="Shopping Bag" aria-label="Shopping Bag">
+                <a href="/cart" class="aura-nav-icon-btn" title="@Localizer["Cart"]" aria-label="@Localizer["Cart"]">
                     <i class="bi bi-bag"></i>
-                    <span class="aura-nav-badge-red aura-cart-badge">0</span>
+                    <span class="aura-nav-badge-red aura-cart-badge" style="display: none;">0</span>
                 </a>
 
                 <!-- 5. User Account Dropdown -->
                 <div class="dropdown">
-                    <button class="aura-nav-icon-btn border-0 bg-transparent d-flex align-items-center gap-0.5" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Account" aria-label="Account">
+                    <button class="aura-nav-icon-btn border-0 bg-transparent d-flex align-items-center gap-0.5" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="@Localizer["Account"]" aria-label="@Localizer["Account"]">
                         <i class="bi bi-person"></i>
                         <i class="bi bi-chevron-down text-muted" style="font-size: 0.65rem;"></i>
                     </button>
@@ -156,41 +171,177 @@
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="px-3 py-2 border-bottom mb-1">
-                                <div class="fw-bold text-dark">@(User.Identity.Name ?? "Patron Account")</div>
+                                <div class="fw-bold text-dark">@(User.Identity.Name ?? Localizer["Account"])</div>
                                 <small class="text-muted">@(User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "")</small>
                             </li>
-                            <li><a class="dropdown-item rounded-3 py-2" href="/account"><i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard</a></li>
-                            <li><a class="dropdown-item rounded-3 py-2" href="/account/orders"><i class="bi bi-box-seam me-2 text-primary"></i> My Orders</a></li>
-                            <li><a class="dropdown-item rounded-3 py-2" href="/account/tickets"><i class="bi bi-headset me-2 text-success"></i> Support Tickets</a></li>
-                            <li><a class="dropdown-item rounded-3 py-2" href="/account/addresses"><i class="bi bi-geo-alt me-2 text-primary"></i> Saved Addresses</a></li>
-                            <li><a class="dropdown-item rounded-3 py-2" href="/account/profile"><i class="bi bi-person-gear me-2 text-primary"></i> Profile Settings</a></li>
+                            <li><a class="dropdown-item rounded-3 py-2" href="/account"><i class="bi bi-speedometer2 me-2 text-primary"></i> @Localizer["Dashboard"]</a></li>
+                            <li><a class="dropdown-item rounded-3 py-2" href="/account/orders"><i class="bi bi-box-seam me-2 text-primary"></i> @Localizer["My Orders"]</a></li>
+                            <li><a class="dropdown-item rounded-3 py-2" href="/account/tickets"><i class="bi bi-headset me-2 text-success"></i> @Localizer["Support Tickets"]</a></li>
+                            <li><a class="dropdown-item rounded-3 py-2" href="/account/addresses"><i class="bi bi-geo-alt me-2 text-primary"></i> @Localizer["Saved Addresses"]</a></li>
+                            <li><a class="dropdown-item rounded-3 py-2" href="/account/profile"><i class="bi bi-person-gear me-2 text-primary"></i> @Localizer["Profile Settings"]</a></li>
                             @if (User.IsInRole("Admin"))
                             {
-                                <li><a class="dropdown-item rounded-3 py-2 text-warning fw-semibold" href="/admin"><i class="bi bi-shield-lock-fill me-2"></i> Admin Console</a></li>
-                                <li><a class="dropdown-item rounded-3 py-2 text-info fw-semibold" href="/admin/tickets"><i class="bi bi-ticket-perforated me-2"></i> Support Console</a></li>
+                                <li><a class="dropdown-item rounded-3 py-2 text-warning fw-semibold" href="/admin"><i class="bi bi-shield-lock-fill me-2"></i> @Localizer["Admin Console"]</a></li>
+                                <li><a class="dropdown-item rounded-3 py-2 text-info fw-semibold" href="/admin/tickets"><i class="bi bi-ticket-perforated me-2"></i> @Localizer["Support Console"]</a></li>
                             }
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <form method="post" action="/account/logout" class="d-inline">
-                                    <button type="submit" class="dropdown-item rounded-3 py-2 text-danger border-0 bg-transparent w-100 text-start">
-                                        <i class="bi bi-box-arrow-right me-2"></i> Sign Out
-                                    </button>
-                                </form>
+                                <button type="button" class="dropdown-item rounded-3 py-2 text-danger border-0 bg-transparent w-100 text-start" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
+                                    <i class="bi bi-box-arrow-right me-2"></i> @Localizer["Sign Out"]
+                                </button>
                             </li>
                         }
                         else
                         {
                             <li class="px-3 py-2 border-bottom mb-1">
-                                <div class="fw-bold text-dark">Welcome to Indoria</div>
-                                <small class="text-muted">Sign in to access your profile</small>
+                                <div class="fw-bold text-dark">@Localizer["Welcome to Indoria"]</div>
+                                <small class="text-muted">@Localizer["Sign in to access your profile"]</small>
                             </li>
-                            <li><a class="dropdown-item rounded-3 py-2 fw-bold text-primary" href="/login"><i class="bi bi-box-arrow-in-right me-2"></i> Sign In</a></li>
-                            <li><a class="dropdown-item rounded-3 py-2" href="/register"><i class="bi bi-person-plus me-2 text-success"></i> Create Account</a></li>
-                            <li><a class="dropdown-item rounded-3 py-2" href="/account/tickets"><i class="bi bi-headset me-2 text-info"></i> Support Desk</a></li>
+                            <li><a class="dropdown-item rounded-3 py-2 fw-bold text-primary" href="/login"><i class="bi bi-box-arrow-in-right me-2"></i> @Localizer["Sign In"]</a></li>
+                            <li><a class="dropdown-item rounded-3 py-2" href="/register"><i class="bi bi-person-plus me-2 text-success"></i> @Localizer["Create Account"]</a></li>
+                            <li><a class="dropdown-item rounded-3 py-2" href="/account/tickets"><i class="bi bi-headset me-2 text-info"></i> @Localizer["Support Desk"]</a></li>
                         }
                     </ul>
                 </div>
+
+                <!-- Mobile Navigation Drawer Toggle Button -->
+                <button class="aura-nav-icon-btn border-0 bg-transparent d-lg-none text-dark ms-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#auraMobileNavOffcanvas" aria-controls="auraMobileNavOffcanvas" aria-label="Toggle navigation">
+                    <i class="bi bi-list fs-4"></i>
+                </button>
             </div>
         </div>
     </div>
 </header>
+
+<!-- Responsive Mobile Offcanvas Drawer (Placed outside sticky header to prevent backdrop z-index traps) -->
+<div class="offcanvas offcanvas-start aura-mobile-offcanvas d-lg-none" tabindex="-1" id="auraMobileNavOffcanvas" aria-labelledby="auraMobileNavOffcanvasLabel">
+    <div class="offcanvas-header border-bottom">
+        <div class="offcanvas-title fw-bold homixa-brand-name d-flex align-items-center gap-2" id="auraMobileNavOffcanvasLabel">
+            <svg width="28" height="28" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="40" height="40" rx="12" fill="url(#indoriaGradMob)"/>
+                <path d="M20 9L30 17V29C30 30.1 29.1 31 28 31H12C10.9 31 10 30.1 10 29V17L20 9Z" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 31V21H24V31" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="20" cy="16" r="2.5" fill="#F59E0B"/>
+                <defs>
+                    <linearGradient id="indoriaGradMob" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#0F172A"/>
+                        <stop offset="0.55" stop-color="#1E40AF"/>
+                        <stop offset="1" stop-color="#3B82F6"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            Indoria
+        </div>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column gap-3">
+        <!-- Mobile Quick Search Form -->
+        <form action="/search" method="get" class="input-group">
+            <input type="text" name="q" class="form-control rounded-pill-start bg-light border-end-0 ps-3" placeholder="@Localizer["Search appliances..."]" aria-label="@Localizer["Search appliances..."]" />
+            <button type="submit" class="btn btn-outline-secondary rounded-pill-end border-start-0 pe-3">
+                <i class="bi bi-search"></i>
+            </button>
+        </form>
+
+        <!-- Navigation Links -->
+        <div class="nav flex-column gap-1">
+            <span class="text-uppercase text-muted fw-bold small mb-1 px-2">@Localizer["Categories"]</span>
+            <a href="/" class="nav-link py-2 px-3 rounded-3 text-dark fw-semibold d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-house me-2 text-primary"></i>@Localizer["Home"]</span>
+                <i class="bi bi-chevron-right small text-muted"></i>
+            </a>
+            <a href="/categories" class="nav-link py-2 px-3 rounded-3 text-dark fw-semibold d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-grid-fill me-2 text-primary"></i>@Localizer["Categories"]</span>
+                <i class="bi bi-chevron-right small text-muted"></i>
+            </a>
+            <a href="/products" class="nav-link py-2 px-3 rounded-3 text-dark fw-semibold d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-bag-check-fill me-2 text-primary"></i>@Localizer["Shop"]</span>
+                <i class="bi bi-chevron-right small text-muted"></i>
+            </a>
+            <a href="/category/smart-tvs" class="nav-link py-2 px-3 rounded-3 text-dark d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-tv me-2 text-info"></i>@Localizer["Smart TVs"]</span>
+                <i class="bi bi-chevron-right small text-muted"></i>
+            </a>
+            <a href="/category/kitchen-appliances" class="nav-link py-2 px-3 rounded-3 text-dark d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-cup-hot me-2 text-warning"></i>@Localizer["Kitchen"]</span>
+                <i class="bi bi-chevron-right small text-muted"></i>
+            </a>
+            <a href="/category/refrigerators" class="nav-link py-2 px-3 rounded-3 text-dark d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-snow me-2 text-primary"></i>@Localizer["Cooling"]</span>
+                <i class="bi bi-chevron-right small text-muted"></i>
+            </a>
+            <a href="/category/washing-machines" class="nav-link py-2 px-3 rounded-3 text-dark d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-droplet-half me-2 text-secondary"></i>@Localizer["Laundry"]</span>
+                <i class="bi bi-chevron-right small text-muted"></i>
+            </a>
+            <a href="/wishlist" class="nav-link py-2 px-3 rounded-3 text-dark d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-heart me-2 text-danger"></i>@Localizer["Wishlist Saved"]</span>
+                <span class="badge bg-danger rounded-pill aura-wishlist-count" style="display:none;">0</span>
+            </a>
+            <a href="/account/notifications" class="nav-link py-2 px-3 rounded-3 text-dark d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-bell me-2 text-warning"></i>@Localizer["Notifications"]</span>
+                <i class="bi bi-chevron-right small text-muted"></i>
+            </a>
+        </div>
+
+        <hr class="my-2" />
+
+        <!-- Regional Preferences on Mobile -->
+        <div class="p-3 bg-light rounded-4">
+            <h6 class="fw-bold small text-uppercase text-muted mb-2"><i class="bi bi-globe me-1 text-primary"></i> @Localizer["Regional Preferences"]</h6>
+            <div class="row g-2">
+                <div class="col-6">
+                    <label class="form-label text-xs fw-semibold text-muted mb-1">@Localizer["Country"]</label>
+                    <select class="form-select form-select-sm rounded-3" onchange="changeAppCountry(this.value)">
+                        @foreach (var country in countries)
+                        {
+                            <option value="@country.Code" selected="@(country.Code == activeCountry.Code)">
+                                @country.Flag @country.Name
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-6">
+                    <label class="form-label text-xs fw-semibold text-muted mb-1">@Localizer["Currency"]</label>
+                    <select class="form-select form-select-sm rounded-3" onchange="changeAppCurrency(this.value)">
+                        @foreach (var curr in currencies)
+                        {
+                            <option value="@curr.Code" selected="@(curr.Code == activeCurrency.Code)">
+                                @curr.Code (@curr.Symbol)
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-12 mt-2">
+                    <label class="form-label text-xs fw-semibold text-muted mb-1">@Localizer["Language"]</label>
+                    <select class="form-select form-select-sm rounded-3" onchange="changeAppLanguage(this.value)">
+                        @foreach (var lang in languages)
+                        {
+                            <option value="@lang.Code" selected="@(lang.Code == activeLanguage.Code)">
+                                @lang.Flag @lang.NativeName
+                            </option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Account Shortcuts -->
+        <div class="mt-auto pt-2">
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a href="/account" class="btn btn-primary w-100 rounded-3 mb-2"><i class="bi bi-speedometer2 me-2"></i> @Localizer["My Account Dashboard"]</a>
+                <button type="button" class="btn btn-outline-danger w-100 rounded-3" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
+                    <i class="bi bi-box-arrow-right me-2"></i> @Localizer["Sign Out"]
+                </button>
+            }
+            else
+            {
+                <div class="d-flex gap-2">
+                    <a href="/login" class="btn btn-primary flex-grow-1 rounded-3"><i class="bi bi-box-arrow-in-right me-1"></i> @Localizer["Sign In"]</a>
+                    <a href="/register" class="btn btn-outline-primary flex-grow-1 rounded-3"><i class="bi bi-person-plus me-1"></i> @Localizer["Register"]</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,9 +1,24 @@
 @model AuraLiving.Models.ProfileViewModel
 @{
     ViewData["Title"] = "My Profile Settings";
+    var breadcrumbs = new List<(string Title, string Url)>
+    {
+        ("My Account", "/account"),
+        ("Profile Settings", "")
+    };
+
+    var initials = "AM";
+    if (!string.IsNullOrWhiteSpace(Model.FullName))
+    {
+        var parts = Model.FullName.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length >= 2) initials = $"{parts[0][0]}{parts[1][0]}".ToUpper();
+        else if (parts.Length == 1 && parts[0].Length >= 2) initials = parts[0].Substring(0, 2).ToUpper();
+    }
 }
 
 <div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
     <div class="row g-4">
         <div class="col-lg-3">
             <partial name="_AccountSidebar" />
@@ -11,19 +26,28 @@
 
         <div class="col-lg-9">
             <div class="p-4 p-md-5 rounded-4 bg-white border shadow-sm">
-                <h3 class="fw-bold text-dark mb-4">Personal Profile Information</h3>
+                <div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom">
+                    <div>
+                        <h3 class="fw-bold text-dark mb-1">Personal Profile Settings</h3>
+                        <p class="text-secondary small mb-0">Update your account identity, contact information, and security preferences.</p>
+                    </div>
+                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-20 px-3 py-1.5 rounded-pill fw-bold">
+                        <i class="bi bi-shield-check me-1"></i> Verified Patron
+                    </span>
+                </div>
 
                 <form onsubmit="event.preventDefault(); showAuraToast('Profile information updated successfully!', 'success');">
                     <!-- Avatar Section -->
                     <div class="d-flex align-items-center gap-4 mb-4 pb-4 border-bottom">
-                        <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center" style="width: 72px; height: 72px; font-size: 1.6rem;">
-                            AM
+                        <div class="rounded-circle shadow-md d-flex align-items-center justify-content-center text-white fw-bold text-uppercase flex-shrink-0" 
+                             style="width: 72px; height: 72px; font-size: 1.6rem; background: linear-gradient(135deg, #0f172a 0%, #334155 100%); border: 3px solid #ffffff;">
+                            @initials
                         </div>
                         <div>
                             <h5 class="fw-bold text-dark mb-1">@Model.FullName</h5>
-                            <p class="text-muted small mb-2">Member since @Model.MemberSince</p>
-                            <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill" onclick="showAuraToast('Photo upload demo ready', 'dark');">
-                                <i class="bi bi-camera me-1"></i> Change Photo
+                            <p class="text-muted small mb-2">Member since @Model.MemberSince • Account: <strong>@Model.Email</strong></p>
+                            <button type="button" class="btn btn-outline-dark btn-sm rounded-pill px-3" onclick="showAuraToast('Photo update option coming soon', 'dark');">
+                                <i class="bi bi-camera me-1"></i> Update Avatar
                             </button>
                         </div>
                     </div>
@@ -32,19 +56,19 @@
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label class="form-label small fw-bold text-dark">Full Name</label>
-                            <input type="text" class="form-control" value="@Model.FullName" required />
+                            <input type="text" class="form-control rounded-3 py-2" value="@Model.FullName" required />
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-bold text-dark">Email Address</label>
-                            <input type="email" class="form-control" value="@Model.Email" required />
+                            <input type="email" class="form-control rounded-3 py-2" value="@Model.Email" required />
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-bold text-dark">Mobile Number</label>
-                            <input type="tel" class="form-control" value="@Model.Phone" required />
+                            <input type="tel" class="form-control rounded-3 py-2" value="@Model.Phone" required />
                         </div>
                         <div class="col-md-3">
                             <label class="form-label small fw-bold text-dark">Gender</label>
-                            <select class="form-select">
+                            <select class="form-select rounded-3 py-2">
                                 <option selected="@(Model.Gender == "Male")">Male</option>
                                 <option selected="@(Model.Gender == "Female")">Female</option>
                                 <option selected="@(Model.Gender == "Other")">Other</option>
@@ -52,15 +76,15 @@
                         </div>
                         <div class="col-md-3">
                             <label class="form-label small fw-bold text-dark">Date of Birth</label>
-                            <input type="date" class="form-control" value="@Model.DateOfBirth" />
+                            <input type="date" class="form-control rounded-3 py-2" value="@Model.DateOfBirth" />
                         </div>
                     </div>
 
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn aura-btn-primary rounded-pill px-4 py-2 fw-bold">
+                        <button type="submit" class="btn aura-btn-primary rounded-pill px-5 py-2.5 fw-bold shadow-sm">
                             Save Changes
                         </button>
-                        <button type="reset" class="btn aura-btn-outline rounded-pill px-4 py-2">
+                        <button type="reset" class="btn aura-btn-outline rounded-pill px-4 py-2.5">
                             Cancel
                         </button>
                     </div>

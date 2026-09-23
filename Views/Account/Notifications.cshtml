@@ -1,9 +1,16 @@
 @model AuraLiving.Models.NotificationSettingsViewModel
 @{
     ViewData["Title"] = "Notification Preferences";
+    var breadcrumbs = new List<(string Title, string Url)>
+    {
+        ("My Account", "/account"),
+        ("Notification Preferences", "")
+    };
 }
 
 <div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
     <div class="row g-4">
         <div class="col-lg-3">
             <partial name="_AccountSidebar" />
@@ -11,22 +18,26 @@
 
         <div class="col-lg-9">
             <div class="p-4 p-md-5 rounded-4 bg-white border shadow-sm">
-                <h3 class="fw-bold text-dark mb-1">Notification Preferences</h3>
-                <p class="text-muted small mb-4">Choose how you want to be alerted regarding logistics, installation updates, and private sales.</p>
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 pb-3 border-bottom gap-2">
+                    <div>
+                        <h3 class="fw-bold text-dark mb-1">Notification Preferences</h3>
+                        <p class="text-secondary small mb-0">Choose how you want to be alerted regarding dispatch logistics, setup technicians, and private sales.</p>
+                    </div>
+                </div>
 
                 <form onsubmit="event.preventDefault(); showAuraToast('Preferences updated successfully!', 'success');">
                     <div class="d-flex flex-column gap-3 mb-4">
-                        <div class="p-3 bg-light rounded-3 d-flex align-items-center justify-content-between">
+                        <div class="p-3.5 bg-light rounded-3 d-flex align-items-center justify-content-between border">
                             <div>
                                 <strong class="text-dark d-block">Email Order Receipts &amp; Warranty PDFs</strong>
-                                <small class="text-muted">Instant official GST invoices and OEM warranty certificates.</small>
+                                <small class="text-muted">Instant official GST invoices and OEM warranty certificates sent to your inbox.</small>
                             </div>
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" role="switch" checked style="width: 2.5rem; height: 1.3rem;">
                             </div>
                         </div>
 
-                        <div class="p-3 bg-light rounded-3 d-flex align-items-center justify-content-between">
+                        <div class="p-3.5 bg-light rounded-3 d-flex align-items-center justify-content-between border">
                             <div>
                                 <strong class="text-dark d-block">WhatsApp Live Delivery &amp; Demo Tracking</strong>
                                 <small class="text-muted">Receive technician arrival ETA and live vehicle location pin on WhatsApp.</small>
@@ -36,9 +47,9 @@
                             </div>
                         </div>
 
-                        <div class="p-3 bg-light rounded-3 d-flex align-items-center justify-content-between">
+                        <div class="p-3.5 bg-light rounded-3 d-flex align-items-center justify-content-between border">
                             <div>
-                                <strong class="text-dark d-block">SMS Alerts</strong>
+                                <strong class="text-dark d-block">SMS Dispatch Alerts</strong>
                                 <small class="text-muted">Critical dispatch OTPs and delivery verification PIN codes.</small>
                             </div>
                             <div class="form-check form-switch">
@@ -46,9 +57,9 @@
                             </div>
                         </div>
 
-                        <div class="p-3 bg-light rounded-3 d-flex align-items-center justify-content-between">
+                        <div class="p-3.5 bg-light rounded-3 d-flex align-items-center justify-content-between border">
                             <div>
-                                <strong class="text-dark d-block">Private Gala Promotions &amp; Bank Offers</strong>
+                                <strong class="text-dark d-block">Private Promotions &amp; Bank Cashbacks</strong>
                                 <small class="text-muted">Early access to seasonal discounts and exclusive manufacturer cashback alerts.</small>
                             </div>
                             <div class="form-check form-switch">
@@ -57,7 +68,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn aura-btn-primary rounded-pill px-4 py-2 fw-bold">
+                    <button type="submit" class="btn aura-btn-primary rounded-pill px-5 py-2.5 fw-bold shadow-sm">
                         Save Preferences
                     </button>
                 </form>

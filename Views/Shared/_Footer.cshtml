@@ -1,123 +1,160 @@
 <footer class="aura-footer">
     <div class="container">
-        <!-- Newsletter Box -->
-        <div class="p-4 p-lg-5 rounded-4 mb-5" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155;">
+        <!-- Minimal Newsletter Card -->
+        <div class="homixa-footer-card">
             <div class="row align-items-center g-4">
                 <div class="col-lg-6">
-                    <span class="badge bg-primary px-3 py-2 text-uppercase mb-2">Indoria Insider Club</span>
-                    <h3 class="text-white fw-bold mb-2">Unlock Curated Launch Deals &amp; Private Offers</h3>
-                    <p class="text-secondary mb-0">Join over 85,000 discerning homeowners receiving architectural inspiration, appliance buying guides, and exclusive festive codes.</p>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-stars text-warning fs-5"></i>
+                        <span class="small text-uppercase fw-bold text-white letter-spacing-1">@Localizer["Indoria Insider Club"]</span>
+                    </div>
+                    <h3 class="text-white fw-bold mb-2 fs-3" style="letter-spacing: -0.02em;">@Localizer["Curated Launch Deals & Private Offers"]</h3>
+                    <p class="text-secondary small mb-0" style="line-height: 1.6;">
+                        Join 85,000+ homeowners receiving exclusive festive codes and appliance buying guides.
+                    </p>
                 </div>
                 <div class="col-lg-6">
-                    <form onsubmit="event.preventDefault(); showAuraToast('Thank you for subscribing! Check your email for exclusive coupon codes.', 'success'); this.reset();" class="d-flex gap-2 flex-column flex-sm-row">
-                        <input type="email" class="form-control py-3 px-4 rounded-pill border-0" placeholder="Enter your email address" required style="background: #ffffff; font-size: 0.95rem;" />
-                        <button type="submit" class="btn aura-btn-primary rounded-pill px-4 py-3 text-nowrap fw-bold">
-                            Join Privilege Club <i class="bi bi-arrow-right ms-1"></i>
+                    <form onsubmit="event.preventDefault(); if (typeof showAuraToast === 'function') showAuraToast('Thank you for subscribing! Check your email for privilege perks.', 'success'); this.reset();" class="d-flex gap-2 flex-column flex-sm-row">
+                        <input type="email" class="form-control homixa-footer-pill-input flex-grow-1" placeholder="@Localizer["Enter your email address"]" required />
+                        <button type="submit" class="btn homixa-footer-pill-btn text-nowrap">
+                            @Localizer["Subscribe"] <i class="bi bi-arrow-right ms-1"></i>
                         </button>
                     </form>
-                    <small class="text-muted d-block mt-2">Zero spam. You can unsubscribe with one click at any time.</small>
+                    <small class="text-muted d-block mt-2" style="font-size: 0.75rem;">Zero spam. Unsubscribe anytime with 1-click.</small>
                 </div>
             </div>
         </div>
 
-        <!-- Trust Badges Grid -->
-        <div class="row g-4 py-4 mb-5 border-top border-bottom border-secondary border-opacity-25">
-            <div class="col-6 col-lg-3 d-flex align-items-center gap-3">
-                <i class="bi bi-patch-check-fill fs-1 text-primary"></i>
-                <div>
-                    <div class="fw-bold text-white">100% Brand Sealed</div>
-                    <small class="text-secondary">Direct manufacturer stock</small>
+        <!-- Trust Features Strip -->
+        <div class="row g-4 mb-5 pb-2">
+            <div class="col-6 col-lg-3">
+                <div class="homixa-footer-trust-item">
+                    <div class="homixa-footer-trust-icon">
+                        <i class="bi bi-patch-check"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold text-white small">@Localizer["100% Brand Sealed"]</div>
+                        <small class="text-muted" style="font-size: 0.75rem;">@Localizer["Direct manufacturer stock"]</small>
+                    </div>
                 </div>
             </div>
-            <div class="col-6 col-lg-3 d-flex align-items-center gap-3">
-                <i class="bi bi-tools fs-1 text-primary"></i>
-                <div>
-                    <div class="fw-bold text-white">Free Expert Install</div>
-                    <small class="text-secondary">Certified brand technicians</small>
+            <div class="col-6 col-lg-3">
+                <div class="homixa-footer-trust-item">
+                    <div class="homixa-footer-trust-icon">
+                        <i class="bi bi-tools"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold text-white small">@Localizer["Free Expert Install"]</div>
+                        <small class="text-muted" style="font-size: 0.75rem;">@Localizer["Brand certified technicians"]</small>
+                    </div>
                 </div>
             </div>
-            <div class="col-6 col-lg-3 d-flex align-items-center gap-3">
-                <i class="bi bi-shield-lock-fill fs-1 text-primary"></i>
-                <div>
-                    <div class="fw-bold text-white">2-Year Indoria Care</div>
-                    <small class="text-secondary">Comprehensive warranty protection</small>
+            <div class="col-6 col-lg-3">
+                <div class="homixa-footer-trust-item">
+                    <div class="homixa-footer-trust-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold text-white small">@Localizer["2-Year Indoria Care"]</div>
+                        <small class="text-muted" style="font-size: 0.75rem;">@Localizer["Comprehensive warranty"]</small>
+                    </div>
                 </div>
             </div>
-            <div class="col-6 col-lg-3 d-flex align-items-center gap-3">
-                <i class="bi bi-truck fs-1 text-primary"></i>
-                <div>
-                    <div class="fw-bold text-white">White-Glove Delivery</div>
-                    <small class="text-secondary">Shockproof fleet in 20+ metros</small>
+            <div class="col-6 col-lg-3">
+                <div class="homixa-footer-trust-item">
+                    <div class="homixa-footer-trust-icon">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold text-white small">@Localizer["White-Glove Delivery"]</div>
+                        <small class="text-muted" style="font-size: 0.75rem;">Shockproof fleet in 20+ metros</small>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Links Columns -->
+        <!-- Links Grid Columns -->
         <div class="row g-4">
+            <!-- Brand & Social -->
             <div class="col-lg-3 col-md-6">
-                <a href="/" class="aura-brand mb-3 text-decoration-none">
-                    <span class="aura-brand-name text-white">Indoria</span>
+                <a href="/" class="d-inline-flex align-items-center gap-2 text-decoration-none mb-3">
+                    <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="40" height="40" rx="12" fill="url(#indoriaGradFooter)"/>
+                        <path d="M20 9L30 17V29C30 30.1 29.1 31 28 31H12C10.9 31 10 30.1 10 29V17L20 9Z" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 31V21H24V31" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="20" cy="16" r="2.5" fill="#F59E0B"/>
+                        <defs>
+                            <linearGradient id="indoriaGradFooter" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#0F172A"/>
+                                <stop offset="0.55" stop-color="#1E40AF"/>
+                                <stop offset="1" stop-color="#3B82F6"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span class="fs-4 fw-bold text-white" style="font-family: 'Outfit', sans-serif; letter-spacing: -0.02em;">Indoria</span>
                 </a>
-                <p class="text-secondary small mb-4">
-                    India's premier experiential marketplace for state-of-the-art kitchen suites, intelligent climate control, and ultra-high-definition cinema appliances.
+                <p class="text-secondary small mb-4" style="line-height: 1.65; max-width: 260px;">
+                    India's premier experiential marketplace for state-of-the-art kitchen suites, climate control, and luxury home appliances.
                 </p>
                 <div class="d-flex gap-2">
-                    <a href="#" class="btn btn-sm btn-outline-light rounded-circle" style="width: 36px; height: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="btn btn-sm btn-outline-light rounded-circle" style="width: 36px; height: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="btn btn-sm btn-outline-light rounded-circle" style="width: 36px; height: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"><i class="bi bi-youtube"></i></a>
-                    <a href="#" class="btn btn-sm btn-outline-light rounded-circle" style="width: 36px; height: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"><i class="bi bi-linkedin"></i></a>
+                    <a href="https://www.instagram.com/ebsor_infosystems/" target="_blank" rel="noopener noreferrer" class="homixa-social-btn" title="Instagram (@@ebsor_infosystems)"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="homixa-social-btn" title="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="homixa-social-btn" title="YouTube"><i class="bi bi-youtube"></i></a>
+                    <a href="#" class="homixa-social-btn" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
                 </div>
             </div>
 
+            <!-- Category Links -->
             <div class="col-lg-3 col-md-6">
-                <h5>Curated Appliances</h5>
-                <a href="/category/refrigerators" class="aura-footer-link">Smart Refrigerators</a>
-                <a href="/category/washing-machines" class="aura-footer-link">Front-Load Washers</a>
-                <a href="/category/air-conditioners" class="aura-footer-link">5-Star Inverter ACs</a>
-                <a href="/category/smart-tvs" class="aura-footer-link">4K OLED &amp; QLED TVs</a>
-                <a href="/category/kitchen-appliances" class="aura-footer-link">Built-in Kitchen Hobs</a>
-                <a href="/category/dishwashers" class="aura-footer-link">14-Place Dishwashers</a>
-                <a href="/category/vacuum-air" class="aura-footer-link">Cordless Vacuums &amp; Air</a>
+                <h6 class="homixa-footer-heading">@Localizer["Curated Appliances"]</h6>
+                <a href="/category/refrigerators" class="aura-footer-link">@Localizer["Smart Refrigerators"]</a>
+                <a href="/category/washing-machines" class="aura-footer-link">@Localizer["Front-Load Washers"]</a>
+                <a href="/category/air-conditioners" class="aura-footer-link">@Localizer["5-Star Inverter ACs"]</a>
+                <a href="/category/smart-tvs" class="aura-footer-link">@Localizer["4K OLED & QLED TVs"]</a>
+                <a href="/category/kitchen-appliances" class="aura-footer-link">@Localizer["Built-in Kitchen Hobs"]</a>
+                <a href="/category/dishwashers" class="aura-footer-link">@Localizer["14-Place Dishwashers"]</a>
             </div>
 
+            <!-- Customer Care -->
             <div class="col-lg-3 col-md-6">
-                <h5>Customer Care</h5>
-                <a href="/help" class="aura-footer-link">Help &amp; Support Centre</a>
-                <a href="/faq" class="aura-footer-link">Frequently Asked Questions</a>
-                <a href="/account/orders" class="aura-footer-link">Track Your Shipment</a>
-                <a href="/account/returns" class="aura-footer-link">Request a Return</a>
-                <a href="/shipping-policy" class="aura-footer-link">Delivery &amp; Installation</a>
-                <a href="/return-policy" class="aura-footer-link">15-Day Return Policy</a>
-                <a href="/contact" class="aura-footer-link">Experience Centres &amp; Showrooms</a>
+                <h6 class="homixa-footer-heading">@Localizer["Customer Support"]</h6>
+                <a href="/help" class="aura-footer-link">@Localizer["Help & Support Centre"]</a>
+                <a href="/account/orders" class="aura-footer-link">@Localizer["Track Your Shipment"]</a>
+                <a href="/account/returns" class="aura-footer-link">@Localizer["Request a Return"]</a>
+                <a href="/shipping-policy" class="aura-footer-link">@Localizer["Delivery & Installation"]</a>
+                <a href="/return-policy" class="aura-footer-link">@Localizer["15-Day Return Policy"]</a>
+                <a href="/contact" class="aura-footer-link">@Localizer["Experience Showrooms"]</a>
             </div>
 
+            <!-- About & Concierge -->
             <div class="col-lg-3 col-md-6">
-                <h5>About Indoria &amp; Legal</h5>
-                <a href="/about" class="aura-footer-link">Our Story &amp; Craft</a>
-                <a href="/blog" class="aura-footer-link">Appliance Buying Guides</a>
-                <a href="/terms" class="aura-footer-link">Terms &amp; Conditions</a>
-                <a href="/privacy" class="aura-footer-link">Privacy Policy</a>
-                <div class="mt-4 p-3 rounded-3 bg-dark border border-secondary border-opacity-25">
-                    <small class="text-white fw-bold d-block mb-1"><i class="bi bi-headset text-primary me-1"></i> Concierge Hotline</small>
-                    <span class="text-warning fw-bold">1800-209-INDORIA</span>
-                    <small class="text-muted d-block">9:00 AM – 9:00 PM (All 7 Days)</small>
+                <h6 class="homixa-footer-heading">@Localizer["About & Hotline"]</h6>
+                <a href="/about" class="aura-footer-link">@Localizer["Our Story & Craft"]</a>
+                <a href="/blog" class="aura-footer-link">@Localizer["Appliance Buying Guides"]</a>
+                <a href="/terms" class="aura-footer-link">@Localizer["Terms & Conditions"]</a>
+                <a href="/privacy" class="aura-footer-link">@Localizer["Privacy Policy"]</a>
+                
+                <div class="mt-4 p-3 rounded-4 bg-dark border border-secondary border-opacity-25" style="background: rgba(255, 255, 255, 0.03) !important;">
+                    <small class="text-white fw-bold d-block mb-1"><i class="bi bi-headset text-primary me-1"></i> @Localizer["Concierge Hotline"]</small>
+                    <span class="text-warning fw-bold fs-6">1800-209-INDORIA</span>
+                    <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">9:00 AM – 9:00 PM (All 7 Days)</small>
                 </div>
             </div>
         </div>
 
-        <!-- Bottom Bar -->
+        <!-- Minimal Bottom Bar -->
         <div class="aura-footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
             <div>
-                &copy; @DateTime.Now.Year Indoria Technologies Pvt. Ltd. All rights reserved.
+                &copy; @DateTime.Now.Year Indoria Technologies Pvt. Ltd. @Localizer["All rights reserved."]
             </div>
-            <div class="d-flex align-items-center justify-content-center justify-content-md-end flex-wrap gap-2 text-secondary small">
-                <span>Secure Payments:</span>
-                <span class="badge bg-secondary text-light">UPI</span>
-                <span class="badge bg-secondary text-light">RuPay</span>
-                <span class="badge bg-secondary text-light">Visa</span>
-                <span class="badge bg-secondary text-light">Mastercard</span>
-                <span class="badge bg-secondary text-light">NetBanking</span>
-                <span class="badge bg-secondary text-light">No Cost EMI</span>
+            <div class="d-flex align-items-center justify-content-center justify-content-md-end flex-wrap gap-2">
+                <span class="me-1">@Localizer["Protected Payments:"]</span>
+                <span class="homixa-payment-pill">UPI</span>
+                <span class="homixa-payment-pill">RuPay</span>
+                <span class="homixa-payment-pill">Visa</span>
+                <span class="homixa-payment-pill">Mastercard</span>
+                <span class="homixa-payment-pill">NetBanking</span>
+                <span class="homixa-payment-pill">No Cost EMI</span>
             </div>
         </div>
     </div>

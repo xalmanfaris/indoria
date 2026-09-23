@@ -96,6 +96,10 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+main[role="main"] {
+  padding-top: 0;
+}
+
 [data-theme="dark"] .aura-category-bar,
 [data-bs-theme="dark"] .aura-category-bar {
   background: #0d1322;
@@ -183,9 +187,11 @@ body {
 }
 
 [data-theme="dark"] .aura-btn-cart,
-[data-bs-theme="dark"] .aura-btn-cart {
-  background: var(--aura-primary);
-  color: #ffffff;
+[data-bs-theme="dark"] .aura-btn-cart,
+html[data-theme="dark"] .aura-btn-cart {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
 }
 
 [data-theme="champagne"] .aura-btn-cart {
@@ -1435,18 +1441,38 @@ a:hover {
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
 }
 
+[data-theme="dark"] .aura-pill-btn,
+[data-bs-theme="dark"] .aura-pill-btn {
+  background: #1e293b;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .aura-pill-btn:hover,
+[data-bs-theme="dark"] .aura-pill-btn:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+  color: #60a5fa;
+}
+
 [data-theme="dark"] .aura-pill-btn.active,
 [data-bs-theme="dark"] .aura-pill-btn.active {
-  background: var(--aura-primary);
-  border-color: var(--aura-primary);
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+
+[data-theme="champagne"] .aura-pill-btn {
+  background: #29241f;
+  border-color: #443b32;
+  color: #d8cec3;
 }
 
 [data-theme="champagne"] .aura-pill-btn.active {
   background: var(--aura-primary);
   border-color: var(--aura-primary);
-  color: #12100e;
+  color: #12100e !important;
   font-weight: 700;
   box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
 }
@@ -2233,7 +2259,7 @@ a:hover {
   top: 10px;
   z-index: 1040;
   width: min(1320px, calc(100% - 24px));
-  margin: 0 auto 1rem auto;
+  margin: 10px auto 0.25rem auto;
   border-radius: 50px;
   background: rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(24px) saturate(180%);
@@ -2370,21 +2396,24 @@ a:hover {
 }
 
 .homixa-btn-primary {
-  background-color: var(--aura-dark) !important;
-  color: var(--aura-surface) !important;
+  background-color: #0f172a !important;
+  color: #ffffff !important;
   border-radius: 50px !important;
   padding: 10px 24px !important;
   font-weight: 600 !important;
   font-size: 0.9rem !important;
-  border: 1px solid var(--aura-dark) !important;
+  border: 1px solid #0f172a !important;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .homixa-btn-primary:hover {
+  background-color: #d97706 !important;
+  color: #ffffff !important;
+  border-color: #d97706 !important;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  opacity: 0.92;
+  box-shadow: 0 6px 20px rgba(217, 119, 6, 0.35);
+  opacity: 1;
 }
 
 .homixa-btn-outline {
@@ -2833,19 +2862,22 @@ a:hover {
   align-items: center;
   justify-content: center;
   min-height: 420px;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: zoom-in;
+  transition: box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.aura-pdp-gallery-frame:hover {
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.08);
+.aura-pdp-gallery-frame.zoomed {
+  cursor: zoom-out;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.12);
 }
 
 #pdpMainImage {
   max-height: 400px;
   width: auto;
   object-fit: contain;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: zoom-in;
+  transition: transform 0.15s ease-out, opacity 0.15s ease;
+  will-change: transform, transform-origin;
+  pointer-events: none;
 }
 
 /* Floating Badges on Gallery Frame */
@@ -3599,12 +3631,64 @@ a:hover {
   background: #161a22;
 }
 
+[data-theme="dark"] .aura-coupon-pill-group,
 [data-bs-theme="dark"] .aura-coupon-pill-group {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
 }
 
-[data-bs-theme="dark"] .aura-coupon-pill-group input {
-  color: #ffffff;
+[data-theme="dark"] .aura-coupon-pill-group input,
+[data-bs-theme="dark"] .aura-coupon-pill-group input,
+[data-theme="dark"] #couponCodeInput,
+[data-bs-theme="dark"] #couponCodeInput {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .aura-coupon-pill-group input::placeholder,
+[data-bs-theme="dark"] .aura-coupon-pill-group input::placeholder,
+[data-theme="dark"] #couponCodeInput::placeholder,
+[data-bs-theme="dark"] #couponCodeInput::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Coupon Apply Button - High Contrast Dark & Light Mode */
+#applyCouponBtn,
+.aura-coupon-pill-btn {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  border-radius: 50px !important;
+  padding: 0.5rem 1.25rem !important;
+  font-weight: 700 !important;
+  font-size: 0.8rem !important;
+  border: 1px solid transparent !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+#applyCouponBtn:hover,
+.aura-coupon-pill-btn:hover {
+  background: #1e293b !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25) !important;
+}
+
+[data-theme="dark"] #applyCouponBtn,
+[data-bs-theme="dark"] #applyCouponBtn,
+[data-theme="dark"] .aura-coupon-pill-btn,
+[data-bs-theme="dark"] .aura-coupon-pill-btn {
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4) !important;
+}
+
+[data-theme="dark"] #applyCouponBtn:hover,
+[data-bs-theme="dark"] #applyCouponBtn:hover,
+[data-theme="dark"] .aura-coupon-pill-btn:hover,
+[data-bs-theme="dark"] .aura-coupon-pill-btn:hover {
+  background: #60a5fa !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 14px rgba(96, 165, 250, 0.5) !important;
 }
 
 /* ==========================================
@@ -4336,8 +4420,292 @@ a:hover {
 }
 
 /* ==========================================================================
+   Homixa Design System Components & Hero Section Styling
+   ========================================================================== */
+
+/* 1. Header Navigation & Brand */
+.homixa-header {
+  position: sticky;
+  top: 14px;
+  z-index: 1030;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--aura-border-light);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme="dark"] .homixa-header,
+[data-bs-theme="dark"] .homixa-header {
+  background: rgba(9, 13, 22, 0.92);
+  border-bottom-color: var(--aura-border);
+}
+
+.homixa-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.homixa-brand-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 1.65rem;
+  letter-spacing: -0.03em;
+  color: var(--aura-dark);
+  transition: color 0.3s ease;
+}
+
+.homixa-main-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.85rem;
+}
+
+.homixa-nav-link {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--aura-text);
+  text-decoration: none !important;
+  transition: color 0.2s ease;
+  position: relative;
+  padding: 0.25rem 0;
+}
+
+.homixa-nav-link:hover,
+.homixa-nav-link.active {
+  color: var(--aura-primary);
+}
+
+.homixa-nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--aura-primary);
+  border-radius: 2px;
+}
+
+.homixa-icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--aura-surface-subtle);
+  border: 1px solid var(--aura-border-light);
+  color: var(--aura-dark);
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-decoration: none !important;
+}
+
+.homixa-icon-btn:hover {
+  background: var(--aura-primary-light);
+  color: var(--aura-primary);
+  border-color: var(--aura-primary);
+  transform: translateY(-2px);
+}
+
+/* 2. Hero Section */
+.homixa-hero-section {
+  position: relative;
+  padding-top: 1.5rem;
+}
+
+.homixa-hero-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(2.2rem, 4.2vw, 3.75rem);
+  font-weight: 800;
+  line-height: 1.22;
+  letter-spacing: -0.035em;
+  color: var(--aura-dark);
+  margin-bottom: 0;
+}
+
+.homixa-inline-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #10b981;
+  color: #ffffff;
+  font-size: 1.15rem;
+  vertical-align: middle;
+  margin: 0 0.4rem;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+  transition: transform 0.25s ease;
+}
+
+.homixa-inline-badge:hover {
+  transform: scale(1.1);
+}
+
+.homixa-hero-desc {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--aura-muted);
+  line-height: 1.65;
+  max-width: 440px;
+}
+
+.homixa-btn-primary {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 50px !important;
+  padding: 0.85rem 1.85rem !important;
+  font-weight: 800 !important;
+  font-size: 0.95rem !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.2) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none !important;
+}
+
+.homixa-btn-primary:hover {
+  background: #d97706 !important;
+  color: #ffffff !important;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 14px 32px rgba(217, 119, 6, 0.35) !important;
+}
+
+.homixa-btn-outline {
+  background: transparent !important;
+  border: 1.5px solid var(--aura-border) !important;
+  color: var(--aura-dark) !important;
+  border-radius: 50px !important;
+  padding: 0.85rem 1.85rem !important;
+  font-weight: 800 !important;
+  font-size: 0.95rem !important;
+  transition: all 0.25s ease !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none !important;
+}
+
+.homixa-btn-outline:hover {
+  background: var(--aura-surface-subtle) !important;
+  border-color: var(--aura-dark) !important;
+  color: var(--aura-dark) !important;
+  transform: translateY(-2px);
+}
+
+.homixa-hero-img-wrap {
+  width: 100%;
+  border-radius: 32px;
+  overflow: hidden;
+  box-shadow: var(--aura-shadow-lg);
+  border: 1px solid var(--aura-border-light);
+  max-height: 520px;
+  background: var(--aura-surface-subtle);
+  position: relative;
+}
+
+.homixa-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.homixa-hero-img-wrap:hover .homixa-hero-img {
+  transform: scale(1.02);
+}
+
+/* 3. Section Titles & Brand Pills */
+.homixa-section-title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--aura-dark);
+}
+
+.homixa-section-subtext {
+  color: var(--aura-muted);
+  font-size: 0.95rem;
+}
+
+.homixa-link-bold {
+  font-weight: 800;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  color: var(--aura-dark);
+  text-decoration: none !important;
+  transition: color 0.2s ease;
+}
+
+.homixa-link-bold:hover {
+  color: var(--aura-primary);
+}
+
+.homixa-pill-btn {
+  background: var(--aura-surface);
+  border: 1.5px solid var(--aura-border);
+  border-radius: 50px;
+  padding: 0.45rem 1.15rem;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--aura-dark);
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.homixa-pill-btn:hover,
+.homixa-pill-btn.active {
+  background: var(--aura-dark);
+  color: #ffffff;
+  border-color: var(--aura-dark);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2);
+}
+
+[data-theme="dark"] .homixa-pill-btn,
+[data-bs-theme="dark"] .homixa-pill-btn {
+  background: #1e293b;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .homixa-pill-btn:hover,
+[data-theme="dark"] .homixa-pill-btn.active,
+[data-bs-theme="dark"] .homixa-pill-btn:hover,
+[data-bs-theme="dark"] .homixa-pill-btn.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+
+[data-theme="champagne"] .homixa-pill-btn {
+  background: #29241f;
+  border-color: #443b32;
+  color: #d8cec3;
+}
+
+[data-theme="champagne"] .homixa-pill-btn:hover,
+[data-theme="champagne"] .homixa-pill-btn.active {
+  background: #d4af37;
+  border-color: #d4af37;
+  color: #12100e !important;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+}
+
+/* ==========================================================================
    Modern Header Right Side Icons (Capsule Theme Pill, Badges, Avatar)
    ========================================================================== */
+
 .aura-theme-pill-toggle {
   display: inline-flex;
   align-items: center;
@@ -4504,4 +4872,1077 @@ a:hover {
   line-height: 1.1;
   color: var(--aura-dark);
   letter-spacing: -0.5px;
+}
+
+/* ==========================================================================
+   RTL (Right-to-Left) & Arabic Typography Support
+   ========================================================================== */
+html[dir="rtl"],
+html[lang="ar"],
+html[dir="rtl"] body,
+html[lang="ar"] body {
+  font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+  direction: rtl;
+  text-align: right;
+  line-height: 1.6;
+}
+
+html[dir="rtl"] h1, html[dir="rtl"] h2, html[dir="rtl"] h3, 
+html[dir="rtl"] h4, html[dir="rtl"] h5, html[dir="rtl"] h6,
+html[dir="rtl"] .display-1, html[dir="rtl"] .display-2, html[dir="rtl"] .display-3,
+html[dir="rtl"] .display-4, html[dir="rtl"] .display-5, html[dir="rtl"] .display-6,
+html[dir="rtl"] .homixa-brand-name, html[dir="rtl"] .homixa-nav-link,
+html[dir="rtl"] .btn, html[dir="rtl"] .badge, html[dir="rtl"] .form-control,
+html[dir="rtl"] .form-select, html[dir="rtl"] .card-title, html[dir="rtl"] .dropdown-item {
+  font-family: 'Cairo', sans-serif !important;
+  letter-spacing: 0 !important;
+}
+
+/* Force text alignment in RTL */
+html[dir="rtl"] .text-start,
+html[dir="rtl"] .text-left,
+html[dir="rtl"] .dropdown-menu,
+html[dir="rtl"] .modal-content,
+html[dir="rtl"] .card-body,
+html[dir="rtl"] .aura-trust-card,
+html[dir="rtl"] .form-label,
+html[dir="rtl"] .form-control,
+html[dir="rtl"] .form-select,
+html[dir="rtl"] table,
+html[dir="rtl"] th,
+html[dir="rtl"] td {
+  text-align: right !important;
+}
+
+html[dir="rtl"] .text-end,
+html[dir="rtl"] .text-right {
+  text-align: left !important;
+}
+
+/* Search input in header */
+html[dir="rtl"] .aura-search-capsule-icon {
+  left: auto !important;
+  right: 0.8rem !important;
+}
+
+html[dir="rtl"] .aura-search-capsule-close {
+  right: auto !important;
+  left: 0.4rem !important;
+}
+
+html[dir="rtl"] .aura-search-capsule-input {
+  padding: 0.25rem 2.2rem 0.25rem 2rem !important;
+}
+
+/* Product cards */
+html[dir="rtl"] .aura-wishlist-btn {
+  right: auto !important;
+  left: 12px !important;
+}
+
+html[dir="rtl"] .aura-product-badge-group {
+  left: auto !important;
+  right: 12px !important;
+}
+
+html[dir="rtl"] .aura-nav-badge-red {
+  right: auto !important;
+  left: -2px !important;
+}
+
+/* Dropdown alignment */
+html[dir="rtl"] .dropdown-menu-end {
+  left: 0 !important;
+  right: auto !important;
+}
+
+/* Floating Widgets & Toasts */
+html[dir="rtl"] #auraToastContainer {
+  right: auto !important;
+  left: 24px !important;
+}
+
+html[dir="rtl"] .live-chat-floating-btn {
+  right: auto !important;
+  left: 20px !important;
+}
+
+html[dir="rtl"] .live-chat-box-window {
+  right: auto !important;
+  left: 20px !important;
+}
+
+/* Modal close button */
+html[dir="rtl"] .modal-header .btn-close {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+/* Stepper items */
+html[dir="rtl"] .aura-step-item {
+  text-align: center;
+}
+
+/* Icon Flipping for RTL Navigation */
+html[dir="rtl"] .bi-arrow-right::before,
+html[dir="rtl"] .bi-arrow-right-short::before {
+  content: "\f12d"; /* bi-arrow-left */
+}
+
+html[dir="rtl"] .bi-arrow-left::before,
+html[dir="rtl"] .bi-arrow-left-short::before {
+  content: "\f135"; /* bi-arrow-right */
+}
+
+html[dir="rtl"] .bi-chevron-right::before {
+  content: "\f284"; /* bi-chevron-left */
+}
+
+html[dir="rtl"] .bi-chevron-left::before {
+  content: "\f285"; /* bi-chevron-right */
+}
+
+html[dir="rtl"] .bi-caret-right-fill::before {
+  content: "\f22d"; /* bi-caret-left-fill */
+}
+
+/* Home Screen Hero & Section Overrides for RTL */
+html[dir="rtl"] .homixa-hero-title {
+  text-align: right !important;
+  font-family: 'Cairo', sans-serif !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0 !important;
+}
+
+html[dir="rtl"] .homixa-hero-title br {
+  display: none !important;
+}
+
+html[dir="rtl"] .homixa-hero-desc,
+html[dir="rtl"] .homixa-section-title,
+html[dir="rtl"] .homixa-section-subtext,
+html[dir="rtl"] .aura-section-heading,
+html[dir="rtl"] .aura-section-tag {
+  text-align: right !important;
+  font-family: 'Cairo', sans-serif !important;
+  letter-spacing: 0 !important;
+}
+
+html[dir="rtl"] .homixa-inline-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 0.35rem !important;
+  vertical-align: middle !important;
+}
+
+html[dir="rtl"] .border-lg-end {
+  border-right: none !important;
+}
+
+@media (min-width: 992px) {
+  html[dir="rtl"] .border-lg-end {
+    border-right: none !important;
+    border-left: 1px solid var(--aura-border) !important;
+  }
+  html[dir="rtl"] .pe-lg-4 {
+    padding-right: 0 !important;
+    padding-left: 1.5rem !important;
+  }
+  html[dir="rtl"] .ps-lg-4 {
+    padding-left: 0 !important;
+    padding-right: 1.5rem !important;
+  }
+}
+
+html[dir="rtl"] .homixa-pill-btn,
+html[dir="rtl"] .aura-pill-btn,
+html[dir="rtl"] .homixa-brand-logo-card {
+  font-family: 'Cairo', sans-serif !important;
+  letter-spacing: 0 !important;
+}
+
+html[dir="rtl"] .aura-product-card,
+html[dir="rtl"] .homixa-testimonial-card {
+  text-align: right !important;
+}
+
+html[dir="rtl"] .aura-product-title,
+html[dir="rtl"] .aura-product-brand,
+html[dir="rtl"] .aura-price-wrap,
+html[dir="rtl"] .aura-emi-tag {
+  text-align: right !important;
+  font-family: 'Cairo', sans-serif !important;
+}
+
+/* Fix icon margins inside buttons in RTL mode */
+html[dir="rtl"] .me-1,
+html[dir="rtl"] .me-1\.5,
+html[dir="rtl"] .me-2,
+html[dir="rtl"] .me-3 {
+  margin-right: 0 !important;
+  margin-left: 0.4rem !important;
+}
+
+html[dir="rtl"] .ms-1,
+html[dir="rtl"] .ms-2,
+html[dir="rtl"] .ms-3 {
+  margin-left: 0 !important;
+  margin-right: 0.4rem !important;
+}
+
+/* Checkbox and Radio alignment in RTL mode */
+html[dir="rtl"] .form-check {
+  padding-left: 0 !important;
+  padding-right: 1.6em !important;
+  text-align: right !important;
+}
+
+html[dir="rtl"] .form-check .form-check-input {
+  float: right !important;
+  margin-left: 0 !important;
+  margin-right: -1.6em !important;
+}
+
+html[dir="rtl"] .dropdown-menu {
+  text-align: right !important;
+}
+
+html[dir="rtl"] .dropdown-item {
+  text-align: right !important;
+}
+
+/* Printable Document & Invoice Styles */
+@media print {
+  header, footer, nav, .navbar, .aura-footer, .account-sidebar, .no-print, .modal, .btn-close {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 12pt !important;
+  }
+
+  .container, .main-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .card, .stat-card-glass {
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+  }
+}
+
+/* Universal Dark Mode Add to Cart Button Fix - Royal Blue & White */
+[data-theme="dark"] .homixa-btn-primary,
+[data-bs-theme="dark"] .homixa-btn-primary,
+html[data-theme="dark"] .homixa-btn-primary,
+[data-theme="dark"] .aura-btn-cart,
+[data-bs-theme="dark"] .aura-btn-cart,
+html[data-theme="dark"] .aura-btn-cart,
+[data-theme="dark"] .aura-btn-pdp-bag,
+[data-bs-theme="dark"] .aura-btn-pdp-bag,
+html[data-theme="dark"] .aura-btn-pdp-bag,
+[data-theme="dark"] .add-to-cart-btn,
+[data-bs-theme="dark"] .add-to-cart-btn,
+html[data-theme="dark"] .add-to-cart-btn {
+  background: #2563eb !important;
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  border: 1px solid #2563eb !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+[data-theme="dark"] .homixa-btn-primary:hover,
+[data-bs-theme="dark"] .homixa-btn-primary:hover,
+html[data-theme="dark"] .homixa-btn-primary:hover,
+[data-theme="dark"] .aura-btn-cart:hover,
+[data-bs-theme="dark"] .aura-btn-cart:hover,
+html[data-theme="dark"] .aura-btn-cart:hover,
+[data-theme="dark"] .aura-btn-pdp-bag:hover,
+[data-bs-theme="dark"] .aura-btn-pdp-bag:hover,
+html[data-theme="dark"] .aura-btn-pdp-bag:hover,
+[data-theme="dark"] .add-to-cart-btn:hover,
+[data-bs-theme="dark"] .add-to-cart-btn:hover,
+html[data-theme="dark"] .add-to-cart-btn:hover {
+  background: #1d4ed8 !important;
+  background-color: #1d4ed8 !important;
+  color: #ffffff !important;
+  border-color: #1d4ed8 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(29, 78, 216, 0.5) !important;
+}
+
+/* ==========================================
+   Comprehensive Responsive System & Breakpoints
+   ========================================== */
+
+/* Touch Target Optimization (Mobile & Tablets) */
+@media (max-width: 991.98px) {
+  .btn, .form-control, .form-select, .nav-link, .aura-nav-icon-btn {
+    min-height: 44px;
+  }
+
+  .btn-sm, .form-control-sm, .form-select-sm {
+    min-height: 38px;
+  }
+
+  /* Fluid Typography Scaling */
+  h1, .h1 { font-size: clamp(1.5rem, 5vw, 2.5rem) !important; }
+  h2, .h2 { font-size: clamp(1.3rem, 4vw, 2rem) !important; }
+  h3, .h3 { font-size: clamp(1.15rem, 3.5vw, 1.75rem) !important; }
+
+  /* Disable Sticky PDP Gallery Frame on Mobile to prevent clipping */
+  .col-lg-6 .sticky-top,
+  .pdp-sticky-container {
+    position: static !important;
+    top: auto !important;
+  }
+
+  /* Mobile Live Chat Positioning above sticky bar */
+  #liveChatBubbleContainer {
+    bottom: 80px !important;
+    right: 16px !important;
+  }
+}
+
+/* Offcanvas Navigation Drawer System */
+.aura-mobile-offcanvas {
+  width: 320px !important;
+  max-width: 85vw !important;
+  background: var(--bs-body-bg, #ffffff);
+  z-index: 1065 !important;
+}
+
+.offcanvas-backdrop {
+  z-index: 1060 !important;
+}
+
+[data-theme="dark"] .aura-mobile-offcanvas {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .aura-mobile-offcanvas .nav-link {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .aura-mobile-offcanvas .bg-light {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Mobile Stepper Adjustments (< 576px) */
+@media (max-width: 575.98px) {
+  .aura-stepper-wrap {
+    padding: 0.5rem 0;
+  }
+
+  .aura-step-label-group {
+    display: none !important;
+  }
+
+  .aura-step-circle {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 0.85rem !important;
+  }
+
+  .aura-cart-item-row {
+    padding: 0.75rem !important;
+  }
+
+  /* Responsive Table Container Styling */
+  .table-responsive {
+    border-radius: 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-responsive::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .table-responsive::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.4);
+    border-radius: 4px;
+  }
+}
+
+/* Widescreen & High DPI Adjustments (>= 1400px & >= 1600px) */
+@media (min-width: 1400px) {
+  .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+    max-width: 1520px;
+  }
+  .homixa-hero-img-wrap {
+    max-height: 560px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+    max-width: 1680px;
+  }
+  .homixa-hero-img-wrap {
+    max-height: 600px;
+  }
+}
+
+/* ==========================================
+   Product Detail Page (PDP) Mobile System
+   ========================================== */
+@media (max-width: 991.98px) {
+  .border-end-lg {
+    border-right: none !important;
+  }
+  .border-bottom-lg-0 {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .aura-pdp-gallery-frame {
+    min-height: 260px !important;
+    padding: 1rem !important;
+    border-radius: 20px !important;
+  }
+
+  #pdpMainImage {
+    max-height: 240px !important;
+  }
+
+  .aura-pdp-thumb {
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 12px !important;
+    padding: 4px !important;
+  }
+
+  .aura-pdp-title {
+    font-size: 1.35rem !important;
+  }
+
+  .aura-pdp-price-display {
+    font-size: 1.85rem !important;
+  }
+
+  .aura-pdp-price-card {
+    padding: 1rem !important;
+    border-radius: 18px !important;
+  }
+
+  .aura-pincode-card {
+    padding: 1rem !important;
+    border-radius: 18px !important;
+  }
+
+  .aura-pincode-input-group {
+    flex-wrap: wrap;
+    border-radius: 18px !important;
+  }
+
+  .aura-pincode-input-group input {
+    width: 100% !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+
+  .aura-pincode-btn {
+    width: 100% !important;
+    margin-top: 4px;
+  }
+
+  .aura-pdp-tabs-pill-wrap {
+    border-radius: 20px !important;
+    padding: 4px !important;
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .aura-pdp-tabs-pill-wrap::-webkit-scrollbar {
+    display: none;
+  }
+
+  .aura-pdp-tabs-pill-wrap .nav-link {
+    font-size: 0.8rem !important;
+    padding: 0.5rem 0.85rem !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* ==========================================
+   Responsive Add to Cart Button System
+   ========================================== */
+.aura-btn-cart {
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.55rem 0.85rem;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.25s ease;
+  min-height: 40px;
+}
+
+@media (max-width: 575.98px) {
+  .aura-btn-cart {
+    font-size: 0.78rem !important;
+    padding: 0.45rem 0.6rem !important;
+    min-height: 38px !important;
+    border-radius: 50px !important;
+  }
+
+  .aura-card-actions {
+    gap: 0.35rem !important;
+  }
+
+  .aura-btn-pdp-bag,
+  .aura-btn-pdp-buy {
+    padding: 0.75rem 1rem !important;
+    font-size: 0.9rem !important;
+    border-radius: 50px !important;
+  }
+}
+
+/* ==========================================
+   Modern Instagram Feed Section (@ebsor_infosystems)
+   ========================================== */
+.aura-insta-badge {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  color: #ffffff;
+  padding: 0.35rem 0.85rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(220, 39, 67, 0.25);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.aura-insta-btn {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  color: #ffffff !important;
+  font-weight: 700;
+  border: none;
+  border-radius: 50px;
+  padding: 0.65rem 1.6rem;
+  box-shadow: 0 6px 18px rgba(225, 48, 108, 0.3);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.aura-insta-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 24px rgba(225, 48, 108, 0.45);
+  color: #ffffff !important;
+}
+
+.aura-insta-card {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  background-color: var(--aura-surface);
+  border: 1px solid var(--aura-border);
+  box-shadow: var(--aura-shadow-sm);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.aura-insta-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--aura-shadow-lg);
+  border-color: rgba(225, 48, 108, 0.4);
+}
+
+.aura-insta-img-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 100%; /* 1:1 Aspect Ratio */
+  overflow: hidden;
+}
+
+.aura-insta-img-wrapper img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.aura-insta-card:hover .aura-insta-img-wrapper img {
+  transform: scale(1.08);
+}
+
+.aura-insta-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1.25rem;
+  color: #ffffff;
+  transition: opacity 0.3s ease;
+  text-align: center;
+}
+
+.aura-insta-card:hover .aura-insta-overlay {
+  opacity: 1;
+}
+
+.aura-insta-stats {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+}
+
+.aura-insta-caption {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ==========================================
+   Modern Brand Logo Mark Styling
+   ========================================== */
+.aura-brand-logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 4px 10px rgba(30, 64, 175, 0.28));
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.homixa-brand:hover .aura-brand-logo-mark {
+  transform: translateY(-1px) scale(1.06) rotate(-2deg);
+  filter: drop-shadow(0 6px 14px rgba(37, 99, 235, 0.4));
+}
+
+/* ==========================================
+   Instagram Feed Horizontal Scroll Track & Controls
+   ========================================== */
+.aura-insta-scroll-container {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  padding: 0.5rem 0.25rem 1rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.aura-insta-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.aura-insta-scroll-item {
+  flex: 0 0 280px;
+  max-width: 280px;
+  scroll-snap-align: start;
+}
+
+@media (max-width: 575.98px) {
+  .aura-insta-scroll-item {
+    flex: 0 0 230px;
+    max-width: 230px;
+  }
+}
+
+.aura-insta-nav-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--aura-border);
+  background-color: var(--aura-surface);
+  color: var(--aura-dark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: var(--aura-shadow-sm);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.aura-insta-nav-btn:hover {
+  background-color: var(--aura-primary);
+  color: #ffffff;
+  border-color: var(--aura-primary);
+  transform: scale(1.08);
+  box-shadow: var(--aura-shadow-md);
+}
+
+/* ==========================================
+   Instagram Post Cards & Avatar Ring System
+   ========================================== */
+.aura-insta-avatar-ring {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  padding: 2px;
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aura-insta-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #cc2366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+}
+
+.aura-insta-post-card .group-hover:hover .aura-insta-overlay {
+  opacity: 1 !important;
+}
+
+.aura-insta-post-card .group-hover:hover img {
+  transform: scale(1.06);
+}
+
+.aura-insta-overlay {
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(3px);
+  position: absolute;
+  inset: 0;
+}
+
+/* ==========================================
+   Global Modern Color Theme & Button Overhaul
+   ========================================== */
+.btn {
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  border-radius: 12px;
+  padding: 0.55rem 1.25rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-primary, .aura-btn-primary {
+  background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35) !important;
+}
+
+.btn-primary:hover, .aura-btn-primary:hover {
+  background: linear-gradient(135deg, #4338ca 0%, #2563eb 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.48) !important;
+}
+
+.btn-secondary {
+  background: #f1f5f9 !important;
+  color: #1e293b !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+.btn-secondary:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+  transform: translateY(-1px);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(16, 185, 129, 0.42) !important;
+}
+
+.btn-outline-primary {
+  color: #4f46e5 !important;
+  border: 1.5px solid #4f46e5 !important;
+  background: transparent !important;
+}
+
+.btn-outline-primary:hover {
+  background: #4f46e5 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3) !important;
+  transform: translateY(-1px);
+}
+
+.btn-dark {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.3) !important;
+}
+
+.btn-dark:hover {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.42) !important;
+}
+
+/* Card & Input Enhancements */
+.form-control:focus, .form-select:focus {
+  border-color: #4f46e5 !important;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15) !important;
+}
+
+.card {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-shadow-lg:hover {
+  box-shadow: 0 20px 35px -10px rgba(15, 23, 42, 0.12), 0 8px 15px -6px rgba(15, 23, 42, 0.08) !important;
+}
+
+/* ==========================================
+   Luxury Instagram Feed Swiper System
+   ========================================== */
+.aura-insta-feed-section {
+  padding-top: 1rem;
+}
+
+.insta-section-header {
+  position: relative;
+}
+
+.insta-header-badge {
+  background: rgba(225, 48, 108, 0.08);
+  border: 1px solid rgba(225, 48, 108, 0.18);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
+.insta-header-title {
+  font-size: clamp(1.4rem, 2.8vw, 2.1rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--aura-dark, #0f172a);
+}
+
+.insta-header-underline {
+  width: 70px;
+  height: 4px;
+  background: linear-gradient(90deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  border-radius: 4px;
+}
+
+.insta-profile-bar {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.3s ease;
+}
+
+.insta-avatar-gradient-ring {
+  width: 58px;
+  height: 58px;
+  padding: 3px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.insta-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
+
+.insta-follow-btn {
+  background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%) !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.insta-follow-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(225, 48, 108, 0.45) !important;
+  filter: brightness(1.08);
+}
+
+/* Swiper Gallery Navigation Buttons */
+.insta-gallery-wrapper {
+  padding: 0 4px;
+}
+
+.insta-swiper-prev,
+.insta-swiper-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  z-index: 15;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.insta-swiper-prev {
+  left: -18px;
+}
+
+.insta-swiper-next {
+  right: -18px;
+}
+
+@media (max-width: 767.98px) {
+  .insta-swiper-prev { left: 4px; }
+  .insta-swiper-next { right: 4px; }
+}
+
+.insta-swiper-prev:hover,
+.insta-swiper-next:hover {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* Post Cards & Image Hover Overlay */
+.insta-card {
+  border-radius: 20px !important;
+  overflow: hidden;
+  background: #000000;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.insta-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.insta-card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.5) 50%, rgba(15, 23, 42, 0.3) 100%);
+  opacity: 0;
+  transition: opacity 0.35s ease, backdrop-filter 0.35s ease;
+  backdrop-filter: blur(3px);
+  z-index: 2;
+}
+
+.insta-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.25) !important;
+}
+
+.insta-card:hover .insta-card-img {
+  transform: scale(1.08);
+}
+
+.insta-card:hover .insta-card-overlay {
+  opacity: 1;
+}
+
+.insta-icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+.insta-card-caption {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.45;
+}
+
+.backdrop-blur {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Dark Mode Adaptations */
+[data-theme="dark"] .insta-header-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .insta-profile-bar {
+  background: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .insta-profile-bar .text-dark {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .insta-profile-bar .bg-light {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .insta-swiper-prev,
+[data-theme="dark"] .insta-swiper-next {
+  background: #1e293b;
+  color: #f8fafc;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .insta-swiper-prev:hover,
+[data-theme="dark"] .insta-swiper-next:hover {
+  background: #ffffff;
+  color: #0f172a;
 }

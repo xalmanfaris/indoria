@@ -2,7 +2,7 @@
 
 <div class="aura-filter-card">
     <div class="aura-filter-title">
-        <span>Filters</span>
+        <span>@Localizer["Filter Products"]</span>
         <a href="@(Model.CategorySlug != null ? $"/category/{Model.CategorySlug}" : (Model.SearchQuery != null ? $"/search?q={Model.SearchQuery}" : "/products"))" class="text-primary small text-decoration-none fw-semibold">Reset</a>
     </div>
 
@@ -14,7 +14,7 @@
 
         <!-- Brands Filter -->
         <div class="aura-filter-group">
-            <label class="fw-bold small text-dark mb-2 d-block">Brand</label>
+            <label class="fw-bold small text-dark mb-2 d-block">@Localizer["All Brands"]</label>
             <div class="d-flex flex-column gap-2" style="max-height: 200px; overflow-y: auto;">
                 @foreach (var brand in Model.AvailableBrands)
                 {
@@ -50,7 +50,7 @@
 
         <!-- Minimum Customer Rating -->
         <div class="aura-filter-group">
-            <label class="fw-bold small text-dark mb-2 d-block">Customer Rating</label>
+            <label class="fw-bold small text-dark mb-2 d-block">@Localizer["Rating"]</label>
             <div class="d-flex flex-column gap-2">
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="minRating" value="4.5" id="rat_45" @(Model.MinRating >= 4.5 ? "checked" : "") onchange="this.form.submit()" />
@@ -69,17 +69,17 @@
 
         <!-- Availability -->
         <div class="aura-filter-group">
-            <label class="fw-bold small text-dark mb-2 d-block">Availability</label>
+            <label class="fw-bold small text-dark mb-2 d-block">@Localizer["In Stock"]</label>
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="inStockOnly" value="true" id="inStockOnly" @(Model.InStockOnly ? "checked" : "") onchange="this.form.submit()" />
                 <label class="form-check-label small text-secondary" for="inStockOnly">
-                    In Stock (Ready to Dispatch)
+                    @Localizer["In Stock"]
                 </label>
             </div>
         </div>
 
         <button type="submit" class="btn aura-btn-primary w-100 py-2 small mt-2">
-            Apply Filters
+            @Localizer["Filter Products"]
         </button>
     </form>
 </div>

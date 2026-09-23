@@ -17,36 +17,36 @@
                 <h2 class="fw-bold text-dark mb-2">We Are Here to Assist You</h2>
                 <p class="text-secondary small mb-4">Have questions regarding kitchen fitments, product specifications, bulk architect orders, or active shipments? Reach our specialized appliance consultants.</p>
 
-                <form onsubmit="event.preventDefault(); showAuraToast('Your message has been sent to our concierge team. We will call you back within 2 hours.', 'success'); this.reset();">
+                <form id="conciergeContactForm" onsubmit="submitConciergeContactForm(event)">
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Your Name</label>
-                            <input type="text" class="form-control" required placeholder="Arjun Mehta" />
+                            <label class="form-label small fw-bold">Your Name <span class="text-danger">*</span></label>
+                            <input type="text" id="contactName" class="form-control" required placeholder="Arjun Mehta" />
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Mobile Number</label>
-                            <input type="tel" class="form-control" required placeholder="+91 98201 45890" />
+                            <label class="form-label small fw-bold">Mobile Number <span class="text-danger">*</span></label>
+                            <input type="tel" id="contactPhone" class="form-control" required placeholder="+91 98201 45890" />
                         </div>
                         <div class="col-12">
-                            <label class="form-label small fw-bold">Email Address</label>
-                            <input type="email" class="form-control" required placeholder="arjun@example.com" />
+                            <label class="form-label small fw-bold">Email Address <span class="text-danger">*</span></label>
+                            <input type="email" id="contactEmail" class="form-control" required placeholder="arjun@example.com" />
                         </div>
                         <div class="col-12">
                             <label class="form-label small fw-bold">Inquiry Type</label>
-                            <select class="form-select">
-                                <option>Product Recommendation &amp; Sizing</option>
-                                <option>Active Order &amp; Delivery Tracking</option>
-                                <option>Installation &amp; Demo Request</option>
-                                <option>Architect / Interior Designer Partnership</option>
+                            <select id="contactCategory" class="form-select">
+                                <option value="Product Recommendation & Sizing">Product Recommendation &amp; Sizing</option>
+                                <option value="Active Order & Delivery Tracking">Active Order &amp; Delivery Tracking</option>
+                                <option value="Installation & Demo Request">Installation &amp; Demo Request</option>
+                                <option value="Architect / Interior Designer Partnership">Architect / Interior Designer Partnership</option>
                             </select>
                         </div>
                         <div class="col-12">
-                            <label class="form-label small fw-bold">Message Details</label>
-                            <textarea class="form-control" rows="4" required placeholder="Please describe how we can assist you..."></textarea>
+                            <label class="form-label small fw-bold">Message Details <span class="text-danger">*</span></label>
+                            <textarea id="contactMessage" class="form-control" rows="4" required placeholder="Please describe how we can assist you..."></textarea>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn aura-btn-primary rounded-pill px-5 py-3 fw-bold">
+                    <button type="submit" id="contactSubmitBtn" class="btn aura-btn-primary rounded-pill px-5 py-3 fw-bold">
                         Send Inquiry <i class="bi bi-send ms-1"></i>
                     </button>
                 </form>
@@ -139,3 +139,55 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        async function submitConciergeContactForm(e) {
+            e.preventDefault();
+            const btn = document.getElementById('contactSubmitBtn');
+            const name = document.getElementById('contactName').value.trim();
+            const phone = document.getElementById('contactPhone').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            const category = document.getElementById('contactCategory').value;
+            const message = document.getElementById('contactMessage').value.trim();
+
+            if (!name || !email || !message) return;
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Submitting...';
+
+            try {
+                const response = await fetch('/api/support/tickets/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customerName: name,
+                        email: email,
+                        subject: `Concierge Desk Inquiry: ${category}`,
+                        category: category,
+                        priority: "High",
+                        message: `Contact Mobile: ${phone}\n\nInquiry Details:\n${message}`
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    if (typeof showAuraToast === 'function') {
+                        showAuraToast(`Your inquiry has been logged as Ticket #${data.ticketNumber || data.ticketId}. Our Concierge team will call you back within 2 hours!`, 'success');
+                    } else {
+                        alert(`Your inquiry has been logged as Ticket #${data.ticketNumber || data.ticketId}. Our Concierge team will call you back within 2 hours!`);
+                    }
+                    document.getElementById('conciergeContactForm').reset();
+                } else {
+                    alert(data.message || 'Error submitting inquiry.');
+                }
+            } catch (err) {
+                console.error('Contact form submission failed', err);
+                alert('An error occurred while sending your inquiry. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Send Inquiry <i class="bi bi-send ms-1"></i>';
+            }
+        }
+    </script>
+}

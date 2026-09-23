@@ -1,0 +1,485 @@
+@model AuraLiving.Models.AdminDashboardViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Dashboard Overview";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h2 class="fw-bold admin-text-title mb-1">Store Dashboard & Analytics</h2>
+        <p class="admin-text-muted mb-0 small">Real-time performance metrics, inventory alerts, and recent luxury transactions.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary btn-sm dropdown-toggle rounded-pill px-3" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-calendar3 me-1"></i> Last 30 Days
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Today</a></li>
+                <li><a class="dropdown-item" href="#">Last 7 Days</a></li>
+                <li><a class="dropdown-item active" href="#">Last 30 Days</a></li>
+                <li><a class="dropdown-item" href="#">This Year</a></li>
+            </ul>
+        </div>
+        <button class="btn btn-warning btn-sm rounded-pill px-3 fw-semibold">
+            <i class="bi bi-download me-1"></i> Export Report
+        </button>
+    </div>
+</div>
+
+<!-- Stat KPI Cards -->
+<div class="row g-2.5 g-sm-3 mb-4">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card-glass p-2.5 p-sm-3.5 h-100">
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <div class="stat-icon-wrapper bg-warning bg-opacity-10 text-warning flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                    <i class="bi bi-currency-rupee"></i>
+                </div>
+                <div class="min-w-0 flex-grow-1">
+                    <span class="admin-text-muted fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Total Revenue</span>
+                    <h3 class="fw-bold admin-text-title mt-0 mb-0 fs-4 fs-sm-3 text-truncate">₹@Model.TotalRevenue.ToString("N0")</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-xl-3">
+        <div class="stat-card-glass p-2.5 p-sm-3.5 h-100">
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <div class="stat-icon-wrapper bg-info bg-opacity-10 text-info flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                    <i class="bi bi-bag-check-fill"></i>
+                </div>
+                <div class="min-w-0 flex-grow-1">
+                    <span class="admin-text-muted fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Total Orders</span>
+                    <h3 class="fw-bold admin-text-title mt-0 mb-0 fs-4 fs-sm-3 text-truncate">@Model.TotalOrders</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-xl-3">
+        <div class="stat-card-glass p-2.5 p-sm-3.5 h-100">
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <div class="stat-icon-wrapper bg-primary bg-opacity-10 text-primary flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                    <i class="bi bi-grid-fill"></i>
+                </div>
+                <div class="min-w-0 flex-grow-1">
+                    <span class="admin-text-muted fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Active Catalog</span>
+                    <h3 class="fw-bold admin-text-title mt-0 mb-0 fs-4 fs-sm-3 text-truncate">@Model.TotalProducts</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-xl-3">
+        <div class="stat-card-glass p-2.5 p-sm-3.5 h-100">
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <div class="stat-icon-wrapper bg-danger bg-opacity-10 text-danger flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                    <i class="bi bi-chat-left-dots-fill"></i>
+                </div>
+                <div class="min-w-0 flex-grow-1">
+                    <span class="admin-text-muted fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Support Inquiries</span>
+                    <h3 class="fw-bold text-danger mt-0 mb-0 fs-4 fs-sm-3 text-truncate">@Model.OpenSupportTickets</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row g-4 mb-4">
+    <!-- Revenue Trend Chart -->
+    <div class="col-12 col-xl-8">
+        <div class="stat-card-glass h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h5 class="fw-bold admin-text-title mb-0">Revenue & Sales Trajectory</h5>
+                <span class="badge bg-secondary border text-muted">2026 Fiscal</span>
+            </div>
+            <div style="height: 300px; position: relative;">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Sales Share -->
+    <div class="col-12 col-xl-4">
+        <div class="stat-card-glass h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h5 class="fw-bold admin-text-title mb-0">Category Revenue Split</h5>
+                <i class="bi bi-pie-chart-fill text-muted"></i>
+            </div>
+            <div style="height: 300px; position: relative;" class="d-flex align-items-center justify-content-center">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Orders & Inventory Alerts Row -->
+<div class="row g-4">
+    <!-- Recent Orders Table -->
+    <div class="col-12 col-xl-8">
+        <div class="stat-card-glass p-0 overflow-hidden">
+            <div class="p-3 border-bottom d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-2">
+                <h5 class="fw-bold admin-text-title mb-0 ps-1 text-truncate fs-6"><i class="bi bi-clock-history text-warning me-2"></i> Recent Customer Orders</h5>
+                <a href="/admin/orders" class="btn btn-link text-warning btn-sm text-decoration-none fw-semibold p-0 text-nowrap">View All Orders <i class="bi bi-arrow-right"></i></a>
+            </div>
+
+            <!-- Mobile Recent Orders Cards View (< 768px) -->
+            <div class="d-block d-md-none p-3">
+                @if (!Model.RecentOrders.Any())
+                {
+                    <div class="text-center py-4 admin-text-muted small">
+                        No customer orders placed yet.
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex flex-column gap-3">
+                        @foreach (var order in Model.RecentOrders.Take(5))
+                        {
+                            <div class="p-3 rounded-3 bg-black bg-opacity-20 border border-secondary border-opacity-20 overflow-hidden">
+                                <div class="d-flex align-items-center justify-content-between pb-2 border-bottom border-secondary border-opacity-20 mb-2">
+                                    <span class="fw-bold text-warning font-monospace fs-6">#@order.Id</span>
+                                    @if (order.Status == "Processing")
+                                    {
+                                        <span class="badge bg-warning bg-opacity-20 text-warning border border-warning rounded-pill px-2.5 py-1 fs-8">Processing</span>
+                                    }
+                                    else if (order.Status == "Shipped")
+                                    {
+                                        <span class="badge bg-info bg-opacity-20 text-info border border-info rounded-pill px-2.5 py-1 fs-8">Shipped</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success bg-opacity-20 text-success border border-success rounded-pill px-2.5 py-1 fs-8">Delivered</span>
+                                    }
+                                </div>
+
+                                <div class="d-flex align-items-center justify-content-between mb-2 gap-2">
+                                    <div class="min-w-0">
+                                        <div class="fw-semibold admin-text-title fs-7 text-truncate">@order.ShippingAddress.FullName</div>
+                                        <div class="small admin-text-muted fs-8 text-truncate"><i class="bi bi-geo-alt text-warning me-1"></i>@order.ShippingAddress.City</div>
+                                    </div>
+                                    <div class="text-end flex-shrink-0">
+                                        <div class="fw-bold admin-text-title fs-6">₹@order.TotalAmount.ToString("N0")</div>
+                                        <small class="text-muted fs-8">@order.Items.Count Item(s)</small>
+                                    </div>
+                                </div>
+
+                                <a href="/admin/orders" class="btn btn-sm btn-outline-warning rounded-pill w-100 py-1.5 fw-semibold d-flex align-items-center justify-content-center gap-1 mt-1">
+                                    <i class="bi bi-box-seam me-1"></i> Manage Order Details
+                                </a>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Desktop Recent Orders Table View (>= 768px) -->
+            <div class="table-responsive d-none d-md-block">
+                <table class="table table-dark-glass align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.RecentOrders.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-4 admin-text-muted">
+                                    No customer orders placed yet.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var order in Model.RecentOrders.Take(5))
+                            {
+                                <tr>
+                                    <td class="fw-bold text-warning">#@order.Id</td>
+                                    <td>
+                                        <div class="fw-semibold admin-text-title text-truncate" style="max-width: 160px;">@order.ShippingAddress.FullName</div>
+                                        <div class="small admin-text-muted text-truncate" style="max-width: 160px;">@order.ShippingAddress.City</div>
+                                    </td>
+                                    <td>@order.Items.Count Suite Item(s)</td>
+                                    <td class="fw-bold admin-text-title text-nowrap">₹@order.TotalAmount.ToString("N0")</td>
+                                    <td>
+                                        @if (order.Status == "Processing")
+                                        {
+                                            <span class="badge bg-warning bg-opacity-20 text-warning border border-warning rounded-pill px-3 py-1 text-nowrap">Processing</span>
+                                        }
+                                        else if (order.Status == "Shipped")
+                                        {
+                                            <span class="badge bg-info bg-opacity-20 text-info border border-info rounded-pill px-3 py-1 text-nowrap">Shipped</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success bg-opacity-20 text-success border border-success rounded-pill px-3 py-1 text-nowrap">Delivered</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a href="/admin/orders" class="btn btn-outline-secondary btn-sm rounded-circle" title="Manage Order"><i class="bi bi-eye-fill"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Stock Warnings & Top Sellers -->
+    <div class="col-12 col-xl-4 d-flex flex-column gap-4">
+        <!-- Low Stock Alerts -->
+        <div class="stat-card-glass">
+            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2 flex-wrap gap-1">
+                <h5 class="fw-bold admin-text-title mb-0"><i class="bi bi-exclamation-triangle-fill text-danger me-2"></i> Low Stock Alerts</h5>
+                <span class="badge bg-danger text-white">@Model.LowStockProducts.Count Items</span>
+            </div>
+            <div class="d-flex flex-column gap-3">
+                @if (!Model.LowStockProducts.Any())
+                {
+                    <div class="small admin-text-muted text-center py-3">No low stock items.</div>
+                }
+                else
+                {
+                    @foreach (var p in Model.LowStockProducts.Take(4))
+                    {
+                        <div class="d-flex align-items-center justify-content-between p-2 rounded-3 bg-light border gap-2 overflow-hidden">
+                            <div class="d-flex align-items-center gap-2.5 min-w-0 flex-grow-1">
+                                <img src="@p.MainImage" alt="@p.Name" class="rounded-2 flex-shrink-0" style="width: 42px; height: 42px; object-fit: cover;">
+                                <div class="min-w-0 flex-grow-1">
+                                    <div class="fw-semibold admin-text-title fs-7 text-truncate">@p.Name</div>
+                                    <div class="small admin-text-muted fs-8 text-truncate">SKU: @p.Id</div>
+                                </div>
+                            </div>
+                            <div class="text-end flex-shrink-0">
+                                <span class="badge bg-danger bg-opacity-20 text-danger fw-bold fs-7 text-nowrap">@p.StockCount left</span>
+                                <a href="/admin/products" class="d-block small text-warning text-decoration-none mt-1">Restock</a>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Top Selling Suite -->
+        <div class="stat-card-glass">
+            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2 flex-wrap gap-1">
+                <h5 class="fw-bold admin-text-title mb-0"><i class="bi bi-trophy-fill text-warning me-2"></i> Flagship Leaders</h5>
+                <span class="small admin-text-muted">Catalog</span>
+            </div>
+            <div class="d-flex flex-column gap-2">
+                @if (!Model.TopSellingProducts.Any())
+                {
+                    <div class="small admin-text-muted text-center py-3">Catalog is empty. Add products from Products page.</div>
+                }
+                else
+                {
+                    @foreach (var p in Model.TopSellingProducts.Take(3))
+                    {
+                        <div class="d-flex align-items-center justify-content-between py-2 gap-2 overflow-hidden">
+                            <div class="d-flex align-items-center gap-2 min-w-0 flex-grow-1">
+                                <span class="badge bg-secondary rounded-circle flex-shrink-0">#</span>
+                                <div class="min-w-0 flex-grow-1">
+                                    <div class="fw-semibold admin-text-title fs-7 text-truncate">@p.Name</div>
+                                    <div class="small admin-text-muted fs-8">₹@p.Price.ToString("N0")</div>
+                                </div>
+                            </div>
+                            <span class="badge bg-success bg-opacity-20 text-success fw-semibold flex-shrink-0 text-nowrap">Live</span>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Incoming Customer Support Messages & Tickets -->
+<div class="stat-card-glass p-0 overflow-hidden mb-4">
+    <div class="p-3 border-bottom d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-2">
+        <span class="fw-bold admin-text-title small text-truncate"><i class="bi bi-headset text-warning me-1.5"></i> Recent Customer Support Messages &amp; Live Chats</span>
+        <a href="/admin/tickets" class="btn btn-sm btn-outline-warning rounded-pill px-3 w-100 w-sm-auto text-nowrap flex-shrink-0">View All Support Tickets <i class="bi bi-arrow-right ms-1"></i></a>
+    </div>
+    @if (Model.RecentTickets == null || !Model.RecentTickets.Any())
+    {
+        <div class="p-4 text-center admin-text-muted small">
+            <i class="bi bi-chat-check fs-4 d-block mb-1 text-success"></i> No pending customer support tickets!
+        </div>
+    }
+    else
+    {
+        <!-- Mobile Cards View for Support Tickets (< 768px) -->
+        <div class="d-block d-md-none p-3">
+            <div class="d-flex flex-column gap-3">
+                @foreach (var ticket in Model.RecentTickets)
+                {
+                    var statusBadge = ticket.Status switch
+                    {
+                        "Open" => "bg-warning text-dark",
+                        "In Progress" => "bg-info text-dark",
+                        "Customer Reply" => "bg-danger text-white",
+                        "Resolved" => "bg-success text-white",
+                        _ => "bg-secondary text-white"
+                    };
+
+                    var lastMsg = ticket.GetMessages().LastOrDefault()?.MessageText ?? ticket.Subject;
+
+                    <div class="p-3 rounded-3 bg-black bg-opacity-20 border border-secondary border-opacity-20 overflow-hidden">
+                        <div class="d-flex align-items-center justify-content-between pb-2 border-bottom border-secondary border-opacity-20 mb-2 min-w-0">
+                            <span class="fw-bold text-warning font-monospace fs-6">#@ticket.TicketNumber</span>
+                            <div class="d-flex align-items-center gap-1.5 min-w-0">
+                                <span class="badge bg-body border admin-text-title fs-8 text-truncate">@ticket.Category</span>
+                                <span class="badge rounded-pill px-2.5 py-1 fs-8 @statusBadge flex-shrink-0">@ticket.Status</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-2 min-w-0">
+                            <div class="fw-bold admin-text-title text-truncate fs-6">@ticket.CustomerName</div>
+                            <small class="admin-text-muted fs-8 text-break"><i class="bi bi-envelope me-1 text-warning"></i>@ticket.Email</small>
+                        </div>
+
+                        <div class="p-2.5 rounded-3 bg-body-tertiary border border-secondary border-opacity-10 mb-3 overflow-hidden">
+                            <div class="fw-semibold admin-text-title fs-7 mb-1 text-break" style="word-break: break-word; overflow-wrap: anywhere;">@ticket.Subject</div>
+                            <div class="admin-text-muted fs-8 text-break" style="word-break: break-word; overflow-wrap: anywhere;">@lastMsg</div>
+                        </div>
+
+                        <a href="/account/tickets/@ticket.Id" class="btn btn-sm btn-warning rounded-pill py-2 w-100 text-dark fw-bold d-flex align-items-center justify-content-center gap-1">
+                            <i class="bi bi-chat-text-fill"></i> <span>Reply Support Ticket</span>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Desktop Table View for Support Tickets (>= 768px) -->
+        <div class="table-responsive d-none d-md-block">
+            <table class="table table-dark-glass align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Ticket #</th>
+                        <th>Customer</th>
+                        <th>Subject / Message</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ticket in Model.RecentTickets)
+                    {
+                        var statusBadge = ticket.Status switch
+                        {
+                            "Open" => "bg-warning text-dark",
+                            "In Progress" => "bg-info text-dark",
+                            "Customer Reply" => "bg-danger text-white",
+                            "Resolved" => "bg-success text-white",
+                            _ => "bg-secondary text-white"
+                        };
+
+                        var lastMsg = ticket.GetMessages().LastOrDefault()?.MessageText ?? ticket.Subject;
+
+                        <tr>
+                            <td class="ps-4 fw-bold text-warning">#@ticket.TicketNumber</td>
+                            <td style="max-width: 170px;" class="min-w-0">
+                                <div class="fw-bold admin-text-title text-truncate">@ticket.CustomerName</div>
+                                <small class="admin-text-muted text-break">@ticket.Email</small>
+                            </td>
+                            <td style="max-width: 280px;" class="min-w-0">
+                                <div class="fw-semibold admin-text-title text-truncate">@ticket.Subject</div>
+                                <div class="admin-text-muted small text-break" style="word-break: break-word; overflow-wrap: anywhere;" title="@lastMsg">@lastMsg</div>
+                            </td>
+                            <td><span class="badge bg-body border admin-text-title text-nowrap">@ticket.Category</span></td>
+                            <td><span class="badge rounded-pill @statusBadge text-nowrap">@ticket.Status</span></td>
+                            <td class="text-end pe-4 text-nowrap">
+                                <a href="/account/tickets/@ticket.Id" class="btn btn-sm btn-warning rounded-pill px-3 text-dark fw-bold">Reply</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Real Data from AdminDashboardViewModel
+        const revLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyRevenueTrajectory?.Select(m => m.Month) ?? Enumerable.Empty<string>()));
+        const revData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyRevenueTrajectory?.Select(m => m.Revenue) ?? Enumerable.Empty<decimal>()));
+        const catLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CategoryRevenueSplit?.Select(c => c.CategoryName) ?? Enumerable.Empty<string>()));
+        const catData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CategoryRevenueSplit?.Select(c => c.Revenue) ?? Enumerable.Empty<decimal>()));
+
+        // Chart.js Revenue Line Chart Initialization
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const textColor = isDark ? 'rgba(255, 255, 255, 0.7)' : '#475569';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+
+        const ctxRev = document.getElementById('revenueChart').getContext('2d');
+        const revenueChart = new Chart(ctxRev, {
+            type: 'line',
+            data: {
+                labels: revLabels,
+                datasets: [{
+                    label: 'Revenue (₹)',
+                    data: revData,
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#f59e0b',
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        grid: { color: gridColor },
+                        ticks: { color: textColor, callback: value => '₹' + Number(value).toLocaleString() }
+                    },
+                    x: {
+                        grid: { color: gridColor },
+                        ticks: { color: textColor }
+                    }
+                }
+            }
+        });
+
+        // Chart.js Category Pie/Doughnut Chart Initialization
+        const ctxCat = document.getElementById('categoryChart').getContext('2d');
+        const categoryChart = new Chart(ctxCat, {
+            type: 'doughnut',
+            data: {
+                labels: catLabels,
+                datasets: [{
+                    data: catData,
+                    backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316', '#64748b'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: textColor, boxWidth: 12 }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    </script>
+}

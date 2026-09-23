@@ -1,0 +1,144 @@
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Store Settings & System Configuration";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h2 class="fw-bold admin-text-title mb-1">Store Infrastructure & Settings</h2>
+        <p class="admin-text-muted mb-0 small">Configure payment gateways, logistics partners, GST tax rates, and staff permissions.</p>
+    </div>
+    <div>
+        <button class="btn btn-warning rounded-pill px-4 fw-semibold" onclick="alert('System Configuration Saved Successfully!');">
+            <i class="bi bi-floppy-fill me-1"></i> Save All Settings
+        </button>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Store Identity -->
+    <div class="col-12 col-xl-6">
+        <div class="stat-card-glass h-100">
+            <h5 class="fw-bold admin-text-title mb-3 border-bottom pb-2"><i class="bi bi-building-gear text-warning me-2"></i> Store Identity & Support</h5>
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <label class="form-label small fw-semibold admin-text-muted">Store Name</label>
+                    <input type="text" class="form-control" value="Indoria Luxury Appliances">
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label small fw-semibold admin-text-muted">Customer Support Helpline</label>
+                    <input type="text" class="form-control" value="+91 1800-419-8800">
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label small fw-semibold admin-text-muted">Official Email</label>
+                    <input type="email" class="form-control" value="concierge@indoria.com">
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label small fw-semibold admin-text-muted">Currency Code</label>
+                    <input type="text" class="form-control" value="INR (₹)" readonly>
+                </div>
+                <div class="col-12">
+                    <label class="form-label small fw-semibold admin-text-muted">HQ Store Address</label>
+                    <textarea class="form-control" rows="2">Suite 402, Signature Towers, South Delhi Metro Hub, Delhi - 110017</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logistics & White-Glove Care -->
+    <div class="col-12 col-xl-6">
+        <div class="stat-card-glass h-100">
+            <h5 class="fw-bold admin-text-title mb-3 border-bottom pb-2"><i class="bi bi-truck text-warning me-2"></i> Logistics & Installation Network</h5>
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <label class="form-label small fw-semibold admin-text-muted">Free Delivery Threshold (₹)</label>
+                    <input type="number" class="form-control" value="10000">
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label small fw-semibold admin-text-muted">Standard Transit Window</label>
+                    <input type="text" class="form-control" value="24 - 48 Hours">
+                </div>
+                <div class="col-12">
+                    <div class="form-check form-switch py-1">
+                        <input class="form-check-input" type="checkbox" id="whiteGloveCheck" checked>
+                        <label class="form-check-label admin-text-title fw-semibold" for="whiteGloveCheck">Enable White-Glove Unboxing & Civil Plumbing Setup</label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-check form-switch py-1">
+                        <input class="form-check-input" type="checkbox" id="brandWarrantyCheck" checked>
+                        <label class="form-check-label admin-text-title fw-semibold" for="brandWarrantyCheck">Auto-register Brand Direct Manufacturer Warranty Cards</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Gateways -->
+    <div class="col-12 col-xl-6">
+        <div class="stat-card-glass">
+            <h5 class="fw-bold admin-text-title mb-3 border-bottom pb-2"><i class="bi bi-credit-card-2-front text-warning me-2"></i> Payment Gateways</h5>
+            <div class="d-flex flex-column gap-3">
+                <div class="d-flex align-items-center justify-content-between p-3 rounded-3 bg-light border">
+                    <div>
+                        <div class="fw-bold admin-text-title">Razorpay / UPI / NetBanking</div>
+                        <div class="small admin-text-muted">Instant online card & UPI payments</div>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" checked>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center justify-content-between p-3 rounded-3 bg-light border">
+                    <div>
+                        <div class="fw-bold admin-text-title">No-Cost EMI Options</div>
+                        <div class="small admin-text-muted">HDFC, ICICI, Axis Bank 3 to 12 months EMI</div>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" checked>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center justify-content-between p-3 rounded-3 bg-light border">
+                    <div>
+                        <div class="fw-bold admin-text-title">Cash / Card on Delivery</div>
+                        <div class="small admin-text-muted">Available for orders up to ₹1,50,000</div>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" checked>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Team & Permissions -->
+    <div class="col-12 col-xl-6">
+        <div class="stat-card-glass">
+            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                <h5 class="fw-bold admin-text-title mb-0"><i class="bi bi-shield-check text-warning me-2"></i> Admin Team Access</h5>
+                <button class="btn btn-outline-warning btn-sm rounded-pill" onclick="alert('Invite Staff Member modal triggered');"><i class="bi bi-person-plus me-1"></i> Add Member</button>
+            </div>
+            <div class="d-flex flex-column gap-2">
+                <div class="d-flex align-items-center justify-content-between p-2 rounded-3 bg-light border">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="admin-avatar" style="width:36px; height:36px; font-size: 0.8rem;">AD</div>
+                        <div>
+                            <div class="fw-bold admin-text-title fs-7">Administrator</div>
+                            <div class="small admin-text-muted fs-8">admin@indoria.com</div>
+                        </div>
+                    </div>
+                    <span class="badge bg-warning text-dark font-monospace">Super Admin</span>
+                </div>
+                <div class="d-flex align-items-center justify-content-between p-2 rounded-3 bg-light border">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="admin-avatar bg-info" style="width:36px; height:36px; font-size: 0.8rem;">LG</div>
+                        <div>
+                            <div class="fw-bold admin-text-title fs-7">Logistics Manager</div>
+                            <div class="small admin-text-muted fs-8">logistics@indoria.com</div>
+                        </div>
+                    </div>
+                    <span class="badge bg-info bg-opacity-20 text-info">Fulfillment</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

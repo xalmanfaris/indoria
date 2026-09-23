@@ -1,0 +1,459 @@
+@model List<AuraLiving.Models.ReviewViewModel>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Customer Reviews Moderation";
+    var totalCount = Model?.Count ?? 0;
+    var activeCount = Model?.Count(r => r.IsActive) ?? 0;
+    var inactiveCount = Model?.Count(r => !r.IsActive) ?? 0;
+    var lowRatingCount = Model?.Count(r => r.Rating <= 2) ?? 0;
+}
+
+<div>
+    <!-- Admin Navigation & Header -->
+    <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
+        <div>
+            <h2 class="fw-bold admin-text-title mb-1 fs-3 fs-md-2">
+                <i class="bi bi-star-half text-warning me-2"></i>Review Moderation Console
+            </h2>
+            <p class="admin-text-muted mb-0 small">Monitor, publish, or deactivate user reviews across all appliance products.</p>
+        </div>
+        <div class="d-flex align-items-center gap-2 w-100 w-md-auto">
+            <span class="badge bg-warning bg-opacity-20 text-warning px-3 py-2 rounded-pill fs-7 fw-semibold border border-warning border-opacity-30 w-100 w-md-auto text-center text-truncate">
+                <i class="bi bi-shield-check me-1"></i> Moderation Active
+            </span>
+        </div>
+    </div>
+
+    <!-- Review KPI Cards -->
+    <div class="row g-2.5 g-sm-3 mb-4">
+        <div class="col-6 col-xl-3">
+            <div class="stat-card-glass p-2.5 p-sm-3.5 h-100">
+                <div class="d-flex align-items-center gap-2 gap-sm-3">
+                    <div class="stat-icon-wrapper bg-primary bg-opacity-10 text-primary flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <div class="min-w-0 flex-grow-1">
+                        <span class="admin-text-muted fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Total Reviews</span>
+                        <h3 class="fw-bold admin-text-title mt-0 mb-0 fs-4 fs-sm-3">@totalCount</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-xl-3">
+            <div class="stat-card-glass p-2.5 p-sm-3.5 h-100 border-success border-opacity-25">
+                <div class="d-flex align-items-center gap-2 gap-sm-3">
+                    <div class="stat-icon-wrapper bg-success bg-opacity-10 text-success flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div class="min-w-0 flex-grow-1">
+                        <span class="text-success fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Published Active</span>
+                        <h3 class="fw-bold text-success mt-0 mb-0 fs-4 fs-sm-3">@activeCount</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-xl-3">
+            <div class="stat-card-glass p-2.5 p-sm-3.5 h-100 border-danger border-opacity-25">
+                <div class="d-flex align-items-center gap-2 gap-sm-3">
+                    <div class="stat-icon-wrapper bg-danger bg-opacity-10 text-danger flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                        <i class="bi bi-eye-slash-fill"></i>
+                    </div>
+                    <div class="min-w-0 flex-grow-1">
+                        <span class="text-danger fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Hidden / Inactive</span>
+                        <h3 class="fw-bold text-danger mt-0 mb-0 fs-4 fs-sm-3">@inactiveCount</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-xl-3">
+            <div class="stat-card-glass p-2.5 p-sm-3.5 h-100 border-warning border-opacity-25">
+                <div class="d-flex align-items-center gap-2 gap-sm-3">
+                    <div class="stat-icon-wrapper bg-warning bg-opacity-10 text-warning flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                        <i class="bi bi-exclamation-octagon-fill"></i>
+                    </div>
+                    <div class="min-w-0 flex-grow-1">
+                        <span class="text-warning fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Low Ratings (1-2★)</span>
+                        <h3 class="fw-bold text-warning mt-0 mb-0 fs-4 fs-sm-3">@lowRatingCount</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search & Filter Controls Bar -->
+    <div class="stat-card-glass p-3 mb-4">
+        <div class="row g-2.5 align-items-center">
+            <div class="col-12 col-md-7">
+                <div class="d-flex align-items-center gap-1.5 overflow-x-auto pb-1 pb-md-0" style="scrollbar-width: thin;">
+                    <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3 active flex-shrink-0" onclick="filterAdminReviews('all', this)">
+                        <i class="bi bi-grid-fill me-1"></i> All (@totalCount)
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3 flex-shrink-0" onclick="filterAdminReviews('active', this)">
+                        <i class="bi bi-check-circle-fill me-1"></i> Published (@activeCount)
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3 flex-shrink-0" onclick="filterAdminReviews('inactive', this)">
+                        <i class="bi bi-eye-slash-fill me-1"></i> Hidden (@inactiveCount)
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3 flex-shrink-0" onclick="filterAdminReviews('low', this)">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i> Low 1-2★ (@lowRatingCount)
+                    </button>
+                </div>
+            </div>
+            <div class="col-12 col-md-5">
+                <div class="position-relative">
+                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                    <input type="text" id="adminReviewSearch" class="form-control form-control-sm ps-5 rounded-pill w-100" placeholder="Search author, product, title, comment..." onkeyup="searchAdminReviews()" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="stat-card-glass p-5 text-center admin-text-muted my-4">
+            <i class="bi bi-chat-square-text display-4 mb-3 d-block text-warning opacity-50"></i>
+            <h5 class="fw-bold admin-text-title">No Reviews Recorded Yet</h5>
+            <p class="mb-0 small">When customers submit reviews on product pages, they will appear here for moderation.</p>
+        </div>
+    }
+    else
+    {
+        <!-- Container for No Match Search Message -->
+        <div id="adminReviewsNoMatch" class="stat-card-glass p-5 text-center admin-text-muted mb-4" style="display: none;">
+            <i class="bi bi-search fs-1 d-block mb-2 opacity-50 text-warning"></i>
+            <h6 class="fw-bold admin-text-title">No Matching Reviews Found</h6>
+            <p class="small mb-0">Try changing your search term or selected status filter tab.</p>
+        </div>
+
+        <!-- Mobile Reviews Cards View (< 768px) -->
+        <div class="d-block d-md-none mb-4">
+            <div class="d-flex flex-column gap-3" id="mobileReviewsContainer">
+                @foreach (var review in Model)
+                {
+                    <div class="stat-card-glass p-3 review-card-mobile overflow-hidden @(review.IsActive ? "active-card" : "inactive-card opacity-85")" 
+                         data-active="@(review.IsActive ? "true" : "false")" 
+                         data-rating="@review.Rating"
+                         data-search="@($"{review.Author} {review.ProductName} {review.Title} {review.Comment} {review.City}".ToLowerInvariant())">
+                        
+                        <!-- Top Row: Author & Date -->
+                        <div class="d-flex align-items-center justify-content-between pb-2.5 border-bottom border-secondary border-opacity-20 mb-2.5 gap-2 min-w-0">
+                            <div class="d-flex align-items-center gap-2.5 min-w-0 flex-grow-1">
+                                <div class="rounded-circle bg-warning bg-opacity-20 text-warning d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
+                                     style="width: 42px; height: 42px; font-size: 1.05rem; border: 1.5px solid rgba(245, 158, 11, 0.4);">
+                                    @(!string.IsNullOrEmpty(review.Author) ? review.Author.Substring(0, 1).ToUpper() : "U")
+                                </div>
+                                <div class="min-w-0 flex-grow-1">
+                                    <div class="fw-bold admin-text-title text-truncate fs-6">@review.Author</div>
+                                    <small class="admin-text-muted fs-8 d-block text-truncate">
+                                        <i class="bi bi-geo-alt me-1 text-warning"></i>@(string.IsNullOrEmpty(review.City) ? "Verified Patron" : review.City)
+                                    </small>
+                                </div>
+                            </div>
+                            <span class="badge bg-secondary bg-opacity-20 text-muted rounded-pill fs-8 flex-shrink-0">
+                                <i class="bi bi-calendar3 me-1"></i>@review.CreatedAt.ToString("MMM dd, yyyy")
+                            </span>
+                        </div>
+
+                        <!-- Rating Stars & Product Tag -->
+                        <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-2 mb-2.5 min-w-0">
+                            <div class="d-flex align-items-center gap-1.5 bg-black bg-opacity-20 px-2.5 py-1 rounded-pill border border-secondary border-opacity-25 flex-shrink-0">
+                                <div class="text-warning small text-nowrap">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= review.Rating)
+                                        {
+                                            <i class="bi bi-star-fill"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-star admin-text-muted opacity-25"></i>
+                                        }
+                                    }
+                                </div>
+                                <span class="fw-bold fs-8 admin-text-title ms-1">@review.Rating / 5</span>
+                            </div>
+
+                            <div class="min-w-0 flex-grow-1 w-100">
+                                <a href="/product/@review.ProductSlug" target="_blank" 
+                                   class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-30 rounded-pill text-decoration-none text-truncate d-block" 
+                                   style="max-width: 100%;">
+                                    <i class="bi bi-box-seam me-1"></i>@(string.IsNullOrEmpty(review.ProductName) ? review.ProductId : review.ProductName)
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Review Title & Comment Body -->
+                        <div class="p-3 rounded-3 bg-black bg-opacity-20 border border-secondary border-opacity-20 mb-3 overflow-hidden">
+                            @if (!string.IsNullOrEmpty(review.Title))
+                            {
+                                <div class="fw-bold admin-text-title mb-1.5 fs-7 text-break" style="word-break: break-word; overflow-wrap: anywhere;"><i class="bi bi-quote text-warning me-1"></i>@review.Title</div>
+                            }
+                            <p class="admin-text-muted fs-8 mb-0 text-break" style="word-break: break-word; overflow-wrap: anywhere; line-height: 1.5;">@review.Comment</p>
+                            @if (!string.IsNullOrEmpty(review.ImageUrl))
+                            {
+                                <div class="mt-2 pt-2 border-top border-secondary border-opacity-20">
+                                    <a href="@review.ImageUrl" target="_blank" title="View attached review photo">
+                                        <img src="@review.ImageUrl" alt="Customer review photo" class="img-fluid rounded-2 border border-secondary border-opacity-30" style="max-height: 120px; object-fit: cover;" onerror="this.style.display='none';" />
+                                    </a>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Actions Footer -->
+                        <div class="pt-2 border-top border-secondary border-opacity-20 d-flex flex-column gap-2 min-w-0">
+                            <div class="d-flex align-items-center justify-content-between gap-2 min-w-0">
+                                <span class="small admin-text-muted fs-8 flex-shrink-0">Moderation Status</span>
+                                @if (review.IsActive)
+                                {
+                                    <span class="badge bg-success bg-opacity-20 text-success border border-success border-opacity-30 rounded-pill px-2.5 py-1 fw-semibold fs-8 text-truncate" id="mob-status-@review.Id">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Published Active
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger bg-opacity-20 text-danger border border-danger border-opacity-30 rounded-pill px-2.5 py-1 fw-bold fs-8 text-truncate" id="mob-status-@review.Id">
+                                        <i class="bi bi-eye-slash-fill me-1"></i> Inactive (Hidden)
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2 min-w-0">
+                                @if (review.IsActive)
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-warning rounded-pill py-2 w-100 fw-semibold d-flex align-items-center justify-content-center gap-1 text-truncate"
+                                            onclick="toggleAdminReviewStatus('@review.Id', false)">
+                                        <i class="bi bi-eye-slash"></i> <span>Hide Review</span>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-sm btn-success rounded-pill py-2 w-100 text-white fw-bold d-flex align-items-center justify-content-center gap-1 text-truncate"
+                                            onclick="toggleAdminReviewStatus('@review.Id', true)">
+                                        <i class="bi bi-check-circle"></i> <span>Approve &amp; Publish</span>
+                                    </button>
+                                }
+
+                                <button type="button" class="btn btn-sm btn-outline-danger rounded-pill py-2 px-3 fw-semibold d-flex align-items-center justify-content-center gap-1 text-truncate flex-shrink-0"
+                                        onclick="deleteAdminReview('@review.Id')">
+                                    <i class="bi bi-trash"></i> <span>Delete</span>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Desktop Reviews Table View (>= 768px) -->
+        <div class="stat-card-glass p-0 overflow-hidden shadow-sm d-none d-md-block mb-4">
+            <div class="table-responsive">
+                <table class="table table-dark-glass align-middle mb-0" id="adminReviewsTable">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Rating</th>
+                            <th>Author &amp; Location</th>
+                            <th>Product</th>
+                            <th style="max-width: 340px;">Review Content</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var review in Model)
+                        {
+                            var statusClass = review.IsActive ? "active-row" : "inactive-row opacity-50";
+
+                            <tr class="review-table-row @statusClass" 
+                                data-active="@(review.IsActive ? "true" : "false")"
+                                data-rating="@review.Rating"
+                                data-search="@($"{review.Author} {review.ProductName} {review.Title} {review.Comment} {review.City}".ToLowerInvariant())">
+                                <td class="ps-4">
+                                    <div class="text-warning text-nowrap">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= review.Rating)
+                                            {
+                                                <i class="bi bi-star-fill"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-star admin-text-muted opacity-25"></i>
+                                            }
+                                        }
+                                    </div>
+                                    <span class="fw-bold small admin-text-title">@review.Rating / 5</span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold admin-text-title">@review.Author</div>
+                                    <small class="admin-text-muted">@(string.IsNullOrEmpty(review.City) ? "Verified Buyer" : review.City)</small>
+                                </td>
+                                <td>
+                                    <a href="/product/@review.ProductSlug" class="fw-semibold text-warning text-decoration-none" target="_blank">
+                                        @(string.IsNullOrEmpty(review.ProductName) ? review.ProductId : review.ProductName)
+                                    </a>
+                                </td>
+                                <td style="max-width: 340px;">
+                                    @if (!string.IsNullOrEmpty(review.Title))
+                                    {
+                                        <div class="fw-bold admin-text-title mb-1 small">@review.Title</div>
+                                    }
+                                    <div class="admin-text-muted small text-break" style="word-break: break-word;" title="@review.Comment">@review.Comment</div>
+                                    @if (!string.IsNullOrEmpty(review.ImageUrl))
+                                    {
+                                        <div class="mt-2">
+                                            <a href="@review.ImageUrl" target="_blank" title="View full photo">
+                                                <img src="@review.ImageUrl" alt="Review photo" class="rounded-2 border border-secondary border-opacity-30" style="height: 48px; width: 48px; object-fit: cover;" onerror="this.style.display='none';" />
+                                            </a>
+                                        </div>
+                                    }
+                                </td>
+                                <td>
+                                    <small class="admin-text-muted">@review.CreatedAt.ToString("MMM dd, yyyy")</small>
+                                </td>
+                                <td>
+                                    @if (review.IsActive)
+                                    {
+                                        <span class="badge bg-success bg-opacity-20 text-success border border-success border-opacity-30 rounded-pill px-3 py-1">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger bg-opacity-20 text-danger border border-danger border-opacity-30 rounded-pill px-3 py-1">Inactive</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4 text-nowrap">
+                                    @if (review.IsActive)
+                                    {
+                                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3 me-1"
+                                                onclick="toggleAdminReviewStatus('@review.Id', false)" title="Inactivate this review">
+                                            <i class="bi bi-eye-slash me-1"></i> Inactivate
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-sm btn-success rounded-pill px-3 me-1 text-white fw-bold"
+                                                onclick="toggleAdminReviewStatus('@review.Id', true)" title="Publish review to storefront">
+                                            <i class="bi bi-check-circle me-1"></i> Approve &amp; Publish
+                                        </button>
+                                    }
+
+                                    <button type="button" class="btn btn-sm btn-outline-danger rounded-circle p-0 ms-1"
+                                            style="width: 30px; height: 30px;" onclick="deleteAdminReview('@review.Id')" title="Permanently Delete Review">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        let currentFilter = 'all';
+
+        function toggleAdminReviewStatus(reviewId, isActive) {
+            fetch(`/api/v1/admin/reviews/toggle-status/${reviewId}?isActive=${isActive}`, {
+                method: 'POST'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    if (typeof showAuraToast === 'function') {
+                        showAuraToast(data.message, isActive ? 'success' : 'dark');
+                    }
+                    setTimeout(() => window.location.reload(), 600);
+                } else {
+                    alert(data.message || 'Operation failed');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Network error updating status');
+            });
+        }
+
+        function deleteAdminReview(reviewId) {
+            if (!confirm('Are you sure you want to permanently delete this customer review?')) return;
+
+            fetch(`/api/v1/admin/reviews/delete/${reviewId}`, {
+                method: 'POST'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    if (typeof showAuraToast === 'function') {
+                        showAuraToast(data.message, 'danger');
+                    }
+                    setTimeout(() => window.location.reload(), 600);
+                } else {
+                    alert(data.message || 'Failed to delete review');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Network error deleting review');
+            });
+        }
+
+        function filterAdminReviews(filter, btn) {
+            currentFilter = filter;
+            document.querySelectorAll('button[onclick^="filterAdminReviews"]').forEach(b => {
+                b.classList.remove('active');
+            });
+            if (btn) btn.classList.add('active');
+
+            applyFilterAndSearch();
+        }
+
+        function searchAdminReviews() {
+            applyFilterAndSearch();
+        }
+
+        function applyFilterAndSearch() {
+            const query = (document.getElementById('adminReviewSearch')?.value || '').toLowerCase().trim();
+
+            const tableRows = document.querySelectorAll('#adminReviewsTable .review-table-row');
+            const mobileCards = document.querySelectorAll('#mobileReviewsContainer .review-card-mobile');
+
+            const filterItem = (el) => {
+                const isActive = el.getAttribute('data-active') === 'true';
+                const rating = parseInt(el.getAttribute('data-rating') || '5', 10);
+                const searchData = el.getAttribute('data-search') || '';
+
+                let matchesFilter = false;
+                if (currentFilter === 'all') matchesFilter = true;
+                else if (currentFilter === 'active') matchesFilter = isActive;
+                else if (currentFilter === 'inactive') matchesFilter = !isActive;
+                else if (currentFilter === 'low') matchesFilter = rating <= 2;
+
+                let matchesSearch = !query || searchData.includes(query);
+
+                return matchesFilter && matchesSearch;
+            };
+
+            let visibleCount = 0;
+
+            tableRows.forEach(row => {
+                const show = filterItem(row);
+                row.style.display = show ? '' : 'none';
+            });
+
+            mobileCards.forEach(card => {
+                const show = filterItem(card);
+                card.style.display = show ? '' : 'none';
+                if (show) visibleCount++;
+            });
+
+            // Toggle No Match Message
+            const noResultsEl = document.getElementById('adminReviewsNoMatch');
+            if (noResultsEl) {
+                noResultsEl.style.display = (visibleCount === 0 && (tableRows.length > 0 || mobileCards.length > 0)) ? 'block' : 'none';
+            }
+        }
+    </script>
+}

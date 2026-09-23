@@ -45,6 +45,7 @@ public class ReviewViewModel
     public string ProductId { get; set; } = string.Empty;
     public string ProductName { get; set; } = string.Empty;
     public string ProductSlug { get; set; } = string.Empty;
+    public string ProductImage { get; set; } = string.Empty;
     public string UserId { get; set; } = string.Empty;
     public string Author { get; set; } = string.Empty;
     public string City { get; set; } = string.Empty;
@@ -52,6 +53,7 @@ public class ReviewViewModel
     public string Date { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string Comment { get; set; } = string.Empty;
+    public string? ImageUrl { get; set; }
     public bool VerifiedBuyer { get; set; } = true;
     public int HelpfulCount { get; set; } = 0;
     public bool IsActive { get; set; } = true;
@@ -66,6 +68,7 @@ public class AddReviewRequestModel
     public string City { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string Comment { get; set; } = string.Empty;
+    public string? ImageUrl { get; set; }
 }
 
 public class CategoryViewModel
@@ -204,12 +207,21 @@ public class ProfileViewModel
 public class ReturnRequestViewModel
 {
     public string Id { get; set; } = string.Empty;
+    public string UserId { get; set; } = string.Empty;
+    public string CustomerName { get; set; } = string.Empty;
+    public string CustomerEmail { get; set; } = string.Empty;
     public string OrderId { get; set; } = string.Empty;
+    public string ProductId { get; set; } = string.Empty;
     public string ProductName { get; set; } = string.Empty;
+    public string ProductImage { get; set; } = string.Empty;
+    public string Type { get; set; } = "Return"; // Return, Replacement
     public string Reason { get; set; } = string.Empty;
-    public string Status { get; set; } = "Under Review"; // Under Review, Pickup Scheduled, Refund Initiated, Completed
-    public string RequestDate { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Status { get; set; } = "Under Review"; // Pending, Under Review, Approved, Pickup Scheduled, Replacement Shipped, Refund Initiated, Completed, Rejected
+    public DateTime RequestDate { get; set; } = DateTime.Now;
+    public string FormattedDate => RequestDate.ToString("dd MMM yyyy, hh:mm tt");
     public decimal RefundAmount { get; set; }
+    public string AdminNotes { get; set; } = string.Empty;
 }
 
 public class ReviewItemViewModel
@@ -243,6 +255,7 @@ public class HomeViewModel
     public ProductViewModel HeroProduct { get; set; } = new();
     public List<string> Brands { get; set; } = new();
     public List<ReviewViewModel> Testimonials { get; set; } = new();
+    public InstagramFeedViewModel InstagramFeed { get; set; } = new();
 }
 
 public class CouponViewModel
@@ -254,6 +267,19 @@ public class CouponViewModel
     public DateTime ExpiryDate { get; set; } = DateTime.Now.AddDays(30);
     public int UsageCount { get; set; } = 42;
     public bool IsActive { get; set; } = true;
+}
+
+public class CategoryRevenueShare
+{
+    public string CategoryName { get; set; } = string.Empty;
+    public decimal Revenue { get; set; }
+    public double Percentage { get; set; }
+}
+
+public class MonthlyRevenuePoint
+{
+    public string Month { get; set; } = string.Empty;
+    public decimal Revenue { get; set; }
 }
 
 public class AdminDashboardViewModel
@@ -270,7 +296,10 @@ public class AdminDashboardViewModel
     public List<CategoryViewModel> AllCategories { get; set; } = new();
     public List<CouponViewModel> AllCoupons { get; set; } = new();
     public List<AuraLiving.Services.Repositories.SupportTicket> RecentTickets { get; set; } = new();
+    public List<CategoryRevenueShare> CategoryRevenueSplit { get; set; } = new();
+    public List<MonthlyRevenuePoint> MonthlyRevenueTrajectory { get; set; } = new();
 }
+
 
 public class UserDetailsViewModel
 {

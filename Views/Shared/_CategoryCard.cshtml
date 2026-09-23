@@ -7,6 +7,6 @@
     <div class="aura-category-card-icon">
         <i class="bi @Model.Icon"></i>
     </div>
-    <div class="aura-category-card-title">@Model.Name</div>
-    <div class="aura-category-card-count">@Model.ProductCount+ Curated Models</div>
+    <div class="aura-category-card-title">@Localizer[Model.Name]</div>
+    <div class="aura-category-card-count">@Model.ProductCount+ @Localizer["Featured"]</div>
 </a>

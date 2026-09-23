@@ -56,6 +56,18 @@ public class DatabaseInitializer
                         ALTER TABLE Users ADD IsBlocked BIT NOT NULL DEFAULT 0;
                     END
 
+                    IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'InstagramClickAnalytics')
+                    BEGIN
+                        CREATE TABLE InstagramClickAnalytics (
+                            Id INT IDENTITY(1,1) PRIMARY KEY,
+                            PostId NVARCHAR(100) NOT NULL,
+                            Permalink NVARCHAR(500) NOT NULL,
+                            UserAgent NVARCHAR(500) NULL,
+                            IpAddress NVARCHAR(100) NULL,
+                            ClickedAt DATETIME NOT NULL DEFAULT GETDATE()
+                        );
+                    END
+
                     IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Categories')
                     BEGIN
                         CREATE TABLE Categories (
@@ -234,13 +246,9 @@ public class DatabaseInitializer
                             VerifiedBuyer BIT NOT NULL DEFAULT 1,
                             HelpfulCount INT NOT NULL DEFAULT 0,
                             IsActive BIT NOT NULL DEFAULT 1,
+                            ImageUrl NVARCHAR(500) NULL,
                             CreatedAt DATETIME NOT NULL DEFAULT GETDATE()
                         );
-                    END
-
-                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('ProductReviews') AND name = 'IsActive')
-                    BEGIN
-                        ALTER TABLE ProductReviews ADD IsActive BIT NOT NULL DEFAULT 1;
                     END
 
                     IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'CustomerNotifications')
@@ -274,9 +282,48 @@ public class DatabaseInitializer
                             UpdatedAt DATETIME NOT NULL DEFAULT GETDATE()
                         );
                     END
+
+                    IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ReturnRequests')
+                    BEGIN
+                        CREATE TABLE ReturnRequests (
+                            Id NVARCHAR(50) PRIMARY KEY,
+                            UserId NVARCHAR(50) NOT NULL,
+                            CustomerName NVARCHAR(100) NULL,
+                            CustomerEmail NVARCHAR(100) NULL,
+                            OrderId NVARCHAR(50) NOT NULL,
+                            ProductId NVARCHAR(50) NULL,
+                            ProductName NVARCHAR(255) NOT NULL,
+                            ProductImage NVARCHAR(500) NULL,
+                            Type NVARCHAR(50) NOT NULL DEFAULT 'Return',
+                            Reason NVARCHAR(500) NOT NULL,
+                            Description NVARCHAR(MAX) NULL,
+                            Status NVARCHAR(50) NOT NULL DEFAULT 'Under Review',
+                            RequestDate DATETIME NOT NULL DEFAULT GETDATE(),
+                            RefundAmount DECIMAL(18,2) NOT NULL DEFAULT 0,
+                            AdminNotes NVARCHAR(MAX) NULL
+                        );
+                    END
                 ";
 
                 connection.Execute(createTablesSql);
+
+                // Ensure ImageUrl column exists in ProductReviews table for existing databases
+                try
+                {
+                    string alterReviewSql = @"
+                        IF EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductReviews')
+                        BEGIN
+                            IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('ProductReviews') AND name = 'ImageUrl')
+                            BEGIN
+                                ALTER TABLE ProductReviews ADD ImageUrl NVARCHAR(500) NULL;
+                            END
+                        END";
+                    connection.Execute(alterReviewSql);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Could not verify/add ImageUrl column to ProductReviews.");
+                }
 
                 // Clear any leftover demo products, orders, and coupons from earlier initializations
                 string wipeDemoDataSql = @"

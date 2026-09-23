@@ -1,0 +1,566 @@
+@model List<AuraLiving.Models.UserModel>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "User Management";
+    var totalUsers = Model?.Count ?? 0;
+    var totalCustomers = Model?.Count(u => u.Role.Equals("Customer", StringComparison.OrdinalIgnoreCase)) ?? 0;
+    var totalAdmins = Model?.Count(u => u.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase)) ?? 0;
+    var totalBlocked = Model?.Count(u => u.IsBlocked) ?? 0;
+}
+
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+    <div>
+        <h2 class="fw-bold admin-text-title mb-1 fs-3 fs-md-2">
+            <i class="bi bi-people-fill text-warning me-2"></i>User Management &amp; Permissions
+        </h2>
+        <p class="admin-text-muted mb-0 small">Manage registered patrons, assign administrative privileges, block or unblock user accounts, and review full user details.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2 w-100 w-md-auto">
+        <span class="badge bg-warning bg-opacity-20 text-warning px-3 py-2 rounded-pill fs-7 fw-semibold border border-warning border-opacity-30 w-100 w-md-auto text-center text-truncate">
+            <i class="bi bi-shield-lock-fill me-1"></i> Role-Based Control Active
+        </span>
+    </div>
+</div>
+
+<!-- Stat KPI Overview Cards -->
+<div class="row g-2.5 g-sm-3 mb-4">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card-glass p-2.5 p-sm-3.5 h-100">
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <div class="stat-icon-wrapper bg-primary bg-opacity-10 text-primary flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div class="min-w-0 flex-grow-1">
+                    <span class="admin-text-muted fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Total Accounts</span>
+                    <h3 class="fw-bold admin-text-title mt-0 mb-0 fs-4 fs-sm-3">@totalUsers</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card-glass p-2.5 p-sm-3.5 h-100">
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <div class="stat-icon-wrapper bg-info bg-opacity-10 text-info flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                    <i class="bi bi-person-badge-fill"></i>
+                </div>
+                <div class="min-w-0 flex-grow-1">
+                    <span class="admin-text-muted fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Customers</span>
+                    <h3 class="fw-bold admin-text-title mt-0 mb-0 fs-4 fs-sm-3">@totalCustomers</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card-glass p-2.5 p-sm-3.5 h-100">
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <div class="stat-icon-wrapper bg-warning bg-opacity-10 text-warning flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <div class="min-w-0 flex-grow-1">
+                    <span class="admin-text-muted fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Administrators</span>
+                    <h3 class="fw-bold admin-text-title mt-0 mb-0 fs-4 fs-sm-3">@totalAdmins</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card-glass p-2.5 p-sm-3.5 h-100">
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <div class="stat-icon-wrapper bg-danger bg-opacity-10 text-danger flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                    <i class="bi bi-slash-circle-fill"></i>
+                </div>
+                <div class="min-w-0 flex-grow-1">
+                    <span class="admin-text-muted fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Blocked Accounts</span>
+                    <h3 class="fw-bold text-danger mt-0 mb-0 fs-4 fs-sm-3">@totalBlocked</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search & Filter Controls -->
+<div class="stat-card-glass mb-4 p-3">
+    <form method="get" action="/admin/users" class="row g-2.5 align-items-center">
+        <div class="col-12 col-md-5">
+            <div class="position-relative">
+                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                <input type="text" name="search" class="form-control ps-5 rounded-pill" placeholder="Search user by name, email, phone, or ID..." value="@ViewBag.Search" />
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <select name="role" class="form-select rounded-pill" onchange="this.form.submit()">
+                <option value="all" selected="@(ViewBag.SelectedRole == "all" ? "selected" : null)">All Roles</option>
+                <option value="Customer" selected="@(ViewBag.SelectedRole == "Customer" ? "selected" : null)">Customers</option>
+                <option value="Admin" selected="@(ViewBag.SelectedRole == "Admin" ? "selected" : null)">Admins</option>
+            </select>
+        </div>
+        <div class="col-6 col-md-3">
+            <select name="status" class="form-select rounded-pill" onchange="this.form.submit()">
+                <option value="all" selected="@(ViewBag.SelectedStatus == "all" ? "selected" : null)">All Account Statuses</option>
+                <option value="active" selected="@(ViewBag.SelectedStatus == "active" ? "selected" : null)">Active Accounts Only</option>
+                <option value="blocked" selected="@(ViewBag.SelectedStatus == "blocked" ? "selected" : null)">Blocked Accounts Only</option>
+            </select>
+        </div>
+        <div class="col-12 col-md-1 d-flex justify-content-end justify-content-md-center">
+            <a href="/admin/users" class="btn btn-outline-secondary btn-sm rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;" title="Reset Filters"><i class="bi bi-arrow-counterclockwise"></i></a>
+        </div>
+    </form>
+</div>
+
+<!-- Mobile Users View (Visible on Screens < 768px) -->
+<div class="d-block d-md-none mb-4">
+    @if (!Model.Any())
+    {
+        <div class="stat-card-glass text-center py-5 text-muted">
+            <i class="bi bi-person-x fs-1 d-block mb-2 opacity-50"></i>
+            No users found matching your selected criteria.
+        </div>
+    }
+    else
+    {
+        <div class="d-flex flex-column gap-3">
+            @foreach (var user in Model)
+            {
+                var isAdmin = user.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+                <div class="stat-card-glass p-3" id="user-card-mobile-@user.Id">
+                    <div class="d-flex align-items-center gap-3 pb-3 border-bottom">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white shadow-sm flex-shrink-0"
+                             style="width: 44px; height: 44px; background: @(isAdmin ? "linear-gradient(135deg, #d97706, #b45309)" : "linear-gradient(135deg, #2563eb, #1d4ed8)"); font-size: 1rem;">
+                            @(!string.IsNullOrEmpty(user.FullName) ? user.FullName.Substring(0, 1).ToUpper() : "U")
+                        </div>
+                        <div class="min-w-0 flex-grow-1">
+                            <div class="fw-bold admin-text-title text-truncate fs-6">@user.FullName</div>
+                            <small class="text-muted font-monospace d-block fs-8">ID: @user.Id</small>
+                        </div>
+                    </div>
+
+                    <div class="py-2.5 border-bottom">
+                        <div class="small admin-text-muted fs-8 mb-1">Contact Details</div>
+                        <div class="fw-semibold admin-text-title fs-7 text-break mb-0.5"><i class="bi bi-envelope me-1 text-warning"></i> @user.Email</div>
+                        <div class="text-secondary small fs-8"><i class="bi bi-telephone me-1 text-info"></i> @(string.IsNullOrEmpty(user.Phone) ? "Not Provided" : user.Phone)</div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
+                        <div>
+                            <span class="small admin-text-muted fs-8 d-block">Role &amp; Privilege</span>
+                            @if (isAdmin)
+                            {
+                                <span class="badge bg-warning bg-opacity-20 text-warning border border-warning border-opacity-30 rounded-pill px-2.5 py-1 fw-bold fs-8" id="role-badge-m-@user.Id">
+                                    <i class="bi bi-shield-lock-fill me-1"></i> Admin
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-primary bg-opacity-20 text-primary border border-primary border-opacity-30 rounded-pill px-2.5 py-1 fw-semibold fs-8" id="role-badge-m-@user.Id">
+                                    <i class="bi bi-person me-1"></i> Customer
+                                </span>
+                            }
+                        </div>
+
+                        <div class="text-end">
+                            <span class="small admin-text-muted fs-8 d-block">Account Status</span>
+                            @if (user.IsBlocked)
+                            {
+                                <span class="badge bg-danger bg-opacity-20 text-danger border border-danger border-opacity-30 rounded-pill px-2.5 py-1 fw-bold fs-8" id="status-badge-m-@user.Id">
+                                    <i class="bi bi-slash-circle-fill me-1"></i> Blocked
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success bg-opacity-20 text-success border border-success border-opacity-30 rounded-pill px-2.5 py-1 fw-semibold fs-8" id="status-badge-m-@user.Id">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Active
+                                </span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="pt-3.5 d-flex flex-column gap-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-info rounded-pill py-2 w-100 fw-semibold d-flex align-items-center justify-content-center gap-1" onclick="viewUserDetails('@user.Id')">
+                                <i class="bi bi-eye-fill"></i> <span>View Insights</span>
+                            </button>
+
+                            <div class="dropdown w-100">
+                                <button class="btn btn-sm btn-outline-warning rounded-pill py-2 w-100 fw-semibold dropdown-toggle d-flex align-items-center justify-content-between px-3" type="button" data-bs-toggle="dropdown">
+                                    <span><i class="bi bi-person-gear me-1"></i> Role</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-secondary p-1 w-100">
+                                    <li>
+                                        <button type="button" class="dropdown-item rounded-2 small text-warning fw-semibold py-2" onclick="updateUserRole('@user.Id', 'Admin')">
+                                            <i class="bi bi-shield-lock-fill me-2"></i> Make Admin
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="dropdown-item rounded-2 small text-primary fw-semibold py-2" onclick="updateUserRole('@user.Id', 'Customer')">
+                                            <i class="bi bi-person me-2"></i> Set as Customer
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <button type="button" id="block-btn-m-@user.Id" 
+                                class="btn btn-sm @(user.IsBlocked ? "btn-outline-success" : "btn-outline-danger") rounded-pill py-2 w-100 fw-bold d-flex align-items-center justify-content-center gap-1.5" 
+                                onclick="toggleUserBlock('@user.Id', @(user.IsBlocked ? "false" : "true"))">
+                            <i class="bi @(user.IsBlocked ? "bi-unlock-fill" : "bi-slash-circle")"></i>
+                            <span>@(user.IsBlocked ? "Unblock User Account" : "Block User Account")</span>
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<!-- Desktop Users Table (Visible on Screens >= 768px) -->
+<div class="stat-card-glass p-0 overflow-hidden shadow-sm d-none d-md-block mb-4">
+    <div class="table-responsive">
+        <table class="table table-dark-glass align-middle mb-0">
+            <thead>
+                <tr>
+                    <th style="min-width: 200px;">User Profile</th>
+                    <th class="text-nowrap">Email Address</th>
+                    <th class="text-nowrap">Phone</th>
+                    <th class="text-nowrap">Role</th>
+                    <th class="text-nowrap">Status</th>
+                    <th class="text-nowrap">Registered Date</th>
+                    <th class="text-end text-nowrap" style="min-width: 200px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="bi bi-person-x fs-1 d-block mb-2 opacity-50"></i>
+                            No users found matching your selected criteria.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var user in Model)
+                    {
+                        var isAdmin = user.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+                        <tr id="user-row-@user.Id">
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white shadow-sm flex-shrink-0"
+                                         style="width: 42px; height: 42px; background: @(isAdmin ? "linear-gradient(135deg, #d97706, #b45309)" : "linear-gradient(135deg, #2563eb, #1d4ed8)"); font-size: 0.95rem;">
+                                        @(!string.IsNullOrEmpty(user.FullName) ? user.FullName.Substring(0, 1).ToUpper() : "U")
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="fw-bold admin-text-title text-truncate" style="max-width: 170px;">@user.FullName</div>
+                                        <small class="text-muted font-monospace" style="font-size: 0.75rem;">ID: @user.Id</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="admin-text-title text-break">@user.Email</span>
+                            </td>
+                            <td>
+                                <span class="text-secondary small">@(string.IsNullOrEmpty(user.Phone) ? "N/A" : user.Phone)</span>
+                            </td>
+                            <td>
+                                @if (isAdmin)
+                                {
+                                    <span class="badge bg-warning bg-opacity-20 text-warning border border-warning border-opacity-30 rounded-pill px-3 py-1.5 fw-bold" id="role-badge-@user.Id">
+                                        <i class="bi bi-shield-lock-fill me-1"></i> Admin
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-primary bg-opacity-20 text-primary border border-primary border-opacity-30 rounded-pill px-3 py-1.5 fw-semibold" id="role-badge-@user.Id">
+                                        <i class="bi bi-person me-1"></i> Customer
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                @if (user.IsBlocked)
+                                {
+                                    <span class="badge bg-danger bg-opacity-20 text-danger border border-danger border-opacity-30 rounded-pill px-3 py-1.5 fw-bold" id="status-badge-@user.Id">
+                                        <i class="bi bi-slash-circle-fill me-1"></i> Blocked
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success bg-opacity-20 text-success border border-success border-opacity-30 rounded-pill px-3 py-1.5 fw-semibold" id="status-badge-@user.Id">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Active
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                <span class="text-muted small">@user.CreatedAt.ToString("MMM dd, yyyy")</span>
+                            </td>
+                            <td class="text-end">
+                                <div class="d-flex align-items-center justify-content-end gap-1">
+                                    <!-- View Details Button -->
+                                    <button type="button" class="btn btn-sm btn-outline-info rounded-pill px-2.5 py-1" onclick="viewUserDetails('@user.Id')" title="View Full Details">
+                                        <i class="bi bi-eye-fill me-1"></i> Details
+                                    </button>
+
+                                    <!-- Role Change Toggle Dropdown -->
+                                    <div class="dropdown d-inline-block">
+                                        <button class="btn btn-sm btn-outline-warning rounded-pill px-2.5 py-1 dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Change Role">
+                                            <i class="bi bi-person-gear"></i> Role
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-secondary p-1">
+                                            <li>
+                                                <button type="button" class="dropdown-item rounded-2 small text-warning fw-semibold" onclick="updateUserRole('@user.Id', 'Admin')">
+                                                    <i class="bi bi-shield-lock-fill me-2"></i> Make Admin
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button type="button" class="dropdown-item rounded-2 small text-primary fw-semibold" onclick="updateUserRole('@user.Id', 'Customer')">
+                                                    <i class="bi bi-person me-2"></i> Set as Customer
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Block / Unblock Action Button -->
+                                    <button type="button" id="block-btn-@user.Id" 
+                                            class="btn btn-sm @(user.IsBlocked ? "btn-outline-success" : "btn-outline-danger") rounded-pill px-2.5 py-1" 
+                                            onclick="toggleUserBlock('@user.Id', @(user.IsBlocked ? "false" : "true"))" 
+                                            title="@(user.IsBlocked ? "Unblock User" : "Block User")">
+                                        <i class="bi @(user.IsBlocked ? "bi-unlock-fill" : "bi-slash-circle") me-1"></i>
+                                        <span>@(user.IsBlocked ? "Unblock" : "Block")</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- User Details Modal -->
+<div class="modal fade" id="userDetailsModal" tabindex="-1" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-secondary shadow-lg rounded-4 overflow-hidden" style="background: var(--admin-sidebar-bg);">
+            <div class="modal-header border-bottom border-secondary px-3 px-sm-4 py-3">
+                <h5 class="modal-title fw-bold admin-text-title d-flex align-items-center gap-2 fs-6 fs-sm-5" id="userDetailsModalLabel">
+                    <i class="bi bi-person-bounding-box text-warning"></i> User Profile &amp; Account Insights
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-3 p-sm-4" id="userDetailsModalContent">
+                <div class="text-center py-4 text-muted">
+                    <div class="spinner-border text-warning mb-2" role="status"></div>
+                    <p class="small mb-0">Loading user account details...</p>
+                </div>
+            </div>
+            <div class="modal-footer border-top border-secondary px-3 px-sm-4 py-3">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4 w-100 w-sm-auto" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Fetch & View User Details Modal
+        async function viewUserDetails(userId) {
+            const modalContent = document.getElementById('userDetailsModalContent');
+            modalContent.innerHTML = `
+                <div class="text-center py-4 text-muted">
+                    <div class="spinner-border text-warning mb-2" role="status"></div>
+                    <p class="small mb-0">Loading user account details...</p>
+                </div>`;
+
+            const modalEl = document.getElementById('userDetailsModal');
+            const bsModal = new bootstrap.Modal(modalEl);
+            bsModal.show();
+
+            try {
+                const response = await fetch(`/admin/users/details/${encodeURIComponent(userId)}`);
+                if (!response.ok) throw new Error('User details request failed');
+
+                const data = await response.json();
+                const u = data.user;
+
+                modalContent.innerHTML = `
+                    <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-3 mb-4 pb-3 border-bottom border-secondary">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white shadow-lg flex-shrink-0"
+                             style="width: 56px; height: 56px; background: ${u.role === 'Admin' ? 'linear-gradient(135deg, #d97706, #b45309)' : 'linear-gradient(135deg, #2563eb, #1d4ed8)'}; font-size: 1.3rem;">
+                            ${(u.fullName || 'U').charAt(0).toUpperCase()}
+                        </div>
+                        <div class="flex-grow-1 min-w-0">
+                            <h4 class="fw-bold admin-text-title mb-1 fs-5 text-truncate" style="max-width: 100%;">${escapeHtml(u.fullName || 'N/A')}</h4>
+                            <div class="d-flex flex-wrap align-items-center gap-2">
+                                <span class="badge bg-secondary rounded-pill font-monospace text-truncate" style="max-width: 180px;">${u.id}</span>
+                                <span class="badge ${u.role === 'Admin' ? 'bg-warning text-dark' : 'bg-primary'} rounded-pill fw-bold">${u.role}</span>
+                                <span class="badge ${u.isBlocked ? 'bg-danger' : 'bg-success'} rounded-pill">${u.isBlocked ? 'Blocked Account' : 'Active Status'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-12 col-sm-6">
+                            <div class="p-3 rounded-3 border border-secondary bg-black bg-opacity-20">
+                                <small class="text-muted d-block uppercase mb-1 fs-8 fw-bold">EMAIL ADDRESS</small>
+                                <strong class="admin-text-title text-break">${escapeHtml(u.email || 'N/A')}</strong>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="p-3 rounded-3 border border-secondary bg-black bg-opacity-20">
+                                <small class="text-muted d-block uppercase mb-1 fs-8 fw-bold">PHONE NUMBER</small>
+                                <strong class="admin-text-title text-break">${escapeHtml(u.phone || 'Not Provided')}</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold admin-text-title mb-3"><i class="bi bi-bar-chart-line text-warning me-2"></i> Account Activity Overview</h6>
+                    <div class="row g-3">
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 border border-secondary text-center">
+                                <div class="fs-4 fw-bold text-warning mb-1 text-truncate">${data.totalOrders}</div>
+                                <div class="small text-muted fs-8">Total Orders</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 border border-secondary text-center">
+                                <div class="fs-4 fw-bold text-success mb-1 text-truncate">₹${(data.totalSpent || 0).toLocaleString('en-IN')}</div>
+                                <div class="small text-muted fs-8">Total Lifetime Spend</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 border border-secondary text-center">
+                                <div class="fs-4 fw-bold text-info mb-1 text-truncate">${data.addressCount}</div>
+                                <div class="small text-muted fs-8">Saved Addresses</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 border border-secondary text-center">
+                                <div class="fs-4 fw-bold text-primary mb-1 text-truncate">${data.wishlistCount}</div>
+                                <div class="small text-muted fs-8">Wishlist Items</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                modalContent.innerHTML = `<div class="alert alert-danger mb-0">Failed to load user details: ${err.message}</div>`;
+            }
+        }
+
+        // Toggle User Block Status via API
+        async function toggleUserBlock(userId, blockStatus) {
+            const actionText = blockStatus ? 'block' : 'unblock';
+            if (!confirm(`Are you sure you want to ${actionText} this user account?`)) return;
+
+            try {
+                const response = await fetch(`/admin/users/block/${encodeURIComponent(userId)}?block=${blockStatus}`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    alert(result.message || 'Operation failed');
+                    return;
+                }
+
+                // Update Desktop UI live
+                const statusBadge = document.getElementById(`status-badge-${userId}`);
+                const blockBtn = document.getElementById(`block-btn-${userId}`);
+
+                if (statusBadge) {
+                    if (result.isBlocked) {
+                        statusBadge.className = 'badge bg-danger bg-opacity-20 text-danger border border-danger border-opacity-30 rounded-pill px-3 py-1.5 fw-bold';
+                        statusBadge.innerHTML = '<i class="bi bi-slash-circle-fill me-1"></i> Blocked';
+                    } else {
+                        statusBadge.className = 'badge bg-success bg-opacity-20 text-success border border-success border-opacity-30 rounded-pill px-3 py-1.5 fw-semibold';
+                        statusBadge.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Active';
+                    }
+                }
+
+                if (blockBtn) {
+                    const nextStatus = !result.isBlocked;
+                    blockBtn.className = `btn btn-sm ${result.isBlocked ? 'btn-outline-success' : 'btn-outline-danger'} rounded-pill px-2.5 py-1`;
+                    blockBtn.setAttribute('onclick', `toggleUserBlock('${userId}', ${nextStatus})`);
+                    blockBtn.title = result.isBlocked ? 'Unblock User' : 'Block User';
+                    blockBtn.innerHTML = `<i class="bi ${result.isBlocked ? 'bi-unlock-fill' : 'bi-slash-circle'} me-1"></i><span>${result.isBlocked ? 'Unblock' : 'Block'}</span>`;
+                }
+
+                // Update Mobile UI live
+                const statusBadgeM = document.getElementById(`status-badge-m-${userId}`);
+                const blockBtnM = document.getElementById(`block-btn-m-${userId}`);
+
+                if (statusBadgeM) {
+                    if (result.isBlocked) {
+                        statusBadgeM.className = 'badge bg-danger bg-opacity-20 text-danger border border-danger border-opacity-30 rounded-pill px-2.5 py-1 fw-bold fs-8';
+                        statusBadgeM.innerHTML = '<i class="bi bi-slash-circle-fill me-1"></i> Blocked';
+                    } else {
+                        statusBadgeM.className = 'badge bg-success bg-opacity-20 text-success border border-success border-opacity-30 rounded-pill px-2.5 py-1 fw-semibold fs-8';
+                        statusBadgeM.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Active';
+                    }
+                }
+
+                if (blockBtnM) {
+                    const nextStatus = !result.isBlocked;
+                    blockBtnM.className = `btn btn-sm ${result.isBlocked ? 'btn-outline-success' : 'btn-outline-danger'} rounded-pill py-2 w-100 fw-bold d-flex align-items-center justify-content-center gap-1.5`;
+                    blockBtnM.setAttribute('onclick', `toggleUserBlock('${userId}', ${nextStatus})`);
+                    blockBtnM.innerHTML = `<i class="bi ${result.isBlocked ? 'bi-unlock-fill' : 'bi-slash-circle'}"></i><span>${result.isBlocked ? 'Unblock User Account' : 'Block User Account'}</span>`;
+                }
+
+            } catch (err) {
+                console.error("Failed to block/unblock user", err);
+                alert("Network error: Could not complete request.");
+            }
+        }
+
+        // Update User Role (Admin / Customer)
+        async function updateUserRole(userId, newRole) {
+            if (!confirm(`Are you sure you want to set this user's role to '${newRole}'?`)) return;
+
+            try {
+                const response = await fetch(`/admin/users/role/${encodeURIComponent(userId)}?newRole=${encodeURIComponent(newRole)}`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    alert(result.message || 'Operation failed');
+                    return;
+                }
+
+                // Update Desktop UI live
+                const roleBadge = document.getElementById(`role-badge-${userId}`);
+                if (roleBadge) {
+                    const isAdmin = result.newRole.toLowerCase() === 'admin';
+                    if (isAdmin) {
+                        roleBadge.className = 'badge bg-warning bg-opacity-20 text-warning border border-warning border-opacity-30 rounded-pill px-3 py-1.5 fw-bold';
+                        roleBadge.innerHTML = '<i class="bi bi-shield-lock-fill me-1"></i> Admin';
+                    } else {
+                        roleBadge.className = 'badge bg-primary bg-opacity-20 text-primary border border-primary border-opacity-30 rounded-pill px-3 py-1.5 fw-semibold';
+                        roleBadge.innerHTML = '<i class="bi bi-person me-1"></i> Customer';
+                    }
+                }
+
+                // Update Mobile UI live
+                const roleBadgeM = document.getElementById(`role-badge-m-${userId}`);
+                if (roleBadgeM) {
+                    const isAdmin = result.newRole.toLowerCase() === 'admin';
+                    if (isAdmin) {
+                        roleBadgeM.className = 'badge bg-warning bg-opacity-20 text-warning border border-warning border-opacity-30 rounded-pill px-2.5 py-1 fw-bold fs-8';
+                        roleBadgeM.innerHTML = '<i class="bi bi-shield-lock-fill me-1"></i> Admin';
+                    } else {
+                        roleBadgeM.className = 'badge bg-primary bg-opacity-20 text-primary border border-primary border-opacity-30 rounded-pill px-2.5 py-1 fw-semibold fs-8';
+                        roleBadgeM.innerHTML = '<i class="bi bi-person me-1"></i> Customer';
+                    }
+                }
+
+            } catch (err) {
+                console.error("Failed to update user role", err);
+                alert("Network error: Could not update role.");
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+    </script>
+}

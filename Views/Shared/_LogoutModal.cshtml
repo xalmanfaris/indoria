@@ -1,0 +1,26 @@
+<!-- Sleek Global Logout Confirmation Modal -->
+<div class="modal fade" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmModalLabel" aria-hidden="true" style="z-index: 1065;">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+        <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
+            <div class="modal-body p-4 text-center">
+                <div class="mx-auto mb-3 rounded-circle bg-danger bg-opacity-10 text-danger d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                    <i class="bi bi-box-arrow-right fs-2"></i>
+                </div>
+                <h5 class="fw-bold text-dark mb-2" id="logoutConfirmModalLabel">@Localizer["Sign Out Confirmation"]</h5>
+                <p class="text-secondary small mb-4">
+                    @Localizer["Are you sure you want to sign out?"]
+                </p>
+                <div class="d-flex flex-column gap-2">
+                    <form method="post" action="/account/logout" class="m-0 p-0">
+                        <button type="submit" class="btn btn-danger rounded-pill py-2.5 fw-bold w-100 shadow-sm">
+                            <i class="bi bi-box-arrow-right me-1.5"></i> @Localizer["Sign Out"]
+                        </button>
+                    </form>
+                    <button type="button" class="btn btn-light rounded-pill py-2.5 fw-semibold text-secondary w-100 border" data-bs-dismiss="modal">
+                        @Localizer["Cancel Order"]
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

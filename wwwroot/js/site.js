@@ -1,4 +1,11 @@
 // Indoria - Client-Side Interactive Behaviors & Theme System
+function getAppText(key, fallback) {
+    if (window.AppTranslations && window.AppTranslations[key]) {
+        return window.AppTranslations[key];
+    }
+    return fallback !== undefined ? fallback : key;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     initHomeProductTabs();
@@ -313,17 +320,29 @@ function showAuraToast(message, type = 'primary') {
     }, 3500);
 }
 
+// Helper to update navigation badges (hides red badge when count is 0)
+function updateNavBadgeCount(selector, count) {
+    const num = parseInt(count) || 0;
+    document.querySelectorAll(selector).forEach(badge => {
+        badge.textContent = num;
+        if (num > 0) {
+            badge.style.display = 'inline-block';
+            badge.classList.remove('d-none');
+        } else {
+            badge.style.display = 'none';
+        }
+    });
+}
+
 // Wishlist interaction
 async function initWishlist() {
-    const wishlistBadges = document.querySelectorAll('.aura-wishlist-count');
-
     // On page load, sync wishlist state from DB if authenticated
     if (window.isUserAuthenticated) {
         try {
             const response = await fetch('/api/v1/wishlist/status');
             if (response.ok) {
                 const data = await response.json();
-                wishlistBadges.forEach(badge => badge.textContent = data.count || 0);
+                updateNavBadgeCount('.aura-wishlist-count', data.count);
 
                 if (data.productIds && Array.isArray(data.productIds)) {
                     data.productIds.forEach(id => {
@@ -380,7 +399,7 @@ async function initWishlist() {
                             }
                         });
 
-                        wishlistBadges.forEach(badge => badge.textContent = data.count);
+                        updateNavBadgeCount('.aura-wishlist-count', data.count);
 
                         if (data.isWishlisted) {
                             showAuraToast(`Added <strong>${productName}</strong> to your Wishlist`, 'success');
@@ -398,15 +417,13 @@ async function initWishlist() {
 
 // Cart interactions & Drawer
 async function initCart() {
-    const cartBadges = document.querySelectorAll('.aura-cart-badge, .aura-cart-count');
-
     // Sync cart badge count from DB if user is authenticated
     if (window.isUserAuthenticated) {
         try {
             const response = await fetch('/api/v1/cart/status');
             if (response.ok) {
                 const data = await response.json();
-                cartBadges.forEach(badge => badge.textContent = data.count || 0);
+                updateNavBadgeCount('.aura-cart-badge, .aura-cart-count', data.count);
             }
         } catch (err) {
             console.error("Failed to fetch cart count", err);
@@ -449,7 +466,7 @@ async function initCart() {
                 if (res.ok) {
                     const data = await res.json();
                     if (data.success) {
-                        cartBadges.forEach(badge => badge.textContent = data.count);
+                        updateNavBadgeCount('.aura-cart-badge, .aura-cart-count', data.count);
 
                         // Button feedback animation
                         const originalHtml = btn.innerHTML;
@@ -495,28 +512,34 @@ async function initCart() {
         });
     });
 
-    // Quantity Steppers in Cart Page
-    document.querySelectorAll('.aura-cart-item-row .aura-qty-stepper').forEach(stepper => {
+    // Quantity Steppers (PDP & Cart Page)
+    document.querySelectorAll('.aura-qty-stepper').forEach(stepper => {
         const minus = stepper.querySelector('.aura-qty-minus');
         const plus = stepper.querySelector('.aura-qty-plus');
         const input = stepper.querySelector('.aura-qty-input');
         const row = stepper.closest('.aura-cart-item-row');
         const productId = row?.getAttribute('data-product-id');
 
-        if (minus && plus && input && productId) {
+        if (minus && plus && input) {
             minus.addEventListener('click', async () => {
                 let val = parseInt(input.value) || 1;
                 if (val > 1) {
                     val--;
                     input.value = val;
-                    await updateCartQuantityInDb(productId, val, row);
+                    if (productId && row) {
+                        await updateCartQuantityInDb(productId, val, row);
+                    }
                 }
             });
             plus.addEventListener('click', async () => {
                 let val = parseInt(input.value) || 1;
-                val++;
-                input.value = val;
-                await updateCartQuantityInDb(productId, val, row);
+                if (val < 99) {
+                    val++;
+                    input.value = val;
+                    if (productId && row) {
+                        await updateCartQuantityInDb(productId, val, row);
+                    }
+                }
             });
         }
     });
@@ -540,7 +563,7 @@ async function initCart() {
                         row.style.transition = 'all 0.3s ease';
                         setTimeout(() => {
                             row.remove();
-                            cartBadges.forEach(badge => badge.textContent = data.count);
+                            updateNavBadgeCount('.aura-cart-badge, .aura-cart-count', data.count);
                             updateCartTotals();
                             showAuraToast('Item removed from cart', 'dark');
 
@@ -558,7 +581,6 @@ async function initCart() {
 }
 
 async function updateCartQuantityInDb(productId, quantity, row) {
-    const cartBadges = document.querySelectorAll('.aura-cart-badge, .aura-cart-count');
     try {
         const res = await fetch('/api/v1/cart/update', {
             method: 'POST',
@@ -567,7 +589,7 @@ async function updateCartQuantityInDb(productId, quantity, row) {
         });
         if (res.ok) {
             const data = await res.json();
-            cartBadges.forEach(badge => badge.textContent = data.count);
+            updateNavBadgeCount('.aura-cart-badge, .aura-cart-count', data.count);
             updateCartTotals();
         }
     } catch (err) {
@@ -577,29 +599,73 @@ async function updateCartQuantityInDb(productId, quantity, row) {
 
 function updateCartTotals() {
     let subtotal = 0;
-    document.querySelectorAll('.aura-cart-item-row').forEach(row => {
-        const price = parseFloat(row.getAttribute('data-price') || '0');
-        const qtyInput = row.querySelector('.aura-qty-input');
-        const qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
-        const totalEl = row.querySelector('.aura-cart-item-total');
-        const itemTotal = price * qty;
-        if (totalEl) {
-            totalEl.textContent = '₹' + itemTotal.toLocaleString('en-IN');
+    let totalQuantity = 0;
+    const itemRows = document.querySelectorAll('.aura-cart-item-row');
+
+    if (itemRows.length > 0) {
+        itemRows.forEach(row => {
+            const price = parseFloat(row.getAttribute('data-price') || '0');
+            const qtyInput = row.querySelector('.aura-qty-input');
+            const qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
+            const totalEl = row.querySelector('.aura-cart-item-total');
+            const itemTotal = price * qty;
+            if (totalEl) {
+                totalEl.textContent = '₹' + itemTotal.toLocaleString('en-IN');
+            }
+            subtotal += itemTotal;
+            totalQuantity += qty;
+        });
+
+        // Update top-right header nav badge count in real-time
+        updateNavBadgeCount('.aura-cart-badge, .aura-cart-count', totalQuantity);
+
+        // Update top header appliances count on cart page (e.g. "(2 appliances)")
+        const headerCountEl = document.getElementById('cartHeaderAppliancesCount');
+        if (headerCountEl) {
+            headerCountEl.textContent = `(${totalQuantity} appliances)`;
         }
-        subtotal += itemTotal;
-    });
+
+        // Update order summary sidebar item count (e.g. "Subtotal (2 items)")
+        const summaryCountEl = document.getElementById('cartTotalItemsCount');
+        if (summaryCountEl) {
+            summaryCountEl.textContent = totalQuantity.toString();
+        }
+    } else {
+        const subtotalEl = document.getElementById('cartSubtotal');
+        if (subtotalEl) {
+            const rawAttr = subtotalEl.getAttribute('data-subtotal');
+            if (rawAttr) {
+                subtotal = parseFloat(rawAttr) || 0;
+            } else {
+                const cleanText = subtotalEl.textContent.replace(/[^\d.]/g, '');
+                subtotal = parseFloat(cleanText) || 0;
+            }
+        }
+    }
+
 
     const subtotalEl = document.getElementById('cartSubtotal');
     const grandTotalEl = document.getElementById('cartGrandTotal');
     const discountEl = document.getElementById('cartDiscount');
     const discount = discountEl ? parseFloat(discountEl.getAttribute('data-discount') || '0') : 0;
 
-    if (subtotalEl) subtotalEl.textContent = '₹' + subtotal.toLocaleString('en-IN');
+    if (subtotalEl && itemRows.length > 0) {
+        subtotalEl.setAttribute('data-subtotal', subtotal.toString());
+        subtotalEl.textContent = '₹' + subtotal.toLocaleString('en-IN');
+    }
+
     if (grandTotalEl) {
         const grand = Math.max(0, subtotal - discount);
         grandTotalEl.textContent = '₹' + grand.toLocaleString('en-IN');
     }
+
+    const checkoutBtn = document.querySelector('button[type="submit"].aura-btn-pdp-buy');
+    if (checkoutBtn && checkoutBtn.innerHTML.includes('Place Order')) {
+        const grand = Math.max(0, subtotal - discount);
+        checkoutBtn.innerHTML = `Place Order & Confirm (₹${grand.toLocaleString('en-IN')}) <i class="bi bi-check2-circle fs-5 ms-1"></i>`;
+    }
 }
+
 
 // Pincode availability check demo
 function initPincodeChecker() {
@@ -633,26 +699,109 @@ function initPincodeChecker() {
     }
 }
 
-// Product detail gallery thumbnail switcher
+// Product detail gallery thumbnail switcher & Interactive Hover Zoom
 function initProductGallery() {
     const mainImg = document.getElementById('pdpMainImage');
+    const mainVideo = document.getElementById('pdpMainVideo');
+    const galleryFrame = document.getElementById('pdpGalleryMain');
     const thumbs = document.querySelectorAll('.aura-pdp-thumb');
+
+    if (galleryFrame && mainImg) {
+        // Hover Zoom tracking on PDP Main Gallery frame
+        galleryFrame.addEventListener('mousemove', (e) => {
+            if (mainVideo && !mainVideo.classList.contains('d-none')) return; // Disable zoom when video is active
+
+            const rect = galleryFrame.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const xPct = Math.max(0, Math.min(100, (x / rect.width) * 100));
+            const yPct = Math.max(0, Math.min(100, (y / rect.height) * 100));
+
+            mainImg.style.transformOrigin = `${xPct}% ${yPct}%`;
+            mainImg.style.transform = 'scale(2.2)';
+            galleryFrame.classList.add('zoomed');
+        });
+
+        galleryFrame.addEventListener('mouseleave', () => {
+            mainImg.style.transform = 'scale(1)';
+            mainImg.style.transformOrigin = 'center center';
+            galleryFrame.classList.remove('zoomed');
+        });
+
+        // Click to Open Full Screen Image Lightbox Modal on Mobile / Touch
+        galleryFrame.addEventListener('click', (e) => {
+            if (e.target.closest('.aura-wishlist-btn') || e.target.closest('.aura-pdp-energy-badge')) return;
+            if (mainVideo && !mainVideo.classList.contains('d-none')) return;
+
+            const currentSrc = mainImg.src;
+            if (!currentSrc) return;
+
+            openImageLightboxModal(currentSrc, mainImg.alt || 'Product Image');
+        });
+    }
 
     if (mainImg && thumbs.length) {
         thumbs.forEach(thumb => {
             thumb.addEventListener('click', () => {
                 thumbs.forEach(t => t.classList.remove('active'));
                 thumb.classList.add('active');
-                const src = thumb.getAttribute('data-src');
-                if (src) {
-                    mainImg.style.opacity = '0.3';
-                    setTimeout(() => {
-                        mainImg.src = src;
-                        mainImg.style.opacity = '1';
-                    }, 150);
+                
+                const type = thumb.getAttribute('data-type');
+                if (type === 'video' && mainVideo) {
+                    mainImg.classList.add('d-none');
+                    mainVideo.classList.remove('d-none');
+                    mainVideo.play();
+                } else {
+                    if (mainVideo) {
+                        mainVideo.pause();
+                        mainVideo.classList.add('d-none');
+                    }
+                    mainImg.classList.remove('d-none');
+                    const src = thumb.getAttribute('data-src');
+                    if (src) {
+                        mainImg.style.opacity = '0.3';
+                        mainImg.style.transform = 'scale(1)';
+                        setTimeout(() => {
+                            mainImg.src = src;
+                            mainImg.style.opacity = '1';
+                        }, 150);
+                    }
                 }
             });
         });
+    }
+}
+
+// Lightbox modal helper for full resolution image preview
+function openImageLightboxModal(imageSrc, altText) {
+    let modal = document.getElementById('auraImageLightboxModal');
+    if (!modal) {
+        const modalHtml = `
+            <div class="modal fade" id="auraImageLightboxModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-xl">
+                    <div class="modal-content bg-dark border-0 rounded-4 text-white overflow-hidden shadow-lg">
+                        <div class="modal-header border-bottom border-secondary border-opacity-25 py-2 px-3">
+                            <h6 class="modal-title small text-truncate text-secondary mb-0">${altText}</h6>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-0 text-center bg-black d-flex align-items-center justify-content-center" style="min-height: 70vh;">
+                            <img id="lightboxModalImage" src="${imageSrc}" alt="${altText}" class="img-fluid" style="max-height: 85vh; object-fit: contain;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        modal = document.getElementById('auraImageLightboxModal');
+    } else {
+        const img = modal.querySelector('#lightboxModalImage');
+        if (img) img.src = imageSrc;
+    }
+
+    if (typeof bootstrap !== 'undefined') {
+        const bsModal = new bootstrap.Modal(modal);
+        bsModal.show();
     }
 }
 
@@ -730,7 +879,7 @@ function initCheckoutSteps() {
     };
 }
 
-// Coupon code demo
+// Dynamic Coupon code application
 function initCouponDemo() {
     const applyBtn = document.getElementById('applyCouponBtn');
     const input = document.getElementById('couponCodeInput');
@@ -738,30 +887,85 @@ function initCouponDemo() {
     const discountEl = document.getElementById('cartDiscount');
 
     if (applyBtn && input) {
-        applyBtn.addEventListener('click', () => {
+        applyBtn.addEventListener('click', async () => {
             const code = input.value.trim().toUpperCase();
-            if (code === 'LUXE5000' || code === 'INDORIA10' || code === 'AURA10' || code === 'FESTIVE') {
-                if (discountEl) {
-                    discountEl.setAttribute('data-discount', '5000');
-                    discountEl.textContent = '-₹5,000';
-                }
-                if (msg) {
-                    msg.className = 'text-success small mt-1 d-block fw-semibold';
-                    msg.innerHTML = `<i class="bi bi-check-circle-fill me-1"></i> Coupon <strong>${code}</strong> applied! ₹5,000 saved.`;
-                }
-                updateCartTotals();
-                if (typeof showAuraToast === 'function') {
-                    showAuraToast(`Coupon <strong>${code}</strong> applied successfully!`, 'success');
-                }
-            } else {
+            if (!code) {
                 if (msg) {
                     msg.className = 'text-danger small mt-1 d-block fw-semibold';
-                    msg.innerHTML = '<i class="bi bi-exclamation-circle-fill me-1"></i> Invalid coupon code. Try <strong>LUXE5000</strong>';
+                    msg.innerHTML = '<i class="bi bi-exclamation-circle-fill me-1"></i> Please enter a coupon code.';
                 }
+                return;
+            }
+
+            let subtotal = 0;
+            const itemRows = document.querySelectorAll('.aura-cart-item-row');
+            if (itemRows.length > 0) {
+                itemRows.forEach(row => {
+                    const price = parseFloat(row.getAttribute('data-price') || '0');
+                    const qtyInput = row.querySelector('.aura-qty-input');
+                    const qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
+                    subtotal += price * qty;
+                });
+            } else {
+                const subtotalEl = document.getElementById('cartSubtotal');
+                if (subtotalEl) {
+                    const rawAttr = subtotalEl.getAttribute('data-subtotal');
+                    if (rawAttr) {
+                        subtotal = parseFloat(rawAttr) || 0;
+                    } else {
+                        const cleanText = subtotalEl.textContent.replace(/[^\d.]/g, '');
+                        subtotal = parseFloat(cleanText) || 0;
+                    }
+                }
+            }
+
+
+            const originalHtml = applyBtn.innerHTML;
+            applyBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+            applyBtn.disabled = true;
+
+            try {
+                const res = await fetch('/api/v1/cart/apply-coupon', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: code, subtotal: subtotal })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    if (discountEl) {
+                        discountEl.setAttribute('data-discount', data.discountAmount.toString());
+                        discountEl.textContent = '-₹' + Number(data.discountAmount).toLocaleString('en-IN');
+                    }
+                    if (msg) {
+                        msg.className = 'text-success small mt-1 d-block fw-semibold';
+                        msg.innerHTML = `<i class="bi bi-check-circle-fill me-1"></i> Coupon <strong>${data.code}</strong> applied! ₹${Number(data.discountAmount).toLocaleString('en-IN')} saved.`;
+                    }
+                    updateCartTotals();
+                    if (typeof showAuraToast === 'function') {
+                        showAuraToast(`Coupon <strong>${data.code}</strong> applied successfully!`, 'success');
+                    }
+                } else {
+                    if (msg) {
+                        msg.className = 'text-danger small mt-1 d-block fw-semibold';
+                        msg.innerHTML = `<i class="bi bi-exclamation-circle-fill me-1"></i> ${data.message || 'Invalid coupon code.'}`;
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to apply coupon", err);
+                if (msg) {
+                    msg.className = 'text-danger small mt-1 d-block fw-semibold';
+                    msg.innerHTML = '<i class="bi bi-exclamation-circle-fill me-1"></i> Error validating coupon code.';
+                }
+            } finally {
+                applyBtn.innerHTML = originalHtml;
+                applyBtn.disabled = false;
             }
         });
     }
 }
+
 
 // Quick View Modal
 function initQuickView() {
@@ -902,13 +1106,104 @@ function markAllNotificationsRead() {
         .catch(err => console.error(err));
 }
 
+/* ==========================================================================
+   Live Chat Assistant & Realtime Admin Sync Widget
+   ========================================================================== */
+let liveChatPollTimer = null;
+let activeLiveTicketId = null;
+let renderedLiveMsgIds = new Set();
+
 document.addEventListener('DOMContentLoaded', () => {
     initNotificationsBell();
+    initLiveChatPolling();
 });
 
-/* ==========================================================================
-   Live Chat Assistant Widget
-   ========================================================================== */
+function initLiveChatPolling() {
+    pollLiveChatSession();
+    if (!liveChatPollTimer) {
+        liveChatPollTimer = setInterval(pollLiveChatSession, 3000);
+    }
+}
+
+function pollLiveChatSession() {
+    fetch('/api/support/live-session')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) return;
+
+            // 1. Update Admin Ready Status Badge
+            updateAgentStatusBadge(data.isAdminReady);
+
+            // 2. Check Active Session State
+            if (data.hasActiveSession) {
+                activeLiveTicketId = data.ticketId;
+
+                // Handle Cancelled/Closed status
+                if (data.status === 'Cancelled' || data.status === 'Closed') {
+                    showLiveChatEndedState();
+                } else {
+                    hideLiveChatEndedState();
+                }
+
+                // Render any new messages from admin or user that haven't been displayed yet
+                if (data.messages && data.messages.length > 0) {
+                    data.messages.forEach(msg => {
+                        if (!renderedLiveMsgIds.has(msg.id)) {
+                            renderedLiveMsgIds.add(msg.id);
+                            const isUser = msg.senderRole === 'Customer';
+                            const senderName = isUser ? 'User' : (msg.senderName || 'Support Agent');
+                            appendLiveChatMessage(senderName, msg.messageText, msg.id, isUser);
+                        }
+                    });
+                }
+            }
+        })
+        .catch(err => console.debug('Live chat poll debug:', err));
+}
+
+function updateAgentStatusBadge(isReady) {
+    const badgeContainer = document.getElementById('liveAgentStatusBadge');
+    const bubbleDot = document.getElementById('liveChatBubbleDot');
+
+    if (badgeContainer) {
+        if (isReady) {
+            badgeContainer.className = 'badge bg-success text-white rounded-pill px-2.5 py-1 fw-bold shadow-sm d-inline-flex align-items-center gap-1';
+            badgeContainer.innerHTML = `<span class="spinner-grow spinner-grow-sm text-white me-1" style="width: 6px; height: 6px;"></span> Customer Care Online`;
+        } else {
+            badgeContainer.className = 'badge bg-white text-dark rounded-pill px-2.5 py-1 fw-bold shadow-sm d-inline-flex align-items-center gap-1';
+            badgeContainer.innerHTML = `<i class="bi bi-robot text-primary me-1"></i> AI Assistant Active`;
+        }
+    }
+
+    if (bubbleDot) {
+        bubbleDot.style.display = isReady ? 'block' : 'none';
+    }
+}
+
+function showLiveChatEndedState() {
+    const banner = document.getElementById('liveChatEndedBanner');
+    const input = document.getElementById('liveChatInput');
+    const sendBtn = document.getElementById('liveChatSendBtn');
+    const quickBar = document.getElementById('quickQueryBar');
+
+    if (banner) banner.classList.remove('d-none');
+    if (input) { input.disabled = true; input.placeholder = 'Conversation ended by agent...'; }
+    if (sendBtn) sendBtn.disabled = true;
+    if (quickBar) quickBar.classList.add('d-none');
+}
+
+function hideLiveChatEndedState() {
+    const banner = document.getElementById('liveChatEndedBanner');
+    const input = document.getElementById('liveChatInput');
+    const sendBtn = document.getElementById('liveChatSendBtn');
+    const quickBar = document.getElementById('quickQueryBar');
+
+    if (banner) banner.classList.add('d-none');
+    if (input && input.disabled) { input.disabled = false; input.placeholder = 'Type a message...'; }
+    if (sendBtn && sendBtn.disabled) sendBtn.disabled = false;
+    if (quickBar) quickBar.classList.remove('d-none');
+}
+
 function toggleLiveChatModal() {
     const chatBox = document.getElementById('liveChatBoxWindow');
     const openIcon = document.getElementById('liveChatIconOpen');
@@ -920,6 +1215,7 @@ function toggleLiveChatModal() {
         chatBox.classList.remove('d-none');
         if (openIcon) openIcon.classList.add('d-none');
         if (closeIcon) closeIcon.classList.remove('d-none');
+        pollLiveChatSession();
     } else {
         chatBox.classList.add('d-none');
         if (openIcon) openIcon.classList.remove('d-none');
@@ -929,12 +1225,13 @@ function toggleLiveChatModal() {
 
 function sendLiveChatMessage() {
     const input = document.getElementById('liveChatInput');
-    if (!input || !input.value.trim()) return;
+    if (!input || !input.value.trim() || input.disabled) return;
 
     const userText = input.value.trim();
     input.value = '';
 
-    appendLiveChatMessage('User', userText);
+    // Show Typing Indicator
+    showLiveTypingIndicator('Indoria Assistant crafting reply...');
 
     fetch('/api/support/chat-bot', {
         method: 'POST',
@@ -943,13 +1240,32 @@ function sendLiveChatMessage() {
     })
     .then(res => res.json())
     .then(data => {
-        if (data.reply) {
-            appendLiveChatMessage('Agent', data.reply);
+        hideLiveTypingIndicator();
+        if (data.ticketNumber) {
+            activeLiveTicketId = data.ticketNumber;
         }
+        setTimeout(pollLiveChatSession, 300);
     })
     .catch(() => {
+        hideLiveTypingIndicator();
         appendLiveChatMessage('Agent', 'Sorry, I am having trouble connecting right now. Please try again shortly!');
     });
+}
+
+function showLiveTypingIndicator(text) {
+    const indicator = document.getElementById('liveChatTypingIndicator');
+    const indicatorText = document.getElementById('typingIndicatorText');
+    if (indicator) {
+        if (indicatorText && text) indicatorText.innerText = text;
+        indicator.classList.remove('d-none');
+    }
+}
+
+function hideLiveTypingIndicator() {
+    const indicator = document.getElementById('liveChatTypingIndicator');
+    if (indicator) {
+        indicator.classList.add('d-none');
+    }
 }
 
 function sendQuickChatMessage(text) {
@@ -960,21 +1276,72 @@ function sendQuickChatMessage(text) {
     }
 }
 
-function appendLiveChatMessage(sender, text) {
+function appendLiveChatMessage(sender, text, msgId = null, isUserOverride = null) {
     const container = document.getElementById('liveChatMessagesList');
     if (!container) return;
 
+    if (msgId) renderedLiveMsgIds.add(msgId);
+
+    const isUser = isUserOverride !== null ? isUserOverride : (sender === 'User' || sender === 'Customer');
     const div = document.createElement('div');
-    if (sender === 'User') {
-        div.className = 'd-flex align-items-end justify-content-end gap-2 ms-auto max-w-85';
-        div.innerHTML = `<div class="bg-primary text-white rounded-3 p-2 small shadow-sm">${text}</div>`;
+
+    if (isUser) {
+        div.className = 'd-flex align-items-end justify-content-end gap-2 ms-auto max-w-85 my-1';
+        div.innerHTML = `<div class="bg-primary text-white rounded-4 p-2.5 px-3 small shadow-sm">${text}</div>`;
     } else {
-        div.className = 'd-flex align-items-start gap-2 max-w-85 me-auto';
-        div.innerHTML = `<div class="bg-white text-dark border rounded-3 p-2 small shadow-sm">${text}</div>`;
+        div.className = 'd-flex align-items-start gap-2 max-w-85 me-auto my-1';
+        div.innerHTML = `
+            <div class="bg-white text-dark border rounded-4 p-3 small shadow-sm">
+                <div class="fw-bold text-primary mb-1" style="font-size: 0.72rem;">${sender}</div>
+                <div>${text}</div>
+            </div>`;
     }
 
     container.appendChild(div);
     container.scrollTop = container.scrollHeight;
+}
+
+function cancelUserLiveChat() {
+    if (!activeLiveTicketId) {
+        showLiveChatEndedState();
+        return;
+    }
+    if (!confirm('Are you sure you want to end this conversation session?')) return;
+
+    fetch('/api/support/tickets/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ticketId: activeLiveTicketId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        showLiveChatEndedState();
+        if (typeof showAuraToast === 'function') {
+            showAuraToast('Conversation closed successfully.', 'info');
+        }
+    });
+}
+
+function resetLiveChatSession(e) {
+    if (e) e.preventDefault();
+    activeLiveTicketId = null;
+    renderedLiveMsgIds.clear();
+
+    const container = document.getElementById('liveChatMessagesList');
+    if (container) {
+        container.innerHTML = `
+            <div id="liveChatEndedBanner" class="d-none alert alert-warning p-2.5 text-center rounded-3 mb-2 small fw-semibold shadow-sm border-warning" style="font-size: 0.78rem;">
+                <i class="bi bi-exclamation-triangle-fill text-warning me-1"></i> Support Agent ended conversation. 
+                <a href="#" onclick="resetLiveChatSession(event)" class="text-primary fw-bold text-decoration-underline ms-1">Start New Chat</a>
+            </div>
+            <div class="d-flex align-items-start gap-2 max-w-85 me-auto" id="welcomeAgentMsg">
+                <div class="bg-white text-dark border rounded-4 p-3 small shadow-sm">
+                    <div class="fw-bold text-primary mb-1 style-readable" style="font-size: 0.75rem;">Indoria Support Desk</div>
+                    Hello! Welcome to Indoria Support. How can we assist your appliance search, order status, or service request today?
+                </div>
+            </div>`;
+    }
+    hideLiveChatEndedState();
 }
 
 /* ==========================================================================

@@ -1,0 +1,319 @@
+@model List<AuraLiving.Services.Repositories.SupportTicket>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Admin Support Console";
+    var openCount = Model?.Count(t => t.Status == "Open" || t.Status == "Customer Reply") ?? 0;
+    var resolvedCount = Model?.Count(t => t.Status == "Resolved" || t.Status == "Closed") ?? 0;
+}
+
+<div>
+    <!-- Admin Header Bar -->
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+        <div>
+            <h2 class="fw-bold admin-text-title mb-1"><i class="bi bi-headset text-warning me-2"></i> Support Ticket Console</h2>
+            <p class="admin-text-muted mb-0 small">Manage customer inquiries, live chat messages, and support ticket resolutions.</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <button id="adminReadyToggleBtn" class="btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm d-inline-flex align-items-center gap-2" onclick="toggleAdminReadyStatus()">
+                <span class="spinner-grow spinner-grow-sm text-white" style="width: 8px; height: 8px;" id="adminReadyPulse"></span>
+                <span id="adminReadyBtnText">Customer Care Ready (Online)</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Ticket Summary Stats Cards -->
+    <div class="row g-2.5 g-sm-3 mb-4">
+        <div class="col-6 col-xl-3">
+            <div class="stat-card-glass p-2.5 p-sm-3.5 h-100">
+                <div class="d-flex align-items-center gap-2 gap-sm-3">
+                    <div class="stat-icon-wrapper bg-primary bg-opacity-10 text-primary flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                        <i class="bi bi-inbox-fill"></i>
+                    </div>
+                    <div class="min-w-0 flex-grow-1">
+                        <span class="admin-text-muted fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Total Inquiries</span>
+                        <h3 class="fw-bold admin-text-title mt-0 mb-0 fs-4 fs-sm-3">@(Model?.Count ?? 0)</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-xl-3">
+            <div class="stat-card-glass p-2.5 p-sm-3.5 h-100 border-warning border-opacity-25">
+                <div class="d-flex align-items-center gap-2 gap-sm-3">
+                    <div class="stat-icon-wrapper bg-warning bg-opacity-10 text-warning flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                    </div>
+                    <div class="min-w-0 flex-grow-1">
+                        <span class="text-warning fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Needs Response</span>
+                        <h3 class="fw-bold text-warning mt-0 mb-0 fs-4 fs-sm-3">@openCount</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-xl-3">
+            <div class="stat-card-glass p-2.5 p-sm-3.5 h-100 border-success border-opacity-25">
+                <div class="d-flex align-items-center gap-2 gap-sm-3">
+                    <div class="stat-icon-wrapper bg-success bg-opacity-10 text-success flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div class="min-w-0 flex-grow-1">
+                        <span class="text-success fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Resolved Tickets</span>
+                        <h3 class="fw-bold text-success mt-0 mb-0 fs-4 fs-sm-3">@resolvedCount</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-xl-3">
+            <div class="stat-card-glass p-2.5 p-sm-3.5 h-100 border-info border-opacity-25">
+                <div class="d-flex align-items-center gap-2 gap-sm-3">
+                    <div class="stat-icon-wrapper bg-info bg-opacity-10 text-info flex-shrink-0 mb-0" style="width: 40px; height: 40px; min-width: 40px; font-size: 1.15rem; border-radius: 10px;">
+                        <i class="bi bi-chat-dots-fill"></i>
+                    </div>
+                    <div class="min-w-0 flex-grow-1">
+                        <span class="text-info fw-bold text-uppercase text-truncate d-block" style="font-size: 0.68rem; letter-spacing: 0.3px;">Live Chat Sessions</span>
+                        <h3 class="fw-bold text-info mt-0 mb-0 fs-4 fs-sm-3">@(Model?.Count(t => t.Category == "Live Chat") ?? 0)</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="stat-card-glass p-5 text-center my-4">
+            <i class="bi bi-check-circle display-3 text-success mb-3 opacity-75"></i>
+            <h4 class="fw-bold admin-text-title">No Active Tickets</h4>
+            <p class="admin-text-muted mb-0">All customer tickets have been resolved!</p>
+        </div>
+    }
+    else
+    {
+        <!-- Mobile Support Tickets Cards (< 768px) -->
+        <div class="d-block d-md-none mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary border-opacity-20">
+                <span class="fw-bold admin-text-title small"><i class="bi bi-inbox-fill text-warning me-1"></i> Support Inquiries</span>
+                <div class="btn-group btn-group-sm" role="group">
+                    <button type="button" class="btn btn-outline-warning active" onclick="filterAdminTickets('all', this)">All</button>
+                    <button type="button" class="btn btn-outline-warning" onclick="filterAdminTickets('open', this)">Action</button>
+                    <button type="button" class="btn btn-outline-warning" onclick="filterAdminTickets('resolved', this)">Resolved</button>
+                </div>
+            </div>
+
+            <div class="d-flex flex-column gap-3" id="mobileTicketsContainer">
+                @foreach (var ticket in Model)
+                {
+                    var statusBadge = ticket.Status switch
+                    {
+                        "Open" => "bg-warning text-dark",
+                        "In Progress" => "bg-info text-dark",
+                        "Customer Reply" => "bg-danger text-white",
+                        "Resolved" => "bg-success text-white",
+                        "Cancelled" => "bg-secondary text-white",
+                        "Closed" => "bg-secondary text-white",
+                        _ => "bg-secondary text-white"
+                    };
+
+                    var messages = ticket.GetMessages();
+                    var lastMessage = messages.LastOrDefault()?.MessageText ?? ticket.Subject;
+
+                    <div class="stat-card-glass p-3 ticket-card-mobile" data-status="@ticket.Status.ToLowerInvariant()">
+                        <div class="d-flex align-items-center justify-content-between pb-2 border-bottom border-secondary border-opacity-20 mb-2">
+                            <span class="fw-bold text-warning font-monospace fs-6">#@ticket.TicketNumber</span>
+                            <span class="badge rounded-pill px-2.5 py-1 fs-8 @statusBadge">@ticket.Status</span>
+                        </div>
+
+                        <div class="mb-2">
+                            <div class="fw-bold admin-text-title fs-6">@ticket.CustomerName</div>
+                            <small class="admin-text-muted fs-8"><i class="bi bi-envelope me-1 text-warning"></i>@ticket.Email</small>
+                        </div>
+
+                        <div class="p-2.5 rounded-3 bg-black bg-opacity-20 border border-secondary border-opacity-20 mb-3">
+                            <div class="fw-semibold admin-text-title fs-7 mb-1 text-break">@ticket.Subject</div>
+                            <div class="admin-text-muted fs-8 text-break" style="word-break: break-word;">@lastMessage</div>
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                            <span class="badge bg-body border admin-text-title fs-8"><i class="bi bi-tag me-1"></i>@ticket.Category</span>
+                            <small class="admin-text-muted fs-8"><i class="bi bi-clock me-1"></i>@ticket.UpdatedAt.ToString("MMM dd, HH:mm")</small>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2 pt-2 border-top border-secondary border-opacity-20">
+                            <a href="/account/tickets/@ticket.Id" class="btn btn-sm btn-warning rounded-pill py-2 w-100 text-dark fw-bold d-flex align-items-center justify-content-center gap-1">
+                                <i class="bi bi-chat-text-fill"></i> <span>Open &amp; Reply</span>
+                            </a>
+                            @if (ticket.Status != "Cancelled" && ticket.Status != "Closed")
+                            {
+                                <button type="button" class="btn btn-sm btn-outline-danger rounded-pill py-2 px-3 fw-semibold d-flex align-items-center justify-content-center gap-1 flex-shrink-0" 
+                                        onclick="cancelAdminTicket('@ticket.Id', '@ticket.TicketNumber')">
+                                    <i class="bi bi-x-circle"></i> <span>End Chat</span>
+                                </button>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Desktop Support Tickets Table View (>= 768px) -->
+        <div class="stat-card-glass p-0 overflow-hidden shadow-sm d-none d-md-block mb-4">
+            <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
+                <span class="fw-bold admin-text-title small"><i class="bi bi-inbox-fill text-warning me-1"></i> Customer Support Messages &amp; Tickets</span>
+                <div class="btn-group btn-group-sm" role="group">
+                    <button type="button" class="btn btn-outline-warning active" onclick="filterAdminTickets('all', this)">All</button>
+                    <button type="button" class="btn btn-outline-warning" onclick="filterAdminTickets('open', this)">Needs Action</button>
+                    <button type="button" class="btn btn-outline-warning" onclick="filterAdminTickets('resolved', this)">Resolved</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-dark-glass align-middle mb-0" id="adminTicketsTable">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Ticket #</th>
+                            <th>Customer</th>
+                            <th>Subject</th>
+                            <th>Category</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Updated</th>
+                            <th class="text-end pe-4">Manage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ticket in Model)
+                        {
+                            var statusBadge = ticket.Status switch
+                            {
+                                "Open" => "bg-warning text-dark",
+                                "In Progress" => "bg-info text-dark",
+                                "Customer Reply" => "bg-danger text-white",
+                                "Resolved" => "bg-success text-white",
+                                "Cancelled" => "bg-secondary text-white",
+                                "Closed" => "bg-secondary text-white",
+                                _ => "bg-secondary text-white"
+                            };
+
+                            var messages = ticket.GetMessages();
+                            var lastMessage = messages.LastOrDefault()?.MessageText ?? ticket.Subject;
+
+                            <tr class="ticket-table-row" data-status="@ticket.Status.ToLowerInvariant()">
+                                <td class="ps-4 fw-bold text-warning">#@ticket.TicketNumber</td>
+                                <td>
+                                    <div class="fw-bold admin-text-title">@ticket.CustomerName</div>
+                                    <small class="admin-text-muted">@ticket.Email</small>
+                                </td>
+                                <td>
+                                    <div class="fw-semibold admin-text-title">@ticket.Subject</div>
+                                    <div class="admin-text-muted small text-truncate" style="max-width: 260px;" title="@lastMessage">@lastMessage</div>
+                                </td>
+                                <td><span class="badge bg-body border admin-text-title">@ticket.Category</span></td>
+                                <td><span class="badge border admin-text-muted">@ticket.Priority</span></td>
+                                <td><span class="badge rounded-pill @statusBadge">@ticket.Status</span></td>
+                                <td><small class="admin-text-muted">@ticket.UpdatedAt.ToString("MMM dd, HH:mm")</small></td>
+                                <td class="text-end pe-4">
+                                    <a href="/account/tickets/@ticket.Id" class="btn btn-sm btn-warning rounded-pill px-3 me-1 text-dark fw-bold">
+                                        <i class="bi bi-chat-text-fill me-1"></i> Open &amp; Reply
+                                    </a>
+                                    @if (ticket.Status != "Cancelled" && ticket.Status != "Closed")
+                                    {
+                                        <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 fw-bold" onclick="cancelAdminTicket('@ticket.Id', '@ticket.TicketNumber')">
+                                            <i class="bi bi-x-circle me-1"></i> Cancel Chat
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    let isAdminReady = true;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('/api/support/agent-status')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    isAdminReady = data.isReady;
+                    renderAdminReadyButton();
+                }
+            });
+    });
+
+    function toggleAdminReadyStatus() {
+        isAdminReady = !isAdminReady;
+        fetch('/api/support/admin/ready-status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ isReady: isAdminReady })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                isAdminReady = data.isReady;
+                renderAdminReadyButton();
+            }
+        });
+    }
+
+    function renderAdminReadyButton() {
+        const btn = document.getElementById('adminReadyToggleBtn');
+        const text = document.getElementById('adminReadyBtnText');
+        const pulse = document.getElementById('adminReadyPulse');
+
+        if (!btn) return;
+        if (isAdminReady) {
+            btn.className = 'btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm d-inline-flex align-items-center gap-2';
+            if (text) text.innerText = 'Customer Care Ready (Online)';
+            if (pulse) pulse.style.display = 'inline-block';
+        } else {
+            btn.className = 'btn btn-secondary rounded-pill px-4 py-2 fw-bold shadow-sm d-inline-flex align-items-center gap-2';
+            if (text) text.innerText = 'Customer Care Offline (AI Mode)';
+            if (pulse) pulse.style.display = 'none';
+        }
+    }
+
+    function cancelAdminTicket(ticketId, ticketNum) {
+        if (!confirm(`Are you sure you want to end/cancel conversation #${ticketNum}? The customer chat will be cleared.`)) return;
+
+        fetch('/api/support/tickets/cancel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ticketId: ticketId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Conversation #${ticketNum} ended successfully.`);
+                window.location.reload();
+            }
+        });
+    }
+
+    function filterAdminTickets(filter, btn) {
+        document.querySelectorAll('button[onclick^="filterAdminTickets"]').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+
+        const rows = document.querySelectorAll('#adminTicketsTable .ticket-table-row');
+        const cards = document.querySelectorAll('#mobileTicketsContainer .ticket-card-mobile');
+
+        const filterItem = (el) => {
+            const status = el.getAttribute('data-status');
+            if (filter === 'all') return true;
+            if (filter === 'open') return (status === 'open' || status === 'customer reply' || status === 'in progress');
+            if (filter === 'resolved') return (status === 'resolved' || status === 'closed' || status === 'cancelled');
+            return true;
+        };
+
+        rows.forEach(row => {
+            row.style.display = filterItem(row) ? '' : 'none';
+        });
+
+        cards.forEach(card => {
+            card.style.display = filterItem(card) ? '' : 'none';
+        });
+    }
+</script>

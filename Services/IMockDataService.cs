@@ -22,4 +22,9 @@ public interface IMockDataService
     List<ReturnRequestViewModel> GetSampleReturns();
     List<ReviewItemViewModel> GetSampleReviews();
     NotificationSettingsViewModel GetNotificationSettings();
+    AdminDashboardViewModel GetAdminDashboard();
+    void AddProduct(ProductViewModel product);
+    void UpdateProduct(ProductViewModel product);
+    void DeleteProduct(string id);
+    List<CouponViewModel> GetCoupons();
 }

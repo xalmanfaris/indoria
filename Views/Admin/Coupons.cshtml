@@ -1,0 +1,129 @@
+@model List<AuraLiving.Models.CouponViewModel>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Coupons & Promotional Deals";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h2 class="fw-bold admin-text-title mb-1">Marketing Vouchers & Promotional Discounts</h2>
+        <p class="admin-text-muted mb-0 small">Create discount vouchers, set minimum order values, and control promotion schedules.</p>
+    </div>
+    <div>
+        <button class="btn btn-warning rounded-pill px-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#couponModal">
+            <i class="bi bi-ticket-perforated-fill me-1"></i> Create New Voucher
+        </button>
+    </div>
+</div>
+
+<div class="row g-4">
+    @if (!Model.Any())
+    {
+        <div class="col-12 text-center py-5 admin-text-muted">
+            <i class="bi bi-ticket-perforated fs-1 d-block mb-2"></i>
+            No promo vouchers created yet. Click <strong>Create New Voucher</strong> to add deals.
+        </div>
+    }
+    else
+    {
+        @foreach (var coupon in Model)
+        {
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="stat-card-glass p-4 position-relative h-100 d-flex flex-column justify-content-between border-dashed">
+                    <div>
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <span class="badge bg-warning bg-opacity-20 text-warning border border-warning px-3 py-1 font-monospace fs-6">
+                                @coupon.Code
+                            </span>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="form-check form-switch m-0">
+                                    <input class="form-check-input" type="checkbox" role="switch" @(coupon.IsActive ? "checked" : "") 
+                                           onchange="toggleCouponStatus('@coupon.Code', this.checked)">
+                                </div>
+                                <form method="post" action="/admin/coupons/delete/@coupon.Code" onsubmit="return confirm('Are you sure you want to delete voucher @coupon.Code?');" class="d-inline">
+                                    <button type="submit" class="btn btn-link text-danger p-0 ms-1" title="Delete Voucher">
+                                        <i class="bi bi-trash fs-6"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <h3 class="fw-bold admin-text-title mb-1">₹@coupon.DiscountAmount.ToString("N0") OFF</h3>
+                        <div class="small admin-text-muted mb-3">Min Spend: <span class="admin-text-title fw-semibold">₹@coupon.MinimumSpend.ToString("N0")</span></div>
+                        <p class="small admin-text-muted">@coupon.Description</p>
+                    </div>
+
+                    <div class="pt-3 border-top d-flex align-items-center justify-content-between">
+                        <div class="small admin-text-muted fs-8">
+                            <i class="bi bi-people-fill text-warning me-1"></i> Used @coupon.UsageCount times
+                        </div>
+                        <div class="small admin-text-muted fs-8">
+                            Exp: @coupon.ExpiryDate.ToString("MMM dd, yyyy")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<!-- Add Coupon Modal -->
+<div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg border">
+            <form method="post" action="/admin/coupons/create">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold admin-text-title" id="couponModalLabel">Create Promo Voucher</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold admin-text-muted">Promo Code Name</label>
+                            <input type="text" name="Code" class="form-control font-monospace text-uppercase" placeholder="e.g. DIWALI2026" required>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small fw-semibold admin-text-muted">Discount Value (₹)</label>
+                            <input type="number" name="DiscountAmount" class="form-control" placeholder="5000" min="1" step="1" required>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small fw-semibold admin-text-muted">Min Cart Value (₹)</label>
+                            <input type="number" name="MinimumSpend" class="form-control" placeholder="40000" min="0" step="1" required>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small fw-semibold admin-text-muted">Expiry Date</label>
+                            <input type="date" name="ExpiryDate" class="form-control" value="@DateTime.Now.AddDays(30).ToString("yyyy-MM-dd")" required>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small fw-semibold admin-text-muted">Offer Description</label>
+                            <input type="text" name="Description" class="form-control" placeholder="Festive Instant Suite Discount" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning rounded-pill px-4 fw-semibold">Activate Code</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function toggleCouponStatus(code, isActive) {
+        try {
+            const response = await fetch(`/admin/coupons/toggle/${encodeURIComponent(code)}?active=${isActive}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await response.json();
+            if (!response.ok || !data.success) {
+                alert(data.message || 'Failed to update status');
+                location.reload();
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Error updating status');
+            location.reload();
+        }
+    }
+</script>

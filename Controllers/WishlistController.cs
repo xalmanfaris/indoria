@@ -1,22 +1,33 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using AuraLiving.Services;
+using AuraLiving.Services.Repositories;
 
 namespace AuraLiving.Controllers;
 
 public class WishlistController : Controller
 {
-    private readonly IMockDataService _dataService;
+    private readonly IWishlistRepository _wishlistRepository;
+    private readonly IAuthService _authService;
 
-    public WishlistController(IMockDataService dataService)
+    public WishlistController(IWishlistRepository wishlistRepository, IAuthService authService)
     {
-        _dataService = dataService;
+        _wishlistRepository = wishlistRepository;
+        _authService = authService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var allProducts = _dataService.GetAllProducts();
-        // Return 4 sample wishlisted items
-        var wishlistItems = allProducts.Take(4).ToList();
+        var currentUser = await _authService.GetCurrentUserAsync(User);
+        var userId = currentUser?.Id ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return RedirectToAction("Login", "Account", new { returnUrl = "/wishlist" });
+        }
+
+        var wishlistItems = await _wishlistRepository.GetWishlistProductsByUserIdAsync(userId);
         return View(wishlistItems);
     }
 }
+

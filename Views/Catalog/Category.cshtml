@@ -12,29 +12,6 @@
 <div class="container py-4">
     <partial name="_Breadcrumb" model="breadcrumbs" />
 
-    <!-- Category Banner Header -->
-    <div class="p-4 p-md-5 rounded-4 bg-white border mb-4 shadow-sm">
-        <div class="row align-items-center g-4">
-            <div class="col-lg-8">
-                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">Category Collection</span>
-                <h1 class="fw-bold mb-2">@(category?.Name ?? "Home Appliances")</h1>
-                <p class="text-secondary mb-3">@(category?.Description ?? "Explore energy-saving 5-star rated appliances with instant bank offers and free white-glove installation.")</p>
-                <div class="d-flex flex-wrap gap-2">
-                    @if (category?.SubCategories != null)
-                    {
-                        @foreach (var sub in category.SubCategories)
-                        {
-                            <span class="badge bg-light text-dark border px-3 py-2">@sub</span>
-                        }
-                    }
-                </div>
-            </div>
-            <div class="col-lg-4 text-end d-none d-lg-block">
-                <i class="bi @(category?.Icon ?? "bi-box-seam") text-primary opacity-25" style="font-size: 7rem;"></i>
-            </div>
-        </div>
-    </div>
-
     <!-- Product Grid & Filters -->
     <div class="row g-4">
         <!-- Filter Sidebar Desktop -->

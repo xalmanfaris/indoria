@@ -27,9 +27,9 @@
                         <small class="text-muted">Placed on @Model.OrderDate.ToString("dd MMMM yyyy, hh:mm tt")</small>
                     </div>
                     <div class="d-flex align-items-center gap-2">
-                        <button class="btn btn-outline-dark btn-sm rounded-pill px-3" onclick="window.print();">
-                            <i class="bi bi-printer me-1"></i> Invoice PDF
-                        </button>
+                        <a href="/account/orders/@Model.Id/invoice" target="_blank" class="btn btn-outline-dark btn-sm rounded-pill px-3 fw-semibold">
+                            <i class="bi bi-file-earmark-pdf-fill text-danger me-1"></i> Tax Invoice PDF
+                        </a>
                         @if (Model.Status != "Cancelled" && Model.Status != "Delivered")
                         {
                             <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold" data-bs-toggle="modal" data-bs-target="#cancelOrderModal">

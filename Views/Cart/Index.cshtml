@@ -10,10 +10,14 @@
 <div class="container py-4">
     <partial name="_Breadcrumb" model="breadcrumbs" />
 
+    <div class="container py-4">
+    <partial name="_Breadcrumb" model="breadcrumbs" />
+
     <div class="d-flex align-items-baseline justify-content-between mb-4 pb-2 border-bottom">
-        <h1 class="h2 fw-bold mb-0">Your Shopping Bag</h1>
-        <span class="text-muted">(@Model.Items.Sum(i => i.Quantity) appliances)</span>
+        <h1 class="h2 fw-bold mb-0">@Localizer["Shopping Cart"]</h1>
+        <span class="text-muted" id="cartHeaderAppliancesCount">(@Model.Items.Sum(i => i.Quantity) appliances)</span>
     </div>
+
 
     @if (Model.Items.Any())
     {
@@ -24,7 +28,7 @@
                 <div class="alert alert-success d-flex align-items-center gap-3 rounded-3 py-3 px-4 mb-4 border-0 shadow-sm" style="background: #ecfdf5;">
                     <i class="bi bi-truck fs-3 text-success"></i>
                     <div>
-                        <strong class="text-success d-block">Congratulations! You've unlocked Free White-Glove Express Delivery</strong>
+                        <strong class="text-success d-block">@Localizer["Free Shipping"]</strong>
                         <small class="text-secondary">Includes free in-home unboxing, packaging removal, and certified demo setup.</small>
                     </div>
                 </div>
@@ -32,7 +36,7 @@
                 <div class="d-flex flex-column gap-3">
                     @foreach (var item in Model.Items)
                     {
-                        <div class="p-3 p-md-4 rounded-4 bg-white border aura-cart-item-row shadow-sm" data-price="@item.Price">
+                        <div class="p-3 p-md-4 rounded-4 bg-white border aura-cart-item-row shadow-sm" data-product-id="@item.ProductId" data-price="@item.Price">
                             <div class="row align-items-center g-3">
                                 <!-- Image -->
                                 <div class="col-3 col-md-2 text-center bg-light rounded-3 p-2">
@@ -43,7 +47,7 @@
                                 <div class="col-9 col-md-5">
                                     <span class="text-uppercase fw-bold text-primary small" style="font-size: 0.7rem;">@item.Brand</span>
                                     <h5 class="fw-bold text-dark mb-1" style="font-size: 0.95rem;">
-                                        <a href="/product/@item.ProductSlug" class="text-dark text-decoration-none">@item.ProductName</a>
+                                        <a href="/product/@item.ProductSlug" class="text-dark text-decoration-none">@Localizer[item.ProductName]</a>
                                     </h5>
                                     <div class="text-muted small mb-2">
                                         @if (!string.IsNullOrEmpty(item.SelectedCapacity))
@@ -56,8 +60,8 @@
                                         }
                                     </div>
                                     <div class="d-flex gap-3 small">
-                                        <a href="#" class="text-muted text-decoration-none aura-cart-remove-btn"><i class="bi bi-trash3 me-1"></i> Remove</a>
-                                        <a href="#" class="text-muted text-decoration-none" onclick="event.preventDefault(); showAuraToast('Item saved for later!', 'dark');"><i class="bi bi-bookmark me-1"></i> Save for later</a>
+                                        <a href="#" class="text-muted text-decoration-none aura-cart-remove-btn" data-product-id="@item.ProductId"><i class="bi bi-trash3 me-1"></i> @Localizer["Cancel Order"]</a>
+                                        <a href="#" class="text-muted text-decoration-none" onclick="event.preventDefault(); showAuraToast('Item saved for later!', 'dark');"><i class="bi bi-bookmark me-1"></i> @Localizer["Wishlist Saved"]</a>
                                     </div>
                                 </div>
 
@@ -82,7 +86,7 @@
 
                 <div class="d-flex justify-content-between align-items-center mt-4 pt-3">
                     <a href="/products" class="btn aura-btn-outline rounded-pill px-4">
-                        <i class="bi bi-arrow-left me-1"></i> Continue Shopping
+                        <i class="bi bi-arrow-left me-1"></i> @Localizer["Shop Now"]
                     </a>
                 </div>
             </div>
@@ -90,51 +94,53 @@
             <!-- Order Summary Sidebar -->
             <div class="col-lg-4">
                 <div class="p-4 rounded-4 bg-white border shadow-sm sticky-top" style="top: 90px;">
-                    <h5 class="fw-bold text-dark mb-3">Order Summary</h5>
+                    <h5 class="fw-bold text-dark mb-3">@Localizer["Order Summary"]</h5>
 
                     <!-- Coupon Input -->
                     <div class="mb-4">
-                        <label class="small fw-semibold text-muted mb-1">Have a promo code?</label>
-                        <div class="input-group input-group-sm">
-                            <input type="text" id="couponCodeInput" class="form-control text-uppercase" placeholder="Try LUXE5000" value="@Model.CouponCode" />
-                            <button class="btn aura-btn-dark px-3" type="button" id="applyCouponBtn">Apply</button>
+                        <label class="small fw-semibold text-muted mb-1">@Localizer["Coupon Code"]</label>
+                        <div class="aura-coupon-pill-group">
+                            <input type="text" id="couponCodeInput" class="form-control text-uppercase" placeholder="@Localizer["Coupon Code"]" value="" />
+                            <button class="btn aura-btn-dark aura-coupon-pill-btn" type="button" id="applyCouponBtn">@Localizer["Apply"]</button>
                         </div>
-                        <span id="couponMessage" class="text-success small mt-1 d-block">
-                            <i class="bi bi-check-circle-fill"></i> Coupon <strong>LUXE5000</strong> applied! ₹5,000 saved.
+                        <span id="couponMessage" class="text-success small mt-1 @(Model.Discount > 0 ? "d-block" : "d-none")">
+                            <i class="bi bi-check-circle-fill"></i> @Localizer["Coupon applied successfully!"]
                         </span>
                     </div>
 
                     <!-- Price Calculation -->
                     <div class="d-flex justify-content-between mb-2 small text-secondary">
-                        <span>Items Subtotal</span>
-                        <span class="text-dark fw-bold" id="cartSubtotal">₹@Model.SubTotal.ToString("N0")</span>
+                        <span id="cartTotalItemsLabel">@Localizer["Subtotal"] (<span id="cartTotalItemsCount">@Model.Items.Sum(i => i.Quantity)</span> @Localizer["items"])</span>
+                        <span class="text-dark fw-bold" id="cartSubtotal" data-subtotal="@Model.SubTotal">₹@Model.SubTotal.ToString("N0")</span>
                     </div>
+
+
                     <div class="d-flex justify-content-between mb-2 small text-success">
-                        <span>Promotional Discount</span>
+                        <span>@Localizer["Discount"]</span>
                         <span class="fw-bold" id="cartDiscount" data-discount="@Model.Discount">-₹@Model.Discount.ToString("N0")</span>
                     </div>
                     <div class="d-flex justify-content-between mb-2 small text-secondary">
-                        <span>Express Delivery</span>
-                        <span class="text-success fw-bold">FREE</span>
+                        <span>@Localizer["Shipping"]</span>
+                        <span class="text-success fw-bold">@Localizer["Free Shipping"]</span>
                     </div>
                     <div class="d-flex justify-content-between mb-3 small text-secondary">
-                        <span>Certified Installation</span>
-                        <span class="text-success fw-bold">FREE</span>
+                        <span>@Localizer["Tax"]</span>
+                        <span class="text-success fw-bold">@Localizer["Free Shipping"]</span>
                     </div>
 
                     <hr class="my-3" />
 
                     <div class="d-flex justify-content-between align-items-baseline mb-4">
-                        <span class="fw-bold text-dark fs-5">Grand Total</span>
+                        <span class="fw-bold text-dark fs-5">@Localizer["Total"]</span>
                         <span class="display-6 fw-bold text-dark" id="cartGrandTotal">₹@Model.GrandTotal.ToString("N0")</span>
                     </div>
 
                     <a href="/checkout" class="btn aura-btn-primary w-100 py-3 fw-bold rounded-pill text-center d-block mb-3 shadow-sm">
-                        Proceed to Checkout <i class="bi bi-arrow-right ms-1"></i>
+                        @Localizer["Checkout"] <i class="bi bi-arrow-right ms-1"></i>
                     </a>
 
                     <div class="text-center text-muted small">
-                        <i class="bi bi-shield-lock-fill text-success me-1"></i> 256-Bit SSL Encrypted Secure Checkout
+                        <i class="bi bi-shield-lock-fill text-success me-1"></i> @Localizer["Protected Payments:"]
                     </div>
                 </div>
             </div>
@@ -144,10 +150,10 @@
     {
         <div class="text-center py-5 bg-white rounded-4 border p-5">
             <i class="bi bi-bag-x text-muted opacity-50" style="font-size: 4rem;"></i>
-            <h3 class="fw-bold mt-3">Your shopping bag is empty</h3>
+            <h3 class="fw-bold mt-3">@Localizer["Cart"]</h3>
             <p class="text-muted small mb-4">Discover our curated catalog of smart refrigerators, silent washing machines, and OLED televisions.</p>
             <a href="/products" class="btn aura-btn-primary px-4 py-2 rounded-pill">
-                Start Shopping Now
+                @Localizer["Shop Now"]
             </a>
         </div>
     }
